@@ -1,0 +1,322 @@
+
+<div style="width:80%;overflow: hidden;">
+	<div style="min-height: 100vh;overflow: auto;">
+		<div class="page-name" style="display:flex; align-items:center;justify-content:space-between;padding:8px 24px;">
+			<h1 id="ejspageName">Apple</h1>
+			<button type="button" style="margin:30px 0;padding: 7px 20px;border: none;background-color: #315BC1;color: white;font-weight: 600;font-size:18px" onclick="submitFields()">Update</button>
+		</div>
+		<!-- SECTION CONTAINER -->
+		<div id="page-section-container" style="display: flex;width: 100%;flex-direction: column;align-items: center;justify-content: start;">
+			<form action="">
+			<!-- SECTION DEFAULT RENDER 1 -->
+			<div style="border-bottom: 1px solid rgba(0,0,0,0.25);padding: 25px 0px;width: 100%;">
+				<div  style="margin: 0 auto;display: flex;flex-direction: column;align-items: center;justify-content: start;gap: 25px;width: 80%;">
+					<input style="width: 100%;font-size: 54px;padding: 15px 25px;" type="text" placeholder="Add Title" name="" id="">
+					<textarea id="default-text-editor" style="width: 100%;padding: 15px 25px;" name="" id="" cols="30" rows="10" placeholder="Start writing text or HTML"></textarea>
+				</div>
+			</div>
+	
+			<!-- SECTION DEFAULT RENDER 2 -->
+			<% if(pageData.section?.length > 0) { for(let i=0; i < pageData.sections.length; i++) { %>
+			<div style="border-bottom: 1px solid rgba(0,0,0,0.25);width: 100%;padding: 15px;">
+				<div style="width: 80%;">
+					<div style="margin-bottom:10px">
+						<input type="checkbox" class="section-choose-checkbox" id="section-seo">
+						<label for="section-seo" style="font-size: 14px; font-weight: 600; color:#315BC1;font-style: italic;">Working on this section</label>
+					</div>
+					<div>
+						<h5><%= pageData.sections[i].sectionName %></h5>
+					</div>
+					<div class="inputFieldsContainer">
+						<% for(let j=0; j < pageData.sections[i].sectionContent.length; j++) { %>
+							<% if(pageData.sections[i].sectionContent[j].elementName == "input"){ %>
+								<label class="form-label" for="<%= pageData.sections[i].sectionContent[j].elementAttrFor %>"><%= pageData.sections[i].sectionContent[j].elementLabelName %></label>
+								<input class="form-control" type="<%= pageData.sections[i].sectionContent[j].elementAttrType %>" name="<%= pageData.sections[i].sectionContent[j].elementAttrName %>" value="<%= pageData.sections[i].sectionContent[j].elementValue %>">
+							<% } else if(pageData.sections[i].sectionContent[j].elementName == "textarea") { %>
+								<label class="form-label" for="<%= pageData.sections[i].sectionContent[j].elementAttrFor %>" ><%= pageData.sections[i].sectionContent[j].elementLabelName %></label>
+								<textarea name="pageData.sections[i].sectionContent[j].elementAttrName" id="pageData.sections[i].sectionContent[j].elementAttrId" >
+									<%= pageData.sections[i].sectionContent[j].elementValue %>
+								</textarea>
+						<% } }%>
+					</div>
+				</div>
+			</div>
+			<% } } %>
+			<!-- SECTION BASE TEMPLATE -->
+			<!-- <div class="section-container" style="border-bottom: 1px solid rgba(0,0,0,0.25);width: 100%;padding: 15px;">
+				<div class="section-80-wr" style="width: 80%;">
+					<div class="checkbox-subsection" style="margin-bottom:10px">
+						<input type="checkbox" class="section-choose-checkbox" id="section-seo">
+						<label for="section-seo" style="font-size: 14px; font-weight: 600; color:#315BC1;font-style: italic;">Working on this section</label>
+					</div>
+					<div class="heading-subsection">
+						<h5>SEO </h5>
+					</div>
+					<div class="fields-subsection inputFieldsContainer">
+						<label class="form-label">Meta Title</label>
+						<input class="form-control" type="text" name="meta-title">
+						<label class="form-label">Meta Description</label>
+						<input class="form-control" type="text" name="meta-description">
+					</div>
+				</div>
+			</div> -->
+			</form>	
+		</div>
+	</div>
+</div>
+
+<!-- Your existing content goes here -->
+
+<!-- Right sidebar for adding new fields -->
+<div id="sidebar" style="width:20%;height: 100%;border-left: 1px solid rgba(0,0,0,0.25);padding: 10px;display: flex;flex-direction: column;align-items: center;justify-content: start;gap: 15px;" class="sidebar custom-field">
+	
+	<div style="width: 100%;">
+		<h3 style="font-size: 16px;">Add New Section</h3>
+		<button type="button" style="border: none; background-color: #315BC1;color: #fff;padding: 7px 16px;font-size: 13x;font-weight: 600;" onclick="openNewSectionModal()">Add Section</button>
+	</div>
+	<div style="width: 100%;">
+		<h3 style="font-size: 16px;">Add New Field</h3>
+		<form id="addFieldForm">
+			<label for="elementType" style="font-size: 15px;">Select Element Type:</label>
+			<select style="font-weight: 400;width: 100%;padding: 5px;margin: 10px 0;" id="elementType">
+				<option value="input">Input Field</option>
+				<option value="ckeditor">CKEditor</option>
+			</select>
+			<button type="button" style="border: none; background-color: #C9356E;color: #fff;padding: 7px 16px;font-size: 13x;font-weight: 600;" onclick="openNameModal()">Add Field</button>
+		</form>
+	</div>
+</div>
+
+<!-- Modal for inputting section name -->
+<div id="sectionModal" class="modal">
+	<div class="modal-content">
+		<span class="close" onclick="closeSectionModal()">&times;</span>
+		<div style="padding: 20px 0;">
+			<label class="pb-2" for="elementName">Section Name:</label>
+			<input style="width: 100%;display: block;" type="text" id="sectionName" required>
+			<button class="mt-3" style="border: none;background-color: #315BC1;color: #fff;padding: 7px 16px;font-size: 13x;font-weight: 600;" onclick="addSection()">Add Section</button>
+		</div>
+	</div>
+</div>
+<!-- Modal for inputting element name -->
+<div id="nameModal" class="modal">
+	<div class="modal-content">
+		<span class="close" onclick="closeNameModal()">&times;</span>
+		<div style="padding: 20px 0;">
+			<label class="form-label pb-2" for="elementName">Field Title:</label>
+			<input class="form-control" style="width: 100%;display: block;" type="text" id="elementName" required>
+			<label class="form-label pb-2" for="elementAttrName">Field Name Attribute:</label>
+			<input class="form-control" style="width: 100%;display: block;" type="text" id="elementAttrName" required>
+			<button class="mt-3" style="border: none;background-color: #C9356E;color: #fff;padding: 7px 16px;font-size: 13x;font-weight: 600;" onclick="addElement()">Add Field</button>
+		</div>
+	</div>
+</div>
+
+<script>
+	CKEDITOR
+	.replace(document.getElementById("default-text-editor"))
+	.catch(error => {
+		console.error(error);
+	});
+	function openNewSectionModal() {
+		const modal = document.getElementById('sectionModal');
+		modal.style.display = 'block';
+	}
+
+	function closeSectionModal() {
+		const modal = document.getElementById('sectionModal');
+		modal.style.display = 'none';
+	}
+	function openNameModal() {
+		const modal = document.getElementById('nameModal');
+		modal.style.display = 'block';
+	}
+
+	function closeNameModal() {
+		const modal = document.getElementById('nameModal');
+		modal.style.display = 'none';
+	}
+
+	function addSection() {
+		const ejsPageName = document.getElementById("ejspageName").textContent;
+		const sectionName = document.getElementById("sectionName").value;
+
+		fetch("/manage/add-section", {
+			method:"POST",
+			headers:{
+				"Content-Type":"application/json"
+			},
+			body:JSON.stringify({
+				ejsPageName:ejsPageName,
+				sectionName:sectionName,
+			})
+		})
+		const sectionContainer = document.getElementById("page-section-container");
+
+		//OK
+		const section = document.createElement('div');
+		section.style.borderBottom = "1px solid rgba(0,0,0,0.25)";
+		section.style.width = "100%";
+		section.style.padding = "15px";
+		//OK
+		const sectionInner = document.createElement("div");
+		sectionInner.style.width = "80%";
+		//OK
+		const checkBoxContainer = document.createElement("div");
+		checkBoxContainer.style.marginBottom = "10px";
+		// OK
+		const checkBoxInput = document.createElement("input");
+		checkBoxInput.type = "checkbox";
+		checkBoxInput.classList = "section-choose-checkbox"
+		checkBoxInput.id = sectionName.split(" ").join("-").toLowerCase()+"-checkbox-container";
+		const label = document.createElement("label");
+		label.style.fontSize = "14px";
+		label.style.fontWeight = "600";
+		label.style.color = "#315BC1";
+		label.style.fontStyle = "italic";
+		label.setAttribute("for", sectionName.split(" ").join("-").toLowerCase()+"-checkbox-container");
+		label.textContent = "Working on this section";
+		checkBoxContainer.appendChild(checkBoxInput);
+		checkBoxContainer.appendChild(label);
+
+		// OK
+		const firstInner = document.createElement("div");
+
+		const h5Element = document.createElement("h5");
+		firstInner.appendChild(h5Element);
+
+		const secondInner = document.createElement("div");
+
+		sectionInner.appendChild(checkBoxContainer);
+		sectionInner.appendChild(firstInner);
+		sectionInner.appendChild(secondInner);
+		section.appendChild(sectionInner);
+
+		secondInner.classList.add("inputFieldsContainer")
+		secondInner.id = sectionName.split(" ").join("-").toLowerCase()+"-container"
+		h5Element.textContent = sectionName;
+		sectionContainer.appendChild(section);
+	}
+
+	function addElement() {
+		const ejsPageName = document.getElementById("ejspageName").textContent;
+		const elementType = document.getElementById('elementType').value;
+		const elementName = document.getElementById('elementName').value;
+		const elementAttrName = document.getElementById("elementAttrName").value;
+		const checked = document.querySelectorAll(".section-choose-checkbox");
+		let elementObject = undefined;
+		let sectionName = undefined;
+		console.log(checked);
+		checked.forEach(checkItem => {
+			if(checkItem.checked){
+				var parentDiv = checkItem.parentNode.parentNode;
+				sectionName = parentDiv.querySelector("div h5").textContent;
+				// Find the sibling div with class "inputFieldsContainer"
+				const inputFieldsContainer = parentDiv.querySelector('.inputFieldsContainer');
+				console.log("ITEM CHECKED, GETTING FIELD CONTAINER", inputFieldsContainer);
+				if (elementType === 'input') {
+					elementObject = {
+						elementName:"input",
+						elementClass:"form-control",
+						elementLabelName:elementName,
+						elementAttrName:elementAttrName,
+						elementAttrId:"",
+						elementAttrType:"text",
+						elementAttrFor:"",
+						elementValue:"",
+					}
+
+					// const newInput = document.createElement('input');
+					// newInput.name = elementName.replace(/s+/g, '-');
+					// newInput.type = 'text';
+					// newInput.classList.add("form-control");
+
+					// const label = document.createElement('label');
+					// label.htmlFor = newInput.name;
+					// label.textContent = elementName + ':';
+					// label.classList.add("form-label");
+					// inputFieldsContainer.appendChild(label);
+					// inputFieldsContainer.appendChild(newInput);
+				} else if (elementType === 'ckeditor') {
+
+					elementObject = {
+						elementName:"textarea",
+						elementLabelName:elementName,
+						elementAttrName:elementAttrName,
+						elementAttrId:elementAttrName+"-editor-gen",
+						elementAttrType:"text",
+						elementAttrFor:elementAttrName+"-editor-gen",
+						elementValue:"",
+						elementAttrIsEditor:true
+					}
+					// const editorId = elementName.replace(/s/g, '-');
+					// const label = document.createElement('label');
+					// label.htmlFor = editorId;
+					// label.textContent = elementName + ':';
+					// const editorContainer = document.createElement('div');
+					// editorContainer.id = editorId;
+					// inputFieldsContainer.appendChild(label);
+					// inputFieldsContainer.appendChild(editorContainer);
+
+					// CKEDITOR
+					// 	.replace(document.getElementById(editorId))
+					// 	.catch(error => {
+					// 		console.error(error);
+					// 	});
+				}
+				if(elementObject && sectionName){
+					fetch("/manage/add-element", {
+						method:"POST",
+						headers:{
+							"Content-Type":"application/json"
+						},
+						body: JSON.stringify({ejsPageName, sectionName, elementData:elementObject})
+					})
+				}
+			}
+			
+		})
+		closeNameModal();
+	}
+
+	function addInputField() {
+		openNameModal();
+	}
+
+	async function submitFields() {
+		const inputFields = document.querySelectorAll('#inputFieldsContainer input, #inputFieldsContainer textarea');
+		const pageName = window.location.pathname.split('/').pop();
+		const data = {};
+
+		inputFields.forEach(inputField => {
+			data[inputField.name] = inputField.value;
+		});
+		const requestData = {
+			pageName: pageName,
+			data: data,
+		};
+
+		try {
+			console.log(requestData, "<<<");
+			const response = await fetch('/manage/save-field', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(requestData),
+			});
+
+
+			if (response.ok) {
+				alert('Fields submitted successfully!');
+			} else {
+				console.error('Failed to submit fields:', response.statusText);
+				alert('Failed to submit fields. Please try again.');
+			}
+		} catch (error) {
+			console.error('Error submitting fields:', error);
+			alert('Error submitting fields. Please try again.');
+		}
+	}
+</script>
+

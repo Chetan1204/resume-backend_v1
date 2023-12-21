@@ -1,0 +1,31 @@
+<div>
+    <h3>Batteries</h3>
+    <p>Add, edit, and update products on your website</p>
+</div>
+<table
+style="border-collapse: collapse;border: 1px solid rgba(0,0,0,0.1);padding: 20px; width: 100%;">
+    <thead>
+        <tr>
+            <td style="border: 1px solid rgba(0,0,0,0.1);padding: 20px; width: 100%;display: flex;justify-content: space-between;padding: 10px 30px;align-items: center;">
+                 <h3 style="font-weight: 600;font-size: 16px;">Batteries</h3>        
+            	<a href="/manage/render-add-battery" style="background-color: #C9356E;color: #fff;padding: 7px 16px;font-size: 13x;font-weight: 600;">Add New Battery</a>
+			</td>
+        </tr>
+    </thead>
+    <tbody>
+        <% if(products) { products.forEach(page => { %>
+            <tr class="page-tr" style="display: flex;justify-content: space-between;padding: 10px 30px ;">
+                <td><%= product.name %>
+                    <span style="display: block;">
+                        <span style="cursor: pointer;color: green;font-size: 14px;padding: 0px;">Edit</span>
+                        <span style="cursor: pointer;color: red;font-size: 14px;padding: 0px 10px;">Delete</span>
+                    </span>
+                </td>
+                <td><%= product.brand %>
+                    <span style="display: block;font-size:14px;font-weight: 800;color: #363636;">Brand</span>
+                </td>
+            </tr>
+
+        <% }) } %>
+    </tbody>
+</table>

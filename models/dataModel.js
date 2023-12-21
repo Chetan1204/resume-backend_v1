@@ -1,0 +1,17 @@
+const mongoose = require("mongoose");
+
+const DataSchema = new mongoose.Schema({
+	modelName:{
+		type:String,
+		required:true
+	},
+	modelSlug:String,
+	dataObject:{
+		type:mongoose.Schema.Types.Mixed,
+		required:true
+	}
+})
+
+const dataModel = new mongoose.model("data", DataSchema);
+
+module.exports = dataModel;

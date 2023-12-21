@@ -1,0 +1,81 @@
+<div style="width: 100%;height: 100%;padding: 20px;">
+	<div>
+		<h3><%= postName %></h3>
+		<p>Edit this post accross the website.</p>
+	</div>
+		<div style="display: flex; align-items: center; justify-content: space-between; width: 45%;padding: 10px 0px 20px 0px; border-bottom: 4px solid #315BC1;margin-bottom: 10px;">
+			<p style="margin: 0;">Post data:</p>
+		</div>
+		<div id="inputs-container" style="width: 45%;">
+			<input type="hidden" name="modelName" value="<%= modelName %>">
+			<input type="hidden" name="postName" value="<%= postName %>">
+
+
+			<% if(dataObject) { Object.keys(dataObject).forEach(item => { 
+				if(dataObject[item] == 'String' || dataObject[item] == 'Number') {	
+			%>
+				<div class="section-input-container">
+					<label class="form-label" for="<%= item %>">
+						<%= item %>
+					</label>
+					<input class="form-control mb-3" type="<%= dataObject[item] == 'String' ? 'text': dataObject[item] == 'Number' ? 'number' :'text' %>" name="<%= item %>" value="<%= postData ? postData[item] : '' %>">
+				</div>
+			<% } else if(dataObject[item] == 'Mixed') { %>
+				<div class="section-input-container">
+					<label class="form-label" for="<%= item %>">
+						<%= item %>
+					</label>
+					<textarea class="mb-3" name="<%= item %>">
+						<%= postData ? postData[item] : '' %>
+					</textarea>
+				</div>
+			<% } }); }%>
+		</div>
+		<button style="border:none;background-color: #315BC1;color: #fff;padding: 7px 26px;font-size: 13x;font-weight: 600;" onclick="handlesubmit()">Update Model</button>
+	<script>	
+		window.addEventListener("DOMContentLoaded", () => {
+			const textareaElements = document.querySelectorAll('textarea');
+			textareaElements.forEach(item => {
+				CKEDITOR.replace(item, {
+					on: {
+						instanceReady: function (evt) {
+							// Store the textarea name along with the CKEditor instance
+							evt.editor.textareaName = textarea.getAttribute("name");
+						}
+					}
+				});
+			})
+		})
+
+function handlesubmit() {
+    let data = {};
+    const inputContainer = document.getElementById("inputs-container");
+    const postName = inputContainer.querySelector("input[name='postName']").value;
+    const modelName = inputContainer.querySelector("input[name='modelName']").value;
+	const allInputs = inputContainer.querySelectorAll('input:not([name="modelName"]):not([name="postName"])');
+    allInputs.forEach(input => {
+        const itemName = input.name;
+        const inputValue = input.value;
+        data[itemName] = inputValue;
+    });
+
+    fetch("/manage/add-post-data", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            postName,
+            modelName,
+            postData: data
+        })
+    }).then(res => res.json()).then(data => {
+        if (data.success) {
+            window.location.href = `/manage/render-post?postname=${encodeURIComponent(postName)}`;
+        } else {
+            console.error("Submission failed:", data.message);
+        }
+    });
+}
+	</script>
+</div>

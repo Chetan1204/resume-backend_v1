@@ -1,0 +1,588 @@
+exports.defaultPage = (sanitizedPageName) => `
+<div style="width:80%;border-right: 1px solid rgba(0,0,0,0.25);">
+	<div class="page-name" style="display:flex; align-items:center;justify-content:space-between;padding:8px 24px;">
+		<h1 id="ejspageName" >${sanitizedPageName}</h1>
+		<button type="submit" form="page-data-form" style="margin:30px 0;padding: 7px 20px;border: none;background-color: #315BC1;color: white;font-weight: 600;font-size:18px" onclick="submitFields()">Update</button>
+	</div>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<style>
+		.section-input-container .form-label button{
+			opacity: 0;
+			transition: all 300ms ease;
+		}
+		.section-input-container:hover .form-label button{
+			opacity: 1;
+		}
+		.swal2-deny{
+			background-color: #d8d8d8 !important;
+			color: #000 !important;
+		}
+		.swal2-confirm{
+			background-color: #315BC1 !important;
+		}
+		.swal2-confirm:focus {
+			box-shadow: 0 0 0 3px #315BC111 !important;
+		}
+		.swal2-deny:focus {
+			box-shadow: none !important;
+		}
+	</style>
+	<!-- SECTION CONTAINER -->
+	<div id="page-section-container" style="display: flex;width: 100%;flex-direction: column;align-items: center;justify-content: start;">
+		<!-- SECTION DEFAULT RENDER 1 -->
+		<div style="border-bottom: 1px solid rgba(0,0,0,0.25);padding: 25px 0px;width: 100%;">
+			<div  style="margin: 0 auto;display: flex;flex-direction: column;align-items: center;justify-content: start;gap: 25px;width: 80%;">
+				<input value="<%= pageData?.pageDefaultTitle %>" style="width: 100%;font-size: 54px;padding: 15px 25px;" type="text" placeholder="Add Title" name="pageDefaultTitle" id="default-page-title">
+				<textarea id="default-page-content" style="width: 100%;padding: 15px 25px;" name="pageDefaultContent" cols="30" rows="10" placeholder="Start writing text or HTML">
+				<%= pageData?.pageDefaultContent %>
+				</textarea>
+			</div>
+		</div>
+
+		<!-- SECTION DEFAULT RENDER 2 -->
+		<% for(let i=0; i < pageData.sections.length; i++) { %>
+		<div class="section-wr" style="width: 100%;padding: 15px;border-bottom: 1px solid rgba(0,0,0,0.25);">
+			<div style="width: 100%;">
+				<input type="hidden" name="section-name" value="<%= pageData.sections[i].sectionName %>">
+				<div style="width:100%;margin-bottom:10px; display: flex;align-items: center;justify-content: space-between;">
+					<div style="width: 80%;">
+						<input type="checkbox" class="section-choose-checkbox">
+						<label style="font-size: 14px; font-weight: 600; color:#315BC1;font-style: italic;">Working on this section</label>
+					</div>
+					<% if(pageData.sections[i].sectionName !== "SEO")  { %>
+					<div>
+						<button onclick="hanldeRemoveSection('<%= pageData.sections[i].sectionName %>')" style="color: #C9356E;font-weight: 600;">Remove Section</button>
+					</div>
+					<% } %>
+				</div>
+				<div>
+					<h5><%= pageData.sections[i].sectionName %></h5>
+				</div>
+				<div class="inputFieldsContainer">
+					<% for(let j=0; j < pageData.sections[i].sectionContent.length; j++) { %>
+						<% if(pageData.sections[i].sectionContent[j].elementName == "input" && pageData.sections[i].sectionContent[j].elementAttrType === 'file'){ %>
+							<div class="section-input-container">
+								<label class="mb-3 mt-3" style="display: block;">Image Preview:</label>
+								<div class="mb-3">
+									<img src="/images/<%= pageData.sections[i].sectionContent[j].elementAttrSrcImg || 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMwAAADACAMAAAB/Pny7AAAAOVBMVEX///+hoaGampqdnZ2srKy0tLSoqKjZ2dnq6ur39/fAwMDt7e3g4OC7u7vw8PD6+vqTk5PS0tLIyMhAQKZNAAACjElEQVR4nO3a2XKqQBRAUXsCZGz4/4+9EhCQsS50FYeqvV41hm17Gkh8vQAAAAAAAAAAAAAAAAAAAAAAAAAACCIvXFB1dWNMo01I2iY3xqRGGR2KUcrmt8aYOksCyZ2+OUaH+/VlQUwwxGwRFJM3aXNtYxUTk7hIfRTvCy8mJSZxpm1Rxl2okRKTdi1K6QsXJEJiEvuNUfb80giJiaNvi9Ll6RcTElOrMSY7/WJCYnI7xJjHr0zpvjNzZTsTEjN+zvzueTPVqtl+VErM5y5Nt+vi472dufisnyk2HxYT8/rcjHjtdgcm9n+LV289Lifm9aoOTpel7z+KW/udpJgjw4YXbTzhQTGpHnbvjbF5Tkzu1Wh9bJ4TM21RanWjeExMZH5iVsfmKTHjwPTSlSc9JCbxsxZl4uWzHhKzaFFGLa/hZMZks9PibGA6bvFjImOs99H0fa/nA9NZXHJKjGlvoY0ar22WA9Ob/6TAmObvQLUbatbXpd2fZ2cbeTFxf6T+e5Z3awPTbQKzyxpxMeXwpw3fve/11odsOTbiYsZ16MYm22sx6ue+VFpMMzlUXVST6/71Gju9BxIWk6vpgPh4Z2D6munYyIqp7O+xm+agRf3cDciKKebHvrkrj73RODaiYurDQ1+rGU9IkmKS1Uuw45rhbkBQzPto2LdE37sBQTHpyZbP/tyPjZyYyX81/rumHxsxMYk9uzCtRlRMdXZguqXpxkZKTHN8xLs1LpMTE5/blSc17XWcjJjEHp/qD2LasZER00T2qsglMmKqMguglBATv0NJbo9RLg2liMy9MTrgdzS1uTemjsIqzn+L4Loqj4M6//UOAAAAAAAAAAAAAAAAAAAAAAAAAMBl/wCSoC7OdsS5KwAAAABJRU5ErkJggg==' %>" style="width: 150px;height: auto;box-shadow: 2px 2px 12px 0px rgba(0,0,0,0.25);border-radius: 10px;" alt="<%= pageData.sections[i].sectionContent[j].elementAttrAltImg %>">
+								</div>
+								<label class="form-label" for="<%= pageData.sections[i].sectionContent[j].elementAttrFor %>">
+									<%= pageData.sections[i].sectionContent[j].elementLabelName %>
+									<button onclick="handleElementDelete('<%= pageData.sections[i].sectionName %>', '<%= pageData.sections[i].sectionContent[j].elementAttrName %>')" style="border: none; color: #C9356E;font-weight: 700; font-size: 12px;"><i class="fa-solid fa-trash" style="color: #222b33;font-size: 12px; margin-right: 5px;"></i>Delete</button>
+								</label>
+								<input class="form-control mb-3" type="<%= pageData.sections[i].sectionContent[j].elementAttrType %>" name="<%= pageData.sections[i].sectionContent[j].elementAttrName %>" value="<%= pageData.sections[i].sectionContent[j].elementValue %>">
+							</div>
+						<% } else if(pageData.sections[i].sectionContent[j].elementName == "input"){ %>
+							<div class="section-input-container">
+								<label class="form-label" for="<%= pageData.sections[i].sectionContent[j].elementAttrFor %>">
+									<%= pageData.sections[i].sectionContent[j].elementLabelName %>
+									<button onclick="handleElementDelete('<%= pageData.sections[i].sectionName %>', '<%= pageData.sections[i].sectionContent[j].elementAttrName %>')" style="border: none; color: #C9356E;font-weight: 700; font-size: 12px;"><i class="fa-solid fa-trash" style="color: #222b33;font-size: 12px; margin-right: 5px;"></i>Delete</button>
+								</label>
+								<input class="form-control mb-3" type="<%= pageData.sections[i].sectionContent[j].elementAttrType %>" name="<%= pageData.sections[i].sectionContent[j].elementAttrName %>" value="<%= pageData.sections[i].sectionContent[j].elementValue %>">
+							</div>
+						<% } else if(pageData.sections[i].sectionContent[j].elementName == "textarea") { %>
+							<div class="section-input-container">
+								<label class="form-label" for="<%= pageData.sections[i].sectionContent[j].elementAttrFor %>" >
+									<%= pageData.sections[i].sectionContent[j].elementLabelName %>
+									<button onclick="handleElementDelete('<%= pageData.sections[i].sectionName %>', '<%= pageData.sections[i].sectionContent[j].elementAttrName %>')" style="border: none; color: #C9356E;font-weight: 700; font-size: 12px;"><i class="fa-solid fa-trash" style="color: #222b33;font-size: 12px; margin-right: 5px;"></i>Delete</button>
+								</label>
+								<textarea class="mb-3" name="<%= pageData.sections[i].sectionContent[j].elementAttrName %>" id="<%= pageData.sections[i].sectionContent[j].elementAttrId %>" >
+									<%= pageData.sections[i].sectionContent[j].elementValue %>
+								</textarea>
+							</div>
+						<% } else if(pageData.sections[i].sectionContent[j].elementName == "input-button"){ %>
+							<div class="section-input-container">
+								<label style="display: block;" class="form-label" for="<%= pageData.sections[i].sectionContent[j].elementAttrFor %>">
+									<%= pageData.sections[i].sectionContent[j].elementLabelName %>
+									<button onclick="handleElementDelete('<%= pageData.sections[i].sectionName %>', '<%= pageData.sections[i].sectionContent[j].elementAttrName %>')" style="border: none; color: #C9356E;font-weight: 700; font-size: 12px;"><i class="fa-solid fa-trash" style="color: #222b33;font-size: 12px; margin-right: 5px;"></i>Delete</button>
+								</label>
+								<button onclick="openButtonModal('<%= pageData.sections[i].sectionContent[j].elementAttrName %>','<%= pageData.sections[i].sectionName %>')" style="padding: 10px 15px;">
+									<%= pageData.sections[i].sectionContent[j].elementValue || "Click to add data" %>
+									<% if(pageData.sections[i].sectionContent[j].elementAttrHref) { %>
+										<span style="font-weight: 600; color: #315BC1; border-left:1px solid rgba(0,0,0,0.25);padding-left: 10px;" >Link: <%= pageData.sections[i].sectionContent[j].elementAttrHref %></span>
+									<% } %>
+								</button>
+							</div>
+						<% } else if(pageData.sections[i].sectionContent[j].elementName == "input-link"){ %>
+							<div class="section-input-container">
+								<label style="display: block;" class="form-label" for="<%= pageData.sections[i].sectionContent[j].elementAttrFor %>">
+									<%= pageData.sections[i].sectionContent[j].elementLabelName %>
+									<button onclick="handleElementDelete('<%= pageData.sections[i].sectionName %>', '<%= pageData.sections[i].sectionContent[j].elementAttrName %>')" style="border: none; color: #C9356E;font-weight: 700; font-size: 12px;"><i class="fa-solid fa-trash" style="color: #222b33;font-size: 12px; margin-right: 5px;"></i>Delete</button>
+								</label>
+								<button onclick="openLinkModal('<%= pageData.sections[i].sectionContent[j].elementAttrName %>','<%= pageData.sections[i].sectionName %>')" style="padding: 10px 15px; background-color: #d8d8d8;border:none; border-bottom: 2px solid #315BC1;">
+									<%= pageData.sections[i].sectionContent[j].elementValue || "Click to add data" %>
+									<% if(pageData.sections[i].sectionContent[j].elementAttrHref) { %>
+										<span style="font-weight: 600; color: #315BC1; border-left:1px solid rgba(0,0,0,0.25);padding-left: 10px;" >Link: <%= pageData.sections[i].sectionContent[j].elementAttrHref %></span>
+									<% } %>
+								</button>
+							</div>
+						<% }} %>
+				</div>
+			</div>
+		</div>
+		<% } %>
+	</div>
+</div>
+
+<!-- Your existing content goes here -->
+
+<!-- Right sidebar for adding new fields -->
+<div id="sidebar" style="width:20%;height: 100%;padding: 10px;display: flex;flex-direction: column;align-items: center;justify-content: start;gap: 15px;" class="sidebar custom-field">
+	
+	<div style="width: 100%;">
+		<h3 style="font-size: 16px;">Add New Section</h3>
+		<button type="button" style="border: none; background-color: #315BC1;color: #fff;padding: 7px 16px;font-size: 13x;font-weight: 600;" onclick="openNewSectionModal()">Add Section</button>
+	</div>
+	<div style="width: 100%;">
+		<h3 style="font-size: 16px;">Add New Field</h3>
+		<form id="addFieldForm">
+			<label for="elementType" style="font-size: 15px;">Select Element Type:</label>
+			<select style="font-weight: 400;width: 100%;padding: 5px;margin: 10px 0;" id="elementType">
+				<option value="input">Input Field</option>
+				<option value="ckeditor">CKEditor</option>
+				<option value="button">Button</option>
+				<option value="link">Link</option>
+				<option value="image-uploader">Image Uploader</option>
+			</select>
+			
+			<button type="button" style="border: none;color: #000;padding: 7px 16px;font-size: 13x;font-weight: 600;" onclick="openNameModal()">Add Field</button>
+		</form>
+	</div>
+</div>
+
+<!-- Modal for inputting section name -->
+<div id="sectionModal" class="modal">
+	<div class="modal-content">
+		<span class="close" onclick="closeSectionModal()">&times;</span>
+		<div style="padding: 20px 0;">
+			<label class="pb-2" for="elementName">Section Name:</label>
+			<input style="width: 100%;display: block;" type="text" id="sectionName" required>
+			<button class="mt-3" style="border: none;background-color: #315BC1;color: #fff;padding: 7px 16px;font-size: 13x;font-weight: 600;" onclick="addSection()">Add Section</button>
+		</div>
+	</div>
+</div>
+
+<!-- Modal for inputting element name -->
+<div id="nameModal" class="modal">
+	<div class="modal-content">
+		<span class="close" onclick="closeNameModal()">&times;</span>
+		<div style="padding: 20px 0;">
+			<label class="pb-2" for="elementName">Field Title:</label>
+			<input style="width: 100%;display: block;" type="text" id="elementName" required>
+			<label for="elementAttrName" class="form-label" style="font-size: 15px;">Name Attribute:</label>
+			<input class="form-control mb-3" id="elementAttrName" type="text" name="elementArrtName">
+			
+			<div id="image-uploader-wr" style="display: none;">
+				<label for="elementAttrAltImg" class="form-label" style="font-size: 15px;">Image Alt Attribute:</label>
+				<input class="form-control mb-3" id="elementAttrAltImg" type="text" name="elementAttrAltImg">
+			</div>
+			
+			<!-- <div id="image-uploader-wr" style="display: none;">
+				<label for="elementAttrAltImg" class="form-label" style="font-size: 15px;">Image Alt Attribute:</label>
+				<input class="form-control mb-3" id="elementAttrAltImg" type="text" name="elementAttrAltImg">
+			</div> -->
+			
+
+
+			<button class="mt-3" style="border: none;background-color: #C9356E;color: #fff;padding: 7px 16px;font-size: 13x;font-weight: 600;" onclick="addElement()">Add Field</button>
+		</div>
+	</div>
+</div>
+
+<!-- Modal for adding button data -->
+<div id="buttonModal" class="modal">
+	<div class="modal-content">
+		<span class="close" onclick="closeButtonModal()">&times;</span>
+		<div style="padding: 20px 0;">
+			<label class="pb-2" for="buttonTitle">Button Title:</label>
+			<input style="width: 100%;display: block;" type="text" id="buttonTitle" required>
+			<label for="buttonLink" class="form-label" style="font-size: 15px;">Button Link:</label>
+			<input class="form-control mb-3" id="buttonLink" type="text" name="elementArrtName">
+			<button class="mt-3" style="border: none;background-color: #C9356E;color: #fff;padding: 7px 16px;font-size: 13x;font-weight: 600;" onclick="addButtonData()">Add Field</button>
+		</div>
+	</div>
+</div>
+
+<!-- Modal for adding button data -->
+<div id="linkModal" class="modal">
+	<div class="modal-content">
+		<span class="close" onclick="closeLinkModal()">&times;</span>
+		<div style="padding: 20px 0;">
+			<label class="pb-2" for="linkTitle">Link Title:</label>
+			<input style="width: 100%;display: block;" type="text" id="linkTitle" required>
+			<label for="linkHref" class="form-label" style="font-size: 15px;">Link Href:</label>
+			<input class="form-control mb-3" id="linkHref" type="text" name="elementArrtName">
+			<button class="mt-3" style="border: none;background-color: #C9356E;color: #fff;padding: 7px 16px;font-size: 13x;font-weight: 600;" onclick="addLinkData()">Add Field</button>
+		</div>
+	</div>
+</div>
+
+<script>
+	let buttonNamePointer;
+	let sectionNamePointer;
+	window.addEventListener("DOMContentLoaded", ()=>{
+		CKEDITOR.replace(document.getElementById("default-page-content"), {
+			on: {
+			instanceReady: function (evt) {
+				// Store the textarea name along with the CKEditor instance
+				evt.editor.textareaName = document.getElementById("default-page-content").getAttribute("name");
+			}
+			}
+     	});
+		
+		const sections = document.querySelectorAll('.section-wr');
+		sections.forEach(section => {
+			let textareas = section.querySelectorAll("textarea");
+			textareas.forEach(textarea =>{
+				CKEDITOR.replace(textarea, {
+					on: {
+					instanceReady: function (evt) {
+						// Store the textarea name along with the CKEditor instance
+						evt.editor.textareaName = textarea.getAttribute("name");
+					}
+					}
+				});
+			})
+		})
+	})
+	
+	function openNewSectionModal() {
+		const modal = document.getElementById('sectionModal');
+		modal.style.display = 'block';
+	}
+
+	function closeSectionModal() {
+		const modal = document.getElementById('sectionModal');
+		modal.style.display = 'none';
+	}
+	function openButtonModal(elementArrtName, sectionName) {
+		buttonNamePointer = elementArrtName;
+		sectionNamePointer = sectionName;
+		const modal = document.getElementById('buttonModal');
+		modal.style.display = 'block';
+	}
+
+	function closeButtonModal() {
+		const modal = document.getElementById('buttonModal');
+		modal.style.display = 'none';
+	}
+
+	function openLinkModal(elementArrtName, sectionName) {
+		buttonNamePointer = elementArrtName;
+		sectionNamePointer = sectionName;
+		const modal = document.getElementById('linkModal');
+		modal.style.display = 'block';
+	}
+
+	function closeLinkModal() {
+		const modal = document.getElementById('linkModal');
+		modal.style.display = 'none';
+	}
+
+	function openNameModal() {
+		if(document.getElementById("elementType").value === "image-uploader"){
+			document.getElementById("image-uploader-wr").style.display = "block"
+		} 
+		const modal = document.getElementById('nameModal');
+		modal.style.display = 'block';
+	}
+
+	function closeNameModal() {
+		const modal = document.getElementById('nameModal');
+		modal.style.display = 'none';
+	}
+
+	function addSection() {
+		const ejsPageName = document.getElementById("ejspageName").textContent;
+		const sectionName = document.getElementById("sectionName").value;
+		fetch("/manage/add-section", {
+			method:"POST",
+			headers:{
+				"Content-Type":"application/json"
+			},
+			body:JSON.stringify({ejsPageName, sectionName})
+		}).then(res => res.json()).then(data => {
+			window.location.reload();
+		})
+
+		closeSectionModal();
+	}
+
+	function addButtonData() {
+		const ejsPageName = document.getElementById("ejspageName").textContent;
+		const sectionName = document.getElementById("sectionName").value;
+		const buttonTitle = document.getElementById("buttonTitle").value;
+		const buttonLink = document.getElementById("buttonLink").value;
+		fetch("/manage/save-page-data/add-button", {
+			method:"POST",
+			headers:{
+				"Content-Type":"application/json"
+			},
+			body:JSON.stringify({ejsPageName, sectionNamePointer, buttonNamePointer, buttonTitle, buttonLink})
+		}).then(res => res.json())
+		.then((data)=>{
+			closeButtonModal();
+			window.location.reload();
+		})
+
+	}
+
+	function addLinkData() {
+		const ejsPageName = document.getElementById("ejspageName").textContent;
+		const sectionName = document.getElementById("sectionName").value;
+		const linkTitle = document.getElementById("linkTitle").value;
+		const linkHref = document.getElementById("linkHref").value;
+		fetch("/manage/save-page-data/add-link", {
+			method:"POST",
+			headers:{
+				"Content-Type":"application/json"
+			},
+			body:JSON.stringify({ejsPageName, sectionNamePointer, buttonNamePointer, linkTitle, linkHref})
+		}).then(res => res.json())
+		.then((data)=>{
+			closeLinkModal();
+			window.location.reload();
+		})
+
+	}
+
+	function hanldeRemoveSection(sectionName) {
+		const ejsPageName = document.getElementById("ejspageName").textContent;
+		Swal.fire({
+			title: 'Do you want to remove this section?',
+			showDenyButton: true,
+			showCancelButton: false,
+			confirmButtonText: 'Remove Section',
+			denyButtonText: 'Cancel',
+			customClass: {
+				actions: 'my-actions',
+				cancelButton: 'order-1 right-gap',
+				confirmButton: 'order-2',
+			},
+		}).then((result) => {
+			if (result.isConfirmed) {
+				fetch("/manage/remove-page-section", {
+					method:"POST",
+					headers:{
+						"Content-Type":"application/json"
+					},
+					body:JSON.stringify({ejsPageName,sectionName, elementAttrName})
+				}).then(()=>{
+					window.location.reload();
+				})
+			} else if (result.isDenied) {
+				Swal.fire('Changes are not saved', '', 'info')
+			}
+		})
+	}
+
+	function handleElementDelete(sectionName, elementAttrName) {
+		const ejsPageName = document.getElementById("ejspageName").textContent;
+		Swal.fire({
+			title: 'Do you want to delete this element?',
+			showDenyButton: true,
+			showCancelButton: false,
+			confirmButtonText: 'Delete Element',
+			denyButtonText: 'Cancel',
+			customClass: {
+				actions: 'my-actions',
+				cancelButton: 'order-1 right-gap',
+				confirmButton: 'order-2',
+			},
+		}).then((result) => {
+			if (result.isConfirmed) {
+				fetch("/manage/remove-section-element", {
+					method:"POST",
+					headers:{
+						"Content-Type":"application/json"
+					},
+					body:JSON.stringify({ejsPageName,sectionName, elementAttrName})
+				}).then(()=>{
+					window.location.reload();
+				})
+			} else if (result.isDenied) {
+				Swal.fire('Changes are not saved', '', 'info')
+			}
+		})
+		console.log("Trying to delete element", sectionName, elementAttrName);
+	}
+
+	function addElement() {
+		const ejsPageName = document.getElementById("ejspageName").textContent;
+		const elementType = document.getElementById('elementType').value;
+		const elementName = document.getElementById('elementName').value;
+		const elementAttrName = document.getElementById("elementAttrName").value;
+		const checked = document.querySelectorAll(".section-choose-checkbox");
+		let elementObject = undefined;
+		let sectionName = undefined;
+		console.log(checked);
+		checked.forEach(checkItem => {
+			if(checkItem.checked){
+				var parentDiv = checkItem.parentNode.parentNode.parentNode;
+				sectionName = parentDiv.querySelector("div h5").textContent;
+				// Find the sibling div with class "inputFieldsContainer"
+				const inputFieldsContainer = parentDiv.querySelector('.inputFieldsContainer');
+				console.log("ITEM CHECKED, GETTING FIELD CONTAINER", inputFieldsContainer);
+				if (elementType === 'input') {
+					elementObject = {
+						elementName:"input",
+						elementClass:"form-control",
+						elementLabelName:elementName,
+						elementAttrName:elementAttrName,
+						elementAttrId:"",
+						elementAttrType:"text",
+						elementAttrFor:"",
+						elementValue:"",
+					}
+				} else if (elementType === 'ckeditor') {
+					elementObject = {
+						elementName:"textarea",
+						elementLabelName:elementName,
+						elementAttrName:elementAttrName,
+						elementAttrId:elementAttrName+"-editor-gen",
+						elementAttrType:"text",
+						elementAttrFor:elementAttrName+"-editor-gen",
+						elementValue:"",
+						elementAttrIsEditor:true
+					}
+				} else if (elementType === 'button') {
+					elementObject = {
+						elementName:"input-button",
+						elementClass:"form-control",
+						elementLabelName:elementName,
+						elementAttrName:elementAttrName,
+						elementAttrHref:"",
+						elementAttrId:"",
+						elementAttrType:"text",
+						elementAttrFor:"",
+						elementValue:"",
+					}
+				} else if (elementType === 'link') {
+					elementObject = {
+						elementName:"input-link",
+						elementClass:"form-control",
+						elementLabelName:elementName,
+						elementAttrName:elementAttrName,
+						elementAttrHref:"",
+						elementAttrId:"",
+						elementAttrType:"text",
+						elementAttrFor:"",
+						elementValue:"",
+					}
+				} else if (elementType === 'image-uploader') {
+					elementObject = {
+						elementName:"input",
+						elementClass:"form-control",
+						elementLabelName:elementName,
+						elementAttrName:elementAttrName,
+						elementAttrId:"",
+						elementAttrType:"file",
+						elementAttrFor:"",
+						elementValue:"",
+					}
+				}
+				if(elementObject && sectionName){
+					fetch("/manage/add-element", {
+						method:"POST",
+						headers:{
+							"Content-Type":"application/json"
+						},
+						body: JSON.stringify({ejsPageName, sectionName, elementData:elementObject})
+					}).then(res => res.json()).then(data => {
+						window.location.reload();
+					})
+				}
+			}
+			
+		})
+		closeNameModal();
+	}
+
+	function addInputField() {
+		openNameModal();
+	}
+
+	async function submitFields() {
+		// ejspage name will also come
+		const ejsPageName = document.getElementById("ejspageName").textContent;
+		const pageDefaultTitle = document.getElementById("default-page-title").value;
+		const pageDefaultContent = CKEDITOR.instances["default-page-content"].getData();
+		const data = { ejsPageName, pageDefaultTitle, pageDefaultContent, sections: []};
+		const formData = new FormData();
+		formData.append("ejsPageName", ejsPageName);
+		formData.append("pageDefaultTitle", pageDefaultTitle);
+		formData.append("pageDefaultContent", pageDefaultContent);
+		const sections = document.querySelectorAll('.section-wr');
+		sections.forEach(section => {
+			let sectionContent = [];
+			let sectionNameInput = section.querySelector('input[name="section-name"]');
+			const allInputs = section.querySelectorAll('input:not([name="section-name"]):not([type="file"]):not(.link-input)');
+			allInputs.forEach(inputItem => {
+				sectionContent.push({
+					elementName:"input",
+					elementAttrName:inputItem.getAttribute('name'),
+					elementValue:inputItem.value,
+				})
+			})
+			const allTextAreas = section.querySelectorAll('textarea');
+			for (var instanceName in CKEDITOR.instances) {
+				if (CKEDITOR.instances.hasOwnProperty(instanceName)) {
+					var editor = CKEDITOR.instances[instanceName];
+					var editorContent = editor.getData();
+
+					sectionContent.push({
+						elementName:"textarea",
+						elementAttrName:editor.textareaName,
+						elementValue:editorContent,
+					})
+					// Log the content to the console or use it as needed
+				}
+			}
+			const allFiles = section.querySelectorAll('input[type="file"]');
+			allFiles.forEach(fileInput => {
+				if (fileInput.files.length > 0) {
+					formData.append('files', fileInput.files[0]);
+					sectionContent.push({
+						elementName:"input",
+						elementAttrName:fileInput.getAttribute('name'),
+						elementAttrSrcImg:fileInput.files[0].name,
+						elementAttrAltImg:"Conative IT Solutions"
+					})
+				}
+			})
+			const allLinks = section.querySelectorAll(".link-input");
+			allLinks.forEach(link => {
+				sectionContent.push({
+					elementName:"input-link",
+					elementAttrName:link.getAttribute('name'),
+					elementValue:link.value,
+				})
+			})
+			// for text area also
+			data.sections.push({
+				sectionName: sectionNameInput.value,
+				sectionContent
+			})
+		})
+		formData.append("sections", JSON.stringify(data.sections))
+		console.log("All Page Data", data);
+		fetch("/manage/save-page-data", {
+			method:"POST",
+			body:formData
+		})
+		.then(()=>{ window.location.reload() }).catch(err => console.log("FETCH ERR", err))
+	}
+</script>
+
+`
+
+exports.newPageSection = (sectionTitle) => `<div  style="border-bottom: 1px solid rgba(0,0,0,0.25);width: 100%;padding: 15px;">
+<div style="width: 80%;">
+	<div>
+		<h5>${sectionTitle}</h5>
+	</div>
+	<div id="${sectionTitle.toLowerCase()}-container">
+		
+	</div>
+</div>
+</div>`
