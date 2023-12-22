@@ -17,6 +17,16 @@ exports.allPages =  async (req, res) => {
     }
 }
 
+exports.addNewPage =  async (req, res) => {
+    try {
+        const allPages = await pageModel.find({});
+        res.redirect("/manage/all-pages?addnewmodal=true");
+    } catch (error) {
+        console.error('Error fetching pages:', error);
+        res.status(500).send('Internal Server Error');
+    }
+}
+
 exports.saveFields = async (req, res) => {
   const { pageName, data } = req.body;
   try {
@@ -41,8 +51,16 @@ exports.saveFields = async (req, res) => {
 
 exports.allPosts = async (req, res) =>{
 	try {
-		const allPosts = await postModel.find({});
-        res.render("allposts",{allPosts})
+		let filteringByModel = undefined;
+		if(req.query?.filterbymodel){
+			filteringByModel = req.query?.filterbymodel;
+		}
+		const allPostsData = filteringByModel ? await postModel.find({modelName:filteringByModel}) : await postModel.find({})
+		const allModels = await dataModel.find({});
+		const sanitizedModelData = allModels.map(item => ({
+			modelName:item.modelName
+		}))
+        res.render("allposts",{allPosts:allPostsData, allModels:sanitizedModelData});
 	} catch (error) {
 		console.log(error);
         res.status(500).json({ success: false, message: 'Internal server error' });
@@ -53,6 +71,20 @@ exports.renderAddPost = async (req, res) => {
 	try {
 		const allModels = await dataModel.find({});
         res.render("addNewPost",{allModels})
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({ message: 'Internal server error' });
+	}
+}
+
+exports.deletePost = async (req, res) => {
+	try {
+		const {postName, postId} = req.body;
+		console.log("Deleting a post", req.body);
+		const match = await postModel.findOneAndDelete({_id:postId});
+		if(match){
+			res.redirect("/manage/all-posts");
+		}
 	} catch (error) {
 		console.log(error);
 		res.status(500).json({ message: 'Internal server error' });
@@ -78,10 +110,10 @@ exports.addNewPost = async (req, res) => {
 		res.status(500).json({ message: 'Internal server error' });
 	}
 }
+
 exports.addPostData = async (req, res) => {
     try {
         const { postName,modelName, postData } = req.body;
-
 		const existingPost = await postModel.findOne({ postName });
 		if (existingPost) {
             existingPost.postData = postData;
@@ -93,7 +125,6 @@ exports.addPostData = async (req, res) => {
                 postData,
             });
         }
-
         res.status(200).json({ success: true });
     } catch (error) {
         console.log(error);
@@ -187,6 +218,16 @@ exports.allModels = async (req, res) =>{
         res.status(500).json({ success: false, message: 'Internal server error' });
 	}
 } 
+exports.getAllModelNamesAndLinks = async (req, res) =>{
+	try {
+		const allModels = await dataModel.find({});
+		const sanitizedData = allModels.map(item => ({modelName: item.modelName}));
+		res.status(200).json({success:true, data:sanitizedData});
+	} catch (error) {
+		console.log(error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+	}
+}
 
 exports.addModelData = async (req, res) => {
     try {

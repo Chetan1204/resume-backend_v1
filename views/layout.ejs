@@ -18,6 +18,7 @@
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Lato:wght@100;300;400;700;900&display=swap" rel="stylesheet">
 
+	
 </head>
 
 <body>
@@ -51,17 +52,16 @@
 			margin: 18px 0px;
 		}
 	</style>
-	<header>
+	<header style="height: 25px">
 		<div
 			style="background-color: #2E3345;color: #fff;display: flex;align-items: center;justify-content: space-between;gap: 10px;padding: 8px;height: 25px;">
 			<p style="font-weight: 600;font-size: 15px;margin: 0px;">Express Backend Server</p>
 			<p style="font-weight: 600;font-size: 13px;margin: 0px; color: #ddd;">Hello! Conative IT Solutions</p>
 		</div>
 	</header>
-	<main style="max-height: 100vh; overflow: auto; box-sizing: border-box;">
+	<main style="display: flex;height: calc(100% - 25px);">
 		<!-- Sidebar -->
-		<div class="flex-shrink-0" style="width: 220px;background-color: #2E3345;float: left;height: 100vh; ">
-
+		<div class="flex-shrink-0" style="width: 220px;background-color: #2E3345;height: 100%;overflow: hidden;">
 			<ul class="list-unstyled ps-0">
 				<li class="mb-1">
 					<div class="menu-title-item align-items-center "
@@ -80,14 +80,14 @@
 						<ul class="menu-title-list btn-toggle-nav list-unstyled fw-normal  small">
 							<li>
 								<a id="all-pages-link" href="/manage/all-pages"
-									style="color: #B4B6BC;  padding: 8px 0px 8px 12px;font-size: 0.875rem;line-height: 1.25rem;font-weight: 400;width: 100%;display: inline-block;"><i
-										class="fa-solid fa-copy" style="color: #d1d1d1;margin-right: 10px;"></i>All
+									style="padding: 8px 0px 8px 12px;font-size: 0.875rem;line-height: 1.25rem;font-weight: 400;width: 100%;display: inline-block;"><i
+										class="fa-solid fa-copy" style="margin-right: 10px;"></i>All
 									Pages</a>
 							</li>
 							<li>
 								<a id="all-pages-link" href="/manage/add-new-page"
-									style="color: #B4B6BC;  padding: 8px 0px 8px 12px;font-size: 0.875rem;line-height: 1.25rem;font-weight: 400;width: 100%;display: inline-block;"><i
-										class="fa-solid fa-plus" style="color: #d1d1d1;margin-right: 10px;"></i> Add New
+									style="padding: 8px 0px 8px 12px;font-size: 0.875rem;line-height: 1.25rem;font-weight: 400;width: 100%;display: inline-block;"><i
+										class="fa-solid fa-plus" style="margin-right: 10px;"></i> Add New
 									Page</a>
 							</li>
 						</ul>
@@ -101,14 +101,14 @@
 						Models
 					</div>
 					<div class="collapse show" id="home-collapse">
-						<ul class="menu-title-list btn-toggle-nav list-unstyled fw-normal  small">
+						<ul id="model-ul-list" class="menu-title-list btn-toggle-nav list-unstyled fw-normal  small">
 							<li><a id="all-pages-link" href="/manage/all-models"
-									style="color: #B4B6BC;  padding: 8px 0px 8px 12px;font-size: 0.875rem;line-height: 1.25rem;font-weight: 400; width: 100%;display: inline-block;"><i
-										class="fa-solid fa-shapes" style="color: #d1d1d1;margin-right: 10px;"></i>All
+									style="padding: 8px 0px 8px 12px;font-size: 0.875rem;line-height: 1.25rem;font-weight: 400; width: 100%;display: inline-block;"><i
+										class="fa-solid fa-shapes" style="margin-right: 10px;"></i>All
 									Models</a></li>
-							<li><a id="all-pages-link" href="/manage/add-new-model"
-									style="color: #B4B6BC;  padding: 8px 0px 8px 12px;font-size: 0.875rem;line-height: 1.25rem;font-weight: 400;width: 100%;display: inline-block;"><i
-										class="fa-solid fa-plus" style="color: #d1d1d1;margin-right: 10px;"></i>Add New
+							<li id="add-new-model-li"><a id="all-pages-link" href="/manage/add-new-model"
+									style="padding: 8px 0px 8px 12px;font-size: 0.875rem;line-height: 1.25rem;font-weight: 400;width: 100%;display: inline-block;"><i
+										class="fa-solid fa-plus" style="margin-right: 10px;"></i>Add New
 									Model</a></li>
 						</ul>
 					</div>
@@ -123,12 +123,12 @@
 					<div class="collapse show" id="home-collapse">
 						<ul class="menu-title-list btn-toggle-nav list-unstyled fw-normal  small">
 							<li><a id="all-pages-link" href="/manage/all-posts"
-									style="color: #B4B6BC;  padding: 8px 0px 8px 12px;font-size: 0.875rem;line-height: 1.25rem;font-weight: 400;width: 100%;display: inline-block;"><i
+									style="padding: 8px 0px 8px 12px;font-size: 0.875rem;line-height: 1.25rem;font-weight: 400;width: 100%;display: inline-block;"><i
 										class="fa-solid fa-table-list"
-										style="color: #d1d1d1;margin-right: 10px;"></i>All Posts</a></li>
+										style="margin-right: 10px;"></i>All Posts</a></li>
 							<li><a id="all-pages-link" href="/manage/render-add-post"
-									style="color: #B4B6BC;  padding: 8px 0px 8px 12px;font-size: 0.875rem;line-height: 1.25rem;font-weight: 400;width: 100%;display: inline-block;"><i
-										class="fa-solid fa-plus" style="color: #d1d1d1;margin-right: 10px;"></i>Add New
+									style="padding: 8px 0px 8px 12px;font-size: 0.875rem;line-height: 1.25rem;font-weight: 400;width: 100%;display: inline-block;"><i
+										class="fa-solid fa-plus" style="margin-right: 10px;"></i>Add New
 									Post</a></li>
 						</ul>
 					</div>
@@ -137,7 +137,7 @@
 		</div>
 
 		<!--Main layout-->
-		<div style="display: flex;align-items: start;justify-content: start;height: 100vh;">
+		<div style="display: flex;align-items: start;justify-content: start;height: 100%;width: calc(100% - 220px); overflow: hidden;">
 			<%- body %>
 		</div>
 
@@ -162,24 +162,22 @@
 
 			setActiveLink();
 
-			//    links.forEach(function (link) {
-			// 	  link.addEventListener("click", function (event) {
-			// 		 event.preventDefault();
-
-			// 		 links.forEach(function (otherLink) {
-			// 			otherLink.classList.remove("active");
-			// 		 });
-
-			// 		 this.classList.add("active");
-
-			// 		 var href = this.getAttribute("href");
-			// 		 navigateTo(href);
-			// 	  });
-			//    });
-
 			function navigateTo(url) {
 				window.location.href = url;
 			}
+			fetch("/manage/all-model-names-and-links").then(res => res.json()).then(data => {
+				console.log("MODEL NAMES FETCHED", data);
+				const modelList = document.getElementById("model-ul-list");
+				const lastLi = document.getElementById("add-new-model-li");
+				data?.data?.forEach(item => {
+					const newLi = document.createElement("li");
+					newLi.innerHTML = `<a id="all-pages-link" href="/manage/rendermodel?modelname=${encodeURIComponent(item.modelName)}"
+										style="color: #B4B6BC;  padding: 8px 0px 8px 12px;font-size: 0.875rem;line-height: 1.25rem;font-weight: 400;width: 100%;display: inline-block;"><i
+											class="fa-solid fa-thumbtack" style="color: #d1d1d1;margin-right: 10px;"></i>${item?.modelName}</a>`;
+					newLi.style.backgroundColor = "#424757"
+					modelList.insertBefore(newLi, lastLi)
+				})
+			})
 		});
 	</script>
 

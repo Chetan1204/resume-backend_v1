@@ -1,5 +1,5 @@
 exports.defaultPage = (sanitizedPageName) => `
-<div style="width:80%;border-right: 1px solid rgba(0,0,0,0.25);">
+<div style="width:80%;border-right: 1px solid rgba(0,0,0,0.25);overflow-y:scroll;height:100%">
 	<div class="page-name" style="display:flex; align-items:center;justify-content:space-between;padding:8px 24px;">
 		<h1 id="ejspageName" >${sanitizedPageName}</h1>
 		<button type="submit" form="page-data-form" style="margin:30px 0;padding: 7px 20px;border: none;background-color: #315BC1;color: white;font-weight: 600;font-size:18px" onclick="submitFields()">Update</button>

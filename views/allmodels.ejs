@@ -4,7 +4,7 @@
 		<p>Create, edit, and manage the models of your site.</p>
 	</div>
 	<table class="table table-striped">
-		<thead style="border-bottom: 4px solid #315BC1;">
+		<thead style="border-bottom: 2px solid #d8d8d8;">
 		  <tr>
 			<th>
 				<div style="display: flex; align-items: center; justify-content: start;">
@@ -23,7 +23,7 @@
 			<% allModels.forEach(model => { %>
 				<tr class="page-tr">
 					<td style="width: 80%;">
-						<span style="font-weight: 400;"><%= model.modelName %></span>
+						<span style="font-weight: 600;"><%= model.modelName %></span>
 						<span style="display: block; width: 100%;">
 							<span style="cursor: pointer;color: green;font-size: 14px;padding: 0px; font-weight: 600;" onclick="editPage('<%= model.modelName %>')">Edit</span>
 						</span>

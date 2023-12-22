@@ -1,12 +1,12 @@
-<div style="width: 100%;height: 100%;padding: 20px;">
+<div style="width: 100%;height: 100%;padding: 20px;overflow-y: scroll;">
 	<div>
 		<h3><%= postName %></h3>
 		<p>Edit this post accross the website.</p>
 	</div>
-		<div style="display: flex; align-items: center; justify-content: space-between; width: 45%;padding: 10px 0px 20px 0px; border-bottom: 4px solid #315BC1;margin-bottom: 10px;">
+		<div style="display: flex; align-items: center; justify-content: space-between; width: 100%;padding: 10px 0px 20px 0px; border-bottom: 2px solid #d8d8d8;margin-bottom: 10px;">
 			<p style="margin: 0;">Post data:</p>
 		</div>
-		<div id="inputs-container" style="width: 45%;">
+		<div id="inputs-container" style="width: 100%;">
 			<input type="hidden" name="modelName" value="<%= modelName %>">
 			<input type="hidden" name="postName" value="<%= postName %>">
 
@@ -35,8 +35,8 @@
 	<script>	
 		window.addEventListener("DOMContentLoaded", () => {
 			const textareaElements = document.querySelectorAll('textarea');
-			textareaElements.forEach(item => {
-				CKEDITOR.replace(item, {
+			textareaElements.forEach(textarea => {
+				CKEDITOR.replace(textarea, {
 					on: {
 						instanceReady: function (evt) {
 							// Store the textarea name along with the CKEditor instance
@@ -45,7 +45,7 @@
 					}
 				});
 			})
-		})
+		});
 
 function handlesubmit() {
     let data = {};
@@ -58,6 +58,14 @@ function handlesubmit() {
         const inputValue = input.value;
         data[itemName] = inputValue;
     });
+
+	for (var instanceName in CKEDITOR.instances) {
+		if (CKEDITOR.instances.hasOwnProperty(instanceName)) {
+			var editor = CKEDITOR.instances[instanceName];
+			var editorContent = editor.getData();
+			data[editor.textareaName] = editorContent
+		}
+	}
 
     fetch("/manage/add-post-data", {
         method: "POST",

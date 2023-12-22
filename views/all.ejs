@@ -4,42 +4,52 @@
 		<p>Create, edit, and manage the pages on your site.</p>
 	</div>
 	<table class="table table-striped">
-		<thead style="border-bottom: 4px solid #315BC1;">
-		  <tr>
-			<th>
-				<div style="display: flex; align-items: center; justify-content: start;">
-					<h3 style="font-weight: 600;font-size: 16px;">Pages</h3>  
-				</div>
-			</th>
-			<th>
-				<div style="display: flex; align-items: center; justify-content: end;">
-					<span style="background-color: #315BC1;color: #fff;padding: 7px 16px;font-size: 13x;font-weight: 600;cursor: pointer;" id="openModalBtn">Add New Page</span>
-				</div>
-			</th>
-			
-		  </tr>
+		<thead style="border-bottom: 2px solid #d8d8d8;">
+			<tr>
+				<th>
+					<div style="display: flex; align-items: center; justify-content: start;">
+						<h3 style="font-weight: 600;font-size: 16px;">Pages</h3>
+					</div>
+				</th>
+				<th>
+					<div style="display: flex; align-items: center; justify-content: end;">
+						<span
+							style="background-color: #315BC1;color: #fff;padding: 7px 16px;font-size: 13x;font-weight: 600;cursor: pointer;"
+							id="openModalBtn">Add New Page</span>
+					</div>
+				</th>
+
+			</tr>
 		</thead>
 		<tbody>
-			<% allPages.forEach(page => { %>
+			<% allPages.forEach(page=> { %>
 				<tr class="page-tr">
 					<td style="width: 80%;">
-						<span style="font-weight: 600;"><%= page.name %></span>
+						<span style="font-weight: 600;">
+							<%= page.name %>
+						</span>
 						<span style="display: block;">
-							<span style="cursor: pointer;color: green;font-size: 14px;padding: 0px; font-weight: 600;" onclick="editPage('<%= page.name %>')">Edit</span>
-							<span style="cursor: pointer;color: #C9356E;font-size: 14px;padding: 0px 10px; font-weight: 600;" onclick="deletePage('<%= page.name %>')">Delete</span>
+							<span style="cursor: pointer;color: green;font-size: 14px;padding: 0px; font-weight: 600;"
+								onclick="editPage('<%= page.name %>')">Edit</span>
+							<span
+								style="cursor: pointer;color: #C9356E;font-size: 14px;padding: 0px 10px; font-weight: 600;"
+								onclick="deletePage('<%= page.name %>')">Delete</span>
 						</span>
 					</td>
 					<td style="width: 20%;">
 						<div style="display: flex;align-items: flex-end;justify-content: start;flex-direction: column;">
-							<p style="display: block;font-size:14px;font-weight: 800;color: #363636;text-align: right;margin-bottom: 0px;">Author</p>
-							<p style="margin-bottom: 0px;"><%= page.author %></p>
+							<p
+								style="display: block;font-size:14px;font-weight: 800;color: #363636;text-align: right;margin-bottom: 0px;">
+								Author</p>
+							<p style="margin-bottom: 0px;">
+								<%= page.author %>
+							</p>
 						</div>
 					</td>
 				</tr>
-	
 			<% }) %>
 		</tbody>
-	  </table>
+	</table>
 	<!-- modal  start-->
 	<div id="myModal" class="modal">
 		<div class="modal-content">
@@ -49,13 +59,16 @@
 					<div>
 						<div>
 							<label class="pb-2" for="page-heading">Page Name</label>
-							<input style="width: 100%;display: block;padding:5px;" type="text" name="pageHeading" autofocus>
+							<input style="width: 100%;display: block;padding:5px;" type="text" name="pageHeading"
+								autofocus>
 						</div>
 						<div>
 							<label class="pb-2" for="author">Author</label>
 							<input style="width: 100%;display: block;padding:5px;" type="text" name="author">
 						</div>
-						<button style="border:none;background-color: #315BC1;color: #fff;padding: 7px 26px;font-size: 13x;font-weight: 600;" class="mt-4" type="submit">Create Page</button>
+						<button
+							style="border:none;background-color: #315BC1;color: #fff;padding: 7px 26px;font-size: 13x;font-weight: 600;"
+							class="mt-4" type="submit">Create Page</button>
 					</div>
 				</form>
 			</div>
@@ -67,48 +80,56 @@
 
 <!-- modal end -->
 <script>
-const modal = document.getElementById('myModal');
-const openModalBtn = document.getElementById('openModalBtn');
-const closeBtn = document.getElementsByClassName('close')[0];
+	const modal = document.getElementById('myModal');
+	const openModalBtn = document.getElementById('openModalBtn');
+	const closeBtn = document.getElementsByClassName('close')[0];
 
-openModalBtn.onclick = function () {
-    modal.style.display = 'block';
-};
+	openModalBtn.onclick = function () {
+		modal.style.display = 'block';
+	};
 
-closeBtn.onclick = function () {
-    modal.style.display = 'none';
-};
+	closeBtn.onclick = function () {
+		modal.style.display = 'none';
+	};
 
-window.onclick = function (event) {
-    if (event.target === modal) {
-        modal.style.display = 'none';
-    }
-};
+	window.onclick = function (event) {
+		if (event.target === modal) {
+			modal.style.display = 'none';
+		}
+	};
 
-    function editPage(pageName) {
-        // Redirect to the edit page route (replace with your actual route)
-        window.location.href = `/page/${pageName}`;
-    }
+	window.addEventListener("DOMContentLoaded", ()=>{
+		const thisUrl = new URL(window.location.href);
+		const param1 = thisUrl.searchParams.get("addnewmodal");
+		if(param1 === "true"){
+			modal.style.display = "block"
+		}
+	})
 
-    function deletePage(pageName) {
-        // Show a confirmation dialog before deleting
-        const isConfirmed = confirm(`Are you sure you want to delete the page "${pageName}"?`);
-        
-        if (isConfirmed) {
-            // Make an AJAX request to delete the page (replace with your actual route)
-            fetch(`/delete-page/${pageName}`, {
-                method: 'DELETE',
-            })
-            .then(response => {
-                if (response.ok) {
-                    window.location.reload();
-                } else {
-                    console.error('Failed to delete page:', response.statusText);
-                }
-            })
-            .catch(error => {
-                console.error('Error deleting page:', error);
-            });
-        }
-    }
+	function editPage(pageName) {
+		// Redirect to the edit page route (replace with your actual route)
+		window.location.href = `/page/${pageName}`;
+	}
+
+	function deletePage(pageName) {
+		// Show a confirmation dialog before deleting
+		const isConfirmed = confirm(`Are you sure you want to delete the page "${pageName}"?`);
+
+		if (isConfirmed) {
+			// Make an AJAX request to delete the page (replace with your actual route)
+			fetch(`/delete-page/${pageName}`, {
+				method: 'DELETE',
+			})
+				.then(response => {
+					if (response.ok) {
+						window.location.reload();
+					} else {
+						console.error('Failed to delete page:', response.statusText);
+					}
+				})
+				.catch(error => {
+					console.error('Error deleting page:', error);
+				});
+		}
+	}
 </script>

@@ -25,7 +25,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(flash());
 
 // routes
-
+app.get("/", (req, res)=>{
+	res.redirect("/manage/all-pages")
+})
 app.use('/manage', manageRouter)
 
 app.get('/newpage', (req, res) => {

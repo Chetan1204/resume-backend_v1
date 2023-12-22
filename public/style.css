@@ -187,10 +187,15 @@ text-align: center;
 }
 .menu-title-list li{
 	position: relative;
+	color: #b4b6bc;
+}
+.menu-title-list li a{
+	text-decoration: none;
+	color: inherit;
 }
 .menu-title-list .active {  
   background-color: #000;
-  color: #fff !important; 
+  color: #fff; 
 }
 .menu-title-list .active::before{
 	content: "";
@@ -203,3 +208,21 @@ text-align: center;
 	border-bottom-right-radius: 10px;
 	background-color: #fff;
 }
+::-webkit-scrollbar {
+	width: 5px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+	background: #f1f1f1;
+  }
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+	background: #315BC1;
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+	background: #315BC1;
+  }
