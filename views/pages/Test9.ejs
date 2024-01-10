@@ -183,7 +183,7 @@
 	function addSection() {
 		const ejsPageName = document.getElementById("ejspageName").textContent;
 		const sectionName = document.getElementById("sectionName").value;
-		fetch("/manage/add-section", {
+		fetch("/api/v1/manage/add-section", {
 			method:"POST",
 			headers:{
 				"Content-Type":"application/json"
@@ -211,7 +211,7 @@
 			},
 		}).then((result) => {
 			if (result.isConfirmed) {
-				fetch("/manage/remove-page-section", {
+				fetch("/api/v1/manage/remove-page-section", {
 					method:"POST",
 					headers:{
 						"Content-Type":"application/json"
@@ -241,7 +241,7 @@
 			},
 		}).then((result) => {
 			if (result.isConfirmed) {
-				fetch("/manage/remove-section-element", {
+				fetch("/api/v1/manage/remove-section-element", {
 					method:"POST",
 					headers:{
 						"Content-Type":"application/json"
@@ -254,7 +254,6 @@
 				Swal.fire('Changes are not saved', '', 'info')
 			}
 		})
-		console.log("Trying to delete element", sectionName, elementAttrName);
 	}
 
 	function addElement() {
@@ -265,14 +264,12 @@
 		const checked = document.querySelectorAll(".section-choose-checkbox");
 		let elementObject = undefined;
 		let sectionName = undefined;
-		console.log(checked);
 		checked.forEach(checkItem => {
 			if(checkItem.checked){
 				var parentDiv = checkItem.parentNode.parentNode.parentNode;
 				sectionName = parentDiv.querySelector("div h5").textContent;
 				// Find the sibling div with class "inputFieldsContainer"
 				const inputFieldsContainer = parentDiv.querySelector('.inputFieldsContainer');
-				console.log("ITEM CHECKED, GETTING FIELD CONTAINER", inputFieldsContainer);
 				if (elementType === 'input') {
 					elementObject = {
 						elementName:"input",
@@ -297,7 +294,7 @@
 					}
 				}
 				if(elementObject && sectionName){
-					fetch("/manage/add-element", {
+					fetch("/api/v1/manage/add-element", {
 						method:"POST",
 						headers:{
 							"Content-Type":"application/json"
@@ -353,15 +350,14 @@
 				sectionContent
 			})
 		})
-		console.log("All Page Data", data);
-		fetch("/manage/save-page-data", {
+		fetch("/api/v1/manage/save-page-data", {
 			method:"POST",
 			headers:{
 				"content-Type":"application/json"
 			},
 			body:JSON.stringify(data)
 		})
-		.then(()=>{ window.location.reload() }).catch(err => console.log("FETCH ERR", err))
+		.then(()=>{ window.location.reload() }).catch(err => console.log(err))
 	}
 </script>
 

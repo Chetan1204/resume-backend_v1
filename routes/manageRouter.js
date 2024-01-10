@@ -6,7 +6,7 @@ const pagesRouter = require("./pages/pagesRouter");
 const paymentsAndOrdersRouter = require("./paymentsAndOrders/paymentsAndOrdersRouter");
 
 // Data Management Logics:
-router.use("/", authRouter)
+router.use("/auth/", authRouter)
 router.use("/", dataRouter)
 router.use("/", pagesRouter)
 router.use("/", paymentsAndOrdersRouter)

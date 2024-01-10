@@ -1,0 +1,30 @@
+<div style="width: 100%; height: 100%;background-color: #f0f0f1;display: flex;align-items: center;justify-content: center;">
+	<div style="width: 40%; background-color: #fff;padding: 20px;margin-bottom: 10%;">
+		<h3 style="text-align: center;">Create a new post-type</h3>
+		<form action="/api/v1/manage/add-new-post-type" method="POST">
+			<div style="padding: 20px 0;">
+				<label class="pb-2" for="elementName">Post Type Name:</label>
+				<input name="postTypeName" style="width: 100%;display: block;padding: 5px;" class="form-control" type="text" id="elementName" required>
+				<span class="mb-3" style="display: block;font-size: 14px;">This is the name of the PostType and should be unique</span>
+
+				<label class="pb-2" for="elementSlug">Post Type Slug:</label>
+				<input name="postTypeSlug" style="width: 100%;display: block;padding: 5px;" class="form-control" type="text" id="elementSlug" required>
+				<button type="button" onclick="generateSlug()" class="mb-3 button-secondary" style="margin-top: 5px;" >Auto-generate unique slug</button>
+				
+				<button type="submit" class="mt-3 button-main button-main-md">Create Post</button>
+			</div>
+		</form>
+	</div>
+	<script>
+		function generateSlug() {
+			
+			const postTypeName = document.getElementById("elementName").value;
+			const slugElement = document.getElementById("elementSlug");
+			if(!postTypeName) return slugElement.value ="";
+			const dt = new Date();
+			const mil = "__"+dt.getTime();
+			const slug = "crp__"+postTypeName.toLowerCase()?.split(" ").join("")+mil;
+			slugElement.value = slug;
+		}
+	</script>
+</div>

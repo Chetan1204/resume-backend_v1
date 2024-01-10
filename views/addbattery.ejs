@@ -11,7 +11,7 @@
 <script src="https://cdn.ckeditor.com/ckeditor5/44.0.0/classic/ckeditor.js"></script>
 <div class="row">
 	<div class="col-12">
-		<form id="add-battery-form" action="/manage/add-battery" enctype="multipart/form-data">
+		<form id="add-battery-form" action="/api/v1/manage/add-battery" enctype="multipart/form-data">
 			<div class="row">
 				<div class="col-8 mt-3">
 					<label class="pb-2" for="author">Image </label>
@@ -189,6 +189,7 @@
 		fileElement.addEventListener("change", addFileToUploadQueue);
 
 		function addFileToUploadQueue(event) {
+			
             const parentDiv = document.getElementById('input-image-file-holder');
             const files = event.target.files;
 

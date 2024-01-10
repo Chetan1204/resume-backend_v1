@@ -13,34 +13,61 @@ const fs = require('fs')
 const pageModel = require('./models/pageModel')
 const { defaultPage } = require('./utils/constants')
 const flash = require('connect-flash');
+const cors = require("cors");
+const session = require("express-session");
+const MongoStore = require("connect-mongo");
+const morgan = require("morgan");
 
+/**
+ * Connecting to database
+ */
 Connectdb();
+
 
 
 app.use(expressLayouts);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
 app.use(express.json());
+app.use(morgan(process.env.MODE === "development" ? 'dev' : 'combined'));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({
+	secret:process.env.SESSION_SECRET,
+	resave:false,
+	saveUninitialized:false,
+	cookie:{
+		maxAge:60*60000, // 1 hour
+	},
+	store:MongoStore.create({
+		mongoUrl:"mongodb://127.0.0.1:27017/univbackend"
+	})
+}))
 app.use(flash());
+app.use(cors({
+	origin:["http://192.168.16.36:5173"]
+}))
+
 
 // routes
 app.get("/", (req, res)=>{
-	res.redirect("/manage/all-pages")
+	console.log("rendering all pages...");
+	res.redirect("/api/v1/manage/all-pages")
 })
-app.use('/manage', manageRouter)
+app.use('/api/v1/manage', manageRouter)
 
 app.get('/newpage', (req, res) => {
+	console.log("rendering new page...");
 	res.render('newpage');
 });
 app.post('/create-page', async (req, res) => {
+	console.log("creating a new page...");
 	const { pageHeading, author } = req.body;
 	const sanitizedPageName = pageHeading.replace(/\s/g, '-');
 	const existingPage = await pageModel.findOne({ name: sanitizedPageName });
 	if (existingPage) {
-		res.send('Page with this name already exists!');
+		req.flash("toast", "Page with the same name already exists")
+		res.redirect("/api/v1/manage/all-pages");
 	} else {
-		
 		const newPage = new pageModel({
 			name: sanitizedPageName,
 			author: author,
@@ -101,6 +128,7 @@ app.post('/create-page', async (req, res) => {
 });
 
 app.get('/page/:pageName', async (req, res) => {
+	console.log("rendering a page...");
 	const { pageName } = req.params;
 	try {
 		const pageData = await pageModel.findOne({ name: pageName }).exec();
@@ -119,6 +147,7 @@ app.get('/page/:pageName', async (req, res) => {
 });
 
 app.delete('/delete-page/:pageName', async (req, res) => {
+	console.log("deleting a page...");
 	const { pageName } = req.params;
 	try {
 		// Delete the page from the MongoDB collection

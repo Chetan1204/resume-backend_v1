@@ -14,11 +14,24 @@ const ElementSchema = new mongoose.Schema({
 	elementAttrFileMultiple:String,
 	elementAttrSrcImg:String,
 	elementAttrAltImg:String,
-	elementAttrIsEditor:Boolean
+	elementAttrIsEditor:Boolean,
+	elementItems:[mongoose.Schema.Types.Mixed]
 })
 
 const PageSchema = new mongoose.Schema({
     name: String,
+	revisions:{
+		type:Number,
+		default:0
+	},
+	status:{
+		type:String,
+		enum:['published', 'draft']
+	},
+	visibility:{
+		type:String,
+		enum:['visible', 'hidden']
+	},
     author: String,
 	pageDefaultTitle:String,
 	pageDefaultContent:String,

@@ -1,89 +1,994 @@
-<div style="width: 100%;height: 100%;padding: 20px;overflow-y: scroll;">
-	<div>
-		<h3><%= postName %></h3>
-		<p>Edit this post accross the website.</p>
+<div style="display: flex;width: 100%;align-items: start;justify-content: start;height: 100%;">
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<div style="width: 80%;height: 100%;padding: 20px;overflow-y: scroll;border-right: 1px solid rgba(0,0,0,0.25);">
+		<div>
+			<h3>
+				<%= postName %>
+			</h3>
+			<p>Edit this post across the website.</p>
+		</div>
+		<div
+			style="display: flex; align-items: center; justify-content: space-between; width: 100%;padding: 10px 0px 20px 0px; border-bottom: 2px solid #d8d8d8;margin-bottom: 10px;">
+			<% if(Object.keys(dataObject).length> 0) { %>
+				<p style="margin: 0; font-size: 16px;text-transform: uppercase;font-weight: 600;">Post data:</p>
+				<% } %>
+
+		</div>
+		<form action="/api/v1/manage/add-post-data" id="add-post-data-form" method="POST" enctype="multipart/form-data">
+			<div id="inputs-container" style="width: 100%;">
+				<input id="model-name-glb" type="hidden" name="modelName" value="<%= modelName %>">
+				<input id="post-name-glb" type="hidden" name="postName" value="<%= postName %>">
+				<input id="post-type-id-glb" type="hidden" name="postTypeId" value="<%= postTypeId %>">
+
+				<% if(Object.keys(dataObject).length> 0) { Object.keys(dataObject).forEach(item=> {
+					if(dataObject[item] == 'String' || dataObject[item] == 'Number') {
+					%>
+					<div class="section-input-container">
+						<label class="form-label mt-3" for="<%= item %>">
+							<%= item %>
+						</label>
+						<input class="form-control mb-3"
+							type="<%= dataObject[item] == 'String' ? 'text': dataObject[item] == 'Number' ? 'number' :'text' %>"
+							name="<%= item %>" value="<%= postData ? postData[item] : '' %>">
+					</div>
+					<% } else if(dataObject[item]=='Image' ) { %>
+						<div class="section-input-container">
+
+							<label class="mb-3 mt-3" style="display: block;">
+								<%= item %>
+							</label>
+							<div class="mb-3">
+								<img src="/images/<%= postData ? postData[item] : 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMwAAADACAMAAAB/Pny7AAAAOVBMVEX///+hoaGampqdnZ2srKy0tLSoqKjZ2dnq6ur39/fAwMDt7e3g4OC7u7vw8PD6+vqTk5PS0tLIyMhAQKZNAAACjElEQVR4nO3a2XKqQBRAUXsCZGz4/4+9EhCQsS50FYeqvV41hm17Gkh8vQAAAAAAAAAAAAAAAAAAAAAAAAAACCIvXFB1dWNMo01I2iY3xqRGGR2KUcrmt8aYOksCyZ2+OUaH+/VlQUwwxGwRFJM3aXNtYxUTk7hIfRTvCy8mJSZxpm1Rxl2okRKTdi1K6QsXJEJiEvuNUfb80giJiaNvi9Ll6RcTElOrMSY7/WJCYnI7xJjHr0zpvjNzZTsTEjN+zvzueTPVqtl+VErM5y5Nt+vi472dufisnyk2HxYT8/rcjHjtdgcm9n+LV289Lifm9aoOTpel7z+KW/udpJgjw4YXbTzhQTGpHnbvjbF5Tkzu1Wh9bJ4TM21RanWjeExMZH5iVsfmKTHjwPTSlSc9JCbxsxZl4uWzHhKzaFFGLa/hZMZks9PibGA6bvFjImOs99H0fa/nA9NZXHJKjGlvoY0ar22WA9Ob/6TAmObvQLUbatbXpd2fZ2cbeTFxf6T+e5Z3awPTbQKzyxpxMeXwpw3fve/11odsOTbiYsZ16MYm22sx6ue+VFpMMzlUXVST6/71Gju9BxIWk6vpgPh4Z2D6munYyIqp7O+xm+agRf3cDciKKebHvrkrj73RODaiYurDQ1+rGU9IkmKS1Uuw45rhbkBQzPto2LdE37sBQTHpyZbP/tyPjZyYyX81/rumHxsxMYk9uzCtRlRMdXZguqXpxkZKTHN8xLs1LpMTE5/blSc17XWcjJjEHp/qD2LasZER00T2qsglMmKqMguglBATv0NJbo9RLg2liMy9MTrgdzS1uTemjsIqzn+L4Loqj4M6//UOAAAAAAAAAAAAAAAAAAAAAAAAAMBl/wCSoC7OdsS5KwAAAABJRU5ErkJggg==' %>"
+									style="width: 150px;height: auto;box-shadow: 2px 2px 12px 0px rgba(0,0,0,0.25);border-radius: 10px;"
+									alt="">
+							</div>
+							<p style="font-size: 14px;margin: 0; padding: 10px 0px;">Currently Chosen: <span
+									style="display: inline-block; margin-left: 10px;font-weight: 600;">
+									<%= postData ? postData[item] : 'No Image Chosen' %>
+								</span></p>
+							<input class="form-control mb-3" type="file" name="<%= item %>" value="">
+						</div>
+						<% } else if(dataObject[item]=='Multiple Images' ) { %>
+							<div class="section-input-container">
+								<label class="mb-3 mt-3" style="display: block;">
+									<%= item %>
+								</label>
+								<div class="mb-3" style="display: flex;align-items: center;gap: 10px;">
+									<% if(postData && postData[item] && postData[item].length> 0) { for(let i=0; i <
+											postData[item].length; i++) { %>
+											<img src="/images/<%= postData ? postData[item][i] : 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMwAAADACAMAAAB/Pny7AAAAOVBMVEX///+hoaGampqdnZ2srKy0tLSoqKjZ2dnq6ur39/fAwMDt7e3g4OC7u7vw8PD6+vqTk5PS0tLIyMhAQKZNAAACjElEQVR4nO3a2XKqQBRAUXsCZGz4/4+9EhCQsS50FYeqvV41hm17Gkh8vQAAAAAAAAAAAAAAAAAAAAAAAAAACCIvXFB1dWNMo01I2iY3xqRGGR2KUcrmt8aYOksCyZ2+OUaH+/VlQUwwxGwRFJM3aXNtYxUTk7hIfRTvCy8mJSZxpm1Rxl2okRKTdi1K6QsXJEJiEvuNUfb80giJiaNvi9Ll6RcTElOrMSY7/WJCYnI7xJjHr0zpvjNzZTsTEjN+zvzueTPVqtl+VErM5y5Nt+vi472dufisnyk2HxYT8/rcjHjtdgcm9n+LV289Lifm9aoOTpel7z+KW/udpJgjw4YXbTzhQTGpHnbvjbF5Tkzu1Wh9bJ4TM21RanWjeExMZH5iVsfmKTHjwPTSlSc9JCbxsxZl4uWzHhKzaFFGLa/hZMZks9PibGA6bvFjImOs99H0fa/nA9NZXHJKjGlvoY0ar22WA9Ob/6TAmObvQLUbatbXpd2fZ2cbeTFxf6T+e5Z3awPTbQKzyxpxMeXwpw3fve/11odsOTbiYsZ16MYm22sx6ue+VFpMMzlUXVST6/71Gju9BxIWk6vpgPh4Z2D6munYyIqp7O+xm+agRf3cDciKKebHvrkrj73RODaiYurDQ1+rGU9IkmKS1Uuw45rhbkBQzPto2LdE37sBQTHpyZbP/tyPjZyYyX81/rumHxsxMYk9uzCtRlRMdXZguqXpxkZKTHN8xLs1LpMTE5/blSc17XWcjJjEHp/qD2LasZER00T2qsglMmKqMguglBATv0NJbo9RLg2liMy9MTrgdzS1uTemjsIqzn+L4Loqj4M6//UOAAAAAAAAAAAAAAAAAAAAAAAAAMBl/wCSoC7OdsS5KwAAAABJRU5ErkJggg==' %>"
+												style="width: 150px;height: auto;box-shadow: 2px 2px 12px 0px rgba(0,0,0,0.25);border-radius: 10px;"
+												alt="">
+											<% }} %>
+								</div>
+								<input class="form-control mb-3" type="file" multiple name="<%= item %>" value="">
+								<div id="fileList"></div>
+							</div>
+							<% } else if(dataObject[item]=='Mixed' ) { %>
+								<div class="section-input-container">
+									<label class="form-label mt-3" for="<%= item %>">
+										<%= item %>
+									</label>
+									<textarea class="mb-3" name="<%= item %>">
+										<%= postData ? postData[item] : '' %>
+									</textarea>
+								</div>
+								<% } else if(dataObject[item].value=='Repeater' ) { %>
+									<div class="repeater-item-parent" style="font-size: 13px;">
+										<label class="form-label mt-3">
+											<%= item %>
+										</label>
+										<button onclick="openRepeaterItem(this, '<%= item %>', '<%= JSON.stringify(dataObject[item]?.data) %>')" type="button"
+											class="button-secondary" style="display: block;margin-bottom: 15px;">
+											<i class="fa-solid fa-plus" style="margin-right: 10px;"></i>Add new item
+										</button>
+										<div class="repeater-item-container" style="display: none; border:1px solid rgba(0,0,0,0.25);background-color: #fff;padding: 15px;border-radius: 6px;margin-bottom: 15px;">
+											<input form="repeater-form" type="hidden" name="repeaterName">
+											<input form="repeater-form" type="hidden" name="postName" value="<%= postName %>">
+											<input form="repeater-form" type="hidden" name="postTypeId" value="<%= postTypeId %>">
+											<h5>Add Repeater Data:</h5>
+											<p style="margin:15px 0px;font-size: 12px;padding: 15px; border-radius: 10px;background-color: #7bd4ea52;"><strong>Note that</strong> the details provided in this repeater will be accessible seperately. This is a new repeater entry.</p>
+											<% if(Object.keys(dataObject[item]?.data)?.length > 0 ){ Object.keys(dataObject[item]?.data)?.forEach(innerItem => { 
+												if(dataObject[item]?.data[innerItem] == 'String' || dataObject[item]?.data[innerItem] == 'Number') { %>
+												<div class="section-input-container">
+													<label class="form-label mt-3" for="<%= innerItem %>">
+														<%= innerItem %>
+													</label>
+													<input form="repeater-form" class="form-control mb-3"
+														type="<%= dataObject[item]?.data[innerItem] == 'String' ? 'text': dataObject[item]?.data[innerItem] == 'Number' ? 'number' :'text' %>"
+														name="<%= innerItem %>" value="">
+												</div>
+											<% } else if(dataObject[item]?.data[innerItem] == 'Image') { %>
+												<div class="section-input-container">
+					
+													<label class="mb-3 mt-3" style="display: block;">
+														<%= innerItem %>
+													</label>
+													<div class="mb-3">
+														<img src="" alt="">
+													</div>
+													<p style="font-size: 14px;margin: 0; padding: 10px 0px;">Currently Chosen: <span
+															style="display: inline-block; margin-left: 10px;font-weight: 600;">
+															No Image Chosen
+														</span></p>
+													<input form="repeater-form" class="form-control mb-3" type="file" name="<%= innerItem %>" value="">
+												</div>
+											<% } else if(dataObject[item]?.data[innerItem] == 'Multiple Images') { %>
+												<div class="section-input-container">
+													<label class="mb-3 mt-3" style="display: block;">
+														<%= innerItem %>
+													</label>
+													<div class="mb-3" style="display: flex;align-items: center;gap: 10px;">
+														an array of images here
+													</div>
+													<input form="repeater-form" class="form-control mb-3" type="file" multiple name="<%= innerItem %>" value="">
+													<div></div>
+												</div>
+											<% } else if(dataObject[item]?.data[innerItem] == 'Mixed') { %>
+												<div class="section-input-container">
+													<label class="form-label mt-3" for="<%= item %>">
+														<%= innerItem %>
+													</label>
+													<textarea form="repeater-form" class="mb-3" name="<%= innerItem %>">
+														
+													</textarea>
+												</div>
+											<% } else if(dataObject[item]?.data[innerItem] == 'Array') { %>
+												<div style="font-size: 13px;">
+													<label class="form-label mt-3">
+														<%= innerItem %>
+													</label>
+													<button onclick="openRepeaterArrayModal(this, '<%= innerItem %>', '<%= item %>')" type="button"
+														class="button-secondary" style="display: block;margin-bottom: 15px;">
+														<i class="fa-solid fa-plus" style="margin-right: 10px;"></i>Add new item
+													</button>
+													<table width="100%" cellpadding="0" cellspacing="0">
+														<thead>
+															<tr style="border-bottom: 1px solid rgba(0,0,0,0.25);">
+																<th></th>
+																<th>Index</th>
+																<th>Id</th>
+																<th>Item</th>
+																<th>Item Type</th>
+																<th>Actions</th>
+															</tr>
+														</thead>
+														<tbody class="sortable" data-arrayname="<%= innerItem %>">
+															
+														</tbody>
+													</table>
+												</div>
+											<% }})} %>
+											<button type="button" onclick="handleAddRepeaterItem(this)" class="button-main button-main-md">Update</button>
+										</div>
+										<table width="100%" cellpadding="0" cellspacing="0">
+											<thead>
+												<tr style="border-bottom: 1px solid rgba(0,0,0,0.25);">
+													<th></th>
+													<th>Item</th>
+													<th>Actions</th>
+												</tr>
+											</thead>
+											<tbody class="sortable">
+												<% if(postData[item]?.length > 0) { postData[item]?.forEach( repeaterItem => { %>
+													<tr style="border-bottom:1px solid rgba(0,0,0,0.25);background-color: #f5f5f5;">
+														<td style="padding: 5px 10px;font-size: 13px;font-weight: 500;padding: 10px;">
+															<i class="fa-solid fa-grip-vertical"></i>
+														</td>
+														<td style="padding: 5px 10px;font-size: 13px;font-weight: 500;color: #54b2ff;">
+															<%= JSON.stringify(repeaterItem)?.slice(0,70)+'...' %>
+														</td>
+														<td>
+															<i style="font-size: 13px;margin-right: 5px;" class="fa-solid fa-pencil"></i>
+															<i style="font-size: 13px;" class="fa-solid fa-trash"></i>
+														</td>
+													</tr>
+												<% })} else { %>
+													<tr>
+														<td colspan="6">
+															<div style="background-color: #f5f5f5;border: 1px solid rgba(0,0,0,0.25);display: flex; align-items: center;justify-content: center;padding: 25px;">
+																<h5>No Repeater data added</h5>
+															</div>
+														</td>
+													</tr>
+												<% } %>
+											</tbody>
+										</table>
+									</div>
+								<% } else if(dataObject[item]=='Array') { %>
+									<div style="font-size: 13px;">
+										<label class="form-label mt-3">
+											<%= item %>	
+										</label>
+										<button onclick="openItemModal('<%= item %>')" type="button"
+											class="button-secondary" style="display: block;margin-bottom: 15px;">
+											<i class="fa-solid fa-plus" style="margin-right: 10px;"></i>Add new item
+										</button>
+										<% if(postData && postData[item] && postData[item]?.length> 0) { %>
+											<table width="100%" cellpadding="0" cellspacing="0">
+												<thead>
+													<tr style="border-bottom: 1px solid rgba(0,0,0,0.25);">
+														<th></th>
+														<th>Index</th>
+														<th>Id</th>
+														<th>Item</th>
+														<th>Item Type</th>
+														<th>Actions</th>
+													</tr>
+												</thead>
+												<tbody class="sortable" data-arrayname="<%= item %>">
+													<% postData[item].forEach((arrayitem, index)=> { %>
+														<tr style="border-bottom: 1px solid rgba(0,0,0,0.25);">
+															<td
+																style="padding: 5px 10px;font-size: 13px;font-weight: 600;">
+																<i class="fa-solid fa-grip-vertical"></i></td>
+															<td
+																style="padding: 5px 10px;font-size: 13px;font-weight: 600;">
+																<%= index+1 %>
+															</td>
+															<td
+																style="padding: 5px 10px;font-size: 13px;font-weight: 600;">
+																<%= arrayitem?.id %>
+															</td>
+															<td
+																style="padding: 5px 10px;font-size: 13px;font-weight: 600;">
+																<% if(arrayitem.type==="String" ) { %>
+																	<%= arrayitem.value %>
+																<% } else if(arrayitem.type==="Textarea" ) { %>
+																			<button class="button-secondary"><strong
+																					style="color: #2a5298;">Text
+																					Content</strong> (Click to
+																				View)</button>
+																			<% } else if(arrayitem.type==="JSON" ) { %>
+																				<button type="button"
+																					onclick="openJSONViewer('<%= item %>', '<%= arrayitem.id %>', '<%= arrayitem.type %>', '<%= JSON.stringify(arrayitem.value) %>', '<%= index %>' )"
+																					class="button-secondary"><strong
+																						style="color: #2a5298;">JSON
+																						Data</strong> (Click to
+																					View)</button>
+																				<% } else if(arrayitem.type==="Image" )
+																					{ %>
+																					<img src="/images/<%= arrayitem.value %>"
+																						width="50" alt="">
+																					<% } %>
+															</td>
+															<td
+																style="padding: 5px 10px;font-size: 13px;font-weight: 600;">
+																<%= arrayitem.type %>
+															</td>
+															<td
+																style="padding: 5px 10px;font-size: 13px;font-weight: 600;">
+																<i class="fa-solid fa-trash-can"
+																	style="cursor: pointer;"
+																	onclick="deleteArrayItem('<%= item %>', '<%= arrayitem.id %>')"></i>
+															</td>
+														</tr>
+														<% }) %>
+												</tbody>
+											</table>
+											<% } %>
+									</div>
+									<% } }); } else { %>
+										<div>
+											<div
+												style="border-bottom: 1px solid rgba(0,0,0,0.25);padding: 25px 0px;width: 100%;">
+												<div
+													style="margin: 0 auto;display: flex;flex-direction: column;align-items: center;justify-content: start;gap: 25px;width: 80%;">
+													<input value="<%= defaultPostTitle %>"
+														style="width: 100%;font-size: 54px !important;padding: 15px 25px;"
+														type="text" placeholder="Add Post Title" name="defaultPostTitle"
+														id="default-post-title">
+													<textarea id="default-post-content" style="padding: 15px 25px;"
+														name="defaultPostContent" cols="30" rows="10"
+														placeholder="Start writing text or HTML">
+											<%= defaultPostContent %>
+										</textarea>
+												</div>
+											</div>
+										</div>
+										<% } %>
+			</div>
+
+		</form>
+
+		<div id="arrayItemModal" class="modal">
+			<div class="modal-content" id="modal-input-container">
+				<span class="close" onclick="closeArrayItemModal()">&times;</span>
+				<input type="hidden" name="modelName" value="<%= modelName %>">
+				<input type="hidden" id="arrayItemNamePointer" name="arrayItemNamePointer">
+				<input type="hidden" name="postName" value="<%= postName %>">
+				<input type="hidden" name="postTypeId" value="<%= postTypeId %>">
+				<div id="item-modal-content" style="padding: 20px 0;font-size: 13px;">
+					<label for="itemType" class="mb-3">Choose the item type</label>
+					<select onchange="chooseItemType()" name="itemType" id="itemType"
+						style="display: block;width: 100%;padding: 5px 10px; background-color: aliceblue;margin-bottom: 5px;">
+						<option value="">Choose a type</option>
+						<option value="String">String</option>
+						<option value="Textarea">Textarea</option>
+						<option value="JSON">JSON</option>
+						<option value="Image">Image</option>
+					</select>
+					<button id="add-item-last-btn" class="mt-3 button-main button-main-md" onclick="addItem()">Add Item</button>
+				</div>
+			</div>
+		</div>
+
+		<div id="repeaterArrayItemModal" class="modal">
+			<div class="modal-content" id="repeater-modal-input-container">
+				<span class="close" onclick="closeRepeaterArrayModal()">&times;</span>
+				<input type="hidden" name="modelName" value="<%= modelName %>">
+				<input type="hidden" name="repeaterName" id="repeaterName"> 
+				<input type="hidden" name="arrayName"> 
+				<input type="hidden" name="postName" value="<%= postName %>">
+				<input type="hidden" name="postTypeId" value="<%= postTypeId %>">
+				<div id="item-modal-content" style="padding: 20px 0;font-size: 13px;">
+					<label for="repeaterArrayItemType" class="mb-3">Choose the item type</label>
+					<select onchange="chooseRepeaterArrayItemType()" name="itemType" id="repeaterArrayItemType"
+						style="display: block;width: 100%;padding: 5px 10px; background-color: aliceblue;margin-bottom: 5px;">
+						<option value="">Choose a type</option>
+						<option value="String">String</option>
+						<option value="Textarea">Textarea</option>
+						<option value="JSON">JSON</option>
+						<option value="Image">Image</option>
+					</select>
+					<button id="repeater-add-item-last-btn" class="mt-3 button-main button-main-md" onclick="addRepeaterItem()">Add Item</button>
+				</div>
+			</div>
+		</div>
+
+
+		<div id="jsonviewModal" class="modal">
+			<div class="modal-content" id="modal-input-container">
+				<span class="close" onclick="closeJsonViewModel()">&times;</span>
+				<!-- <form action="/api/v1/manage/add-post-array-item" method="POST" enctype="multipart/form-data"> -->
+				<input type="hidden" name="modelName" value="<%= modelName %>">
+				<input type="hidden" id="arrayName" name="arrayName">
+				<input type="hidden" id="itemId" name="itemId">
+				<input type="hidden" id="arrayIndex" name="arrayIndex">
+				<div id="item-modal-content" style="padding: 20px 0;font-size: 13px;">
+					<label for="jsonContent" style="display: block;" class="mb-3">Choose the item type</label>
+					<textarea id="jsonContent" style="width: 100%;height: 200px;" type="text"></textarea>
+				</div>
+				<button class="button-main button-main-md" onclick="updateJSON()">Update JSON</button>
+				<!-- </form> -->
+			</div>
+		</div>
 	</div>
-		<div style="display: flex; align-items: center; justify-content: space-between; width: 100%;padding: 10px 0px 20px 0px; border-bottom: 2px solid #d8d8d8;margin-bottom: 10px;">
-			<p style="margin: 0;">Post data:</p>
+	<div
+		style="width: 20%;display: flex;flex-direction: column;padding: 20px;align-items: start; justify-content: start;gap: 15px;">
+		<div
+			style="background-color: #fff;border-radius: 8px; padding: 10px; width: 100%;border: 1px solid rgba(0,0,0,0.25);display: flex;flex-direction: column;gap: 5px;">
+			<h5
+				style="font-weight: 600; font-size: 13px; text-transform: uppercase;margin-bottom: 5px; border-bottom: 1px solid rgba(0,0,0,0.25);padding-bottom: 5px;">
+				Summary</h5>
+			<table cellpadding="0" cellspacing="0">
+				<tr>
+					<td style="width: 80px;">
+						<!-- <i style="text-align: center;width: 15px;display: inline-block;color: #484848;font-size: 14px;"
+					class="fa-solid fa-map-pin"></i> -->
+						<span style="display: inline-block;color: #484848;font-weight:500;font-size: 13px;">Status</span>
+					</td>
+					<td>
+						<div class="dropdown">
+							<span class="sidemenu-summary-btn dropdown-toggle" data-bs-auto-close="outside" style="width: 100%;padding: 5px;display: inline-block;font-weight:600;font-size: 13px;text-transform: uppercase;color:<%= status == 'published' ? '#65B741' : '#484848'  %>" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+							  <%= status || "unset" %>
+							</span>
+							<div class="dropdown-menu" style="box-shadow: 4px 4px 12px 0 rgba(0,0,0,0.25);">
+								<div style="display: flex;align-items: start;justify-content: start;flex-direction: column;padding: 10px;width: 300px;">
+									<h5 style="font-size: 14px;">Publish this post:</h5>
+									<p style="margin: 0;font-size: 11px;font-weight: 400;margin-bottom: 10px;">Manage the status of this post, a only posts that are published will be accessible publicly.</p>
+									<div style="display: flex;align-items: center;padding: 5px;gap: 5px;">
+										<input type="radio" name="pageStatus" id="publishPage">
+										<label for="publishPage" style="font-size: 12px;font-weight: 500;">Publish</label>
+									</div>
+									<div style="display: flex;align-items: center;padding: 5px;gap: 5px;margin-bottom: 10px;">
+										<input type="radio" name="pageStatus" id="withdrawPage">
+										<label for="withdrawPage" style="font-size: 12px;font-weight: 500;">Withdraw</label>
+									</div>
+									<button class="button-main button-main-sm">Save</button>
+								</div>
+							</div>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<!-- <i style="text-align: center;width: 15px;display: inline-block;color: #484848;font-size: 14px;" class="fa-solid fa-eye"></i> -->
+						<span style="display: inline-block;color: #484848;font-weight:500;font-size: 13px;">Visibility</span>
+					</td>
+					<td>
+						<div class="dropdown">
+							<span class="sidemenu-summary-btn dropdown-toggle" data-bs-auto-close="outside" style="width: 100%;padding: 5px;display: inline-block;color: #484848;font-weight:500;font-size: 13px;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+							  <%= 'Visible' %>
+							</span>
+							<div class="dropdown-menu" style="box-shadow: 4px 4px 12px 0 rgba(0,0,0,0.25);">
+								<div style="display: flex;align-items: start;justify-content: start;flex-direction: column;padding: 10px;width: 300px;">
+									<h5 style="font-size: 14px;">Page Visibility:</h5>
+									<p style="margin: 0;font-size: 11px;font-weight: 400;margin-bottom: 10px;">Manage the visibility of this page, a only posts that are visible will be accessible publicly.</p>
+									<div style="display: flex;align-items: center;padding: 5px;gap: 5px;">
+										<input type="radio" name="pageVisibility" id="makePageVisible">
+										<label for="makePageVisible" style="font-size: 12px;font-weight: 500;">Visible (Public)</label>
+									</div>
+									<div style="display: flex;align-items: center;padding: 5px;gap: 5px;">
+										<input type="radio" name="pageVisibility" id="makePageHidden">
+										<label for="makePageHidden" style="font-size: 12px;font-weight: 500;">Hidden</label>
+									</div>
+								</div>
+							</div>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<!-- <i style="text-align: center;width: 15px;display: inline-block;color: #484848;font-size: 14px;" class="fa-solid fa-code-compare"></i> -->
+						<span style="display: inline-block;color: #484848;font-weight:500;font-size: 13px;">Revisions</span>
+					</td>
+					<td>
+						<span class="sidemenu-summary-btn" style="width: 100%;padding: 5px;display: inline-block;color: #484848;font-weight:500;font-size: 13px;">
+							<%= revisions %>
+						</span>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<!-- <i style="text-align: center;width: 15px;display: inline-block;color: #484848;font-size: 14px;" class="fa-solid fa-code-compare"></i> -->
+						<span style="display: inline-block;color: #484848;font-weight:500;font-size: 13px;">URL</span>
+					</td>
+					<td>
+						<div class="dropdown">
+							<span class="sidemenu-summary-btn dropdown-toggle" style="width: 100%;padding: 5px;display: inline-block;color: #54b2ff;font-weight:600;font-size: 13px;font-family: Arial, Helvetica, sans-serif;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+							  <%= 'url not found' %>
+							</span>
+							<div class="dropdown-menu" style="box-shadow: 4px 4px 12px 0 rgba(0,0,0,0.25);">
+								<div style="display: flex;align-items: start;justify-content: start;flex-direction: column;padding: 10px;width: 300px;">
+									<p style="margin: 0;font-size: 11px;font-weight: 400;">This slug will be used as a unique route for your webpage or webpost.</p>
+									<label for="url-post" style="font-size: 12px;margin-top: 10px;">permalink</label>
+									<input class="form-control" type="text" name="postUrlSlug" id="url-post">
+								</div>
+							</div>
+						</div>
+					</td>
+				</tr>
+			</table>
+			<button type="submit" form="add-post-data-form" class="mt-3 button-main button-main-md">Update Post</button>
+			<div
+				style="display: flex;align-items: center;justify-content: space-between;border-top:1px solid rgba(0,0,0,0.25);padding: 10px;">
+				<p style="margin: 0;font-weight: 500;color: #872341;font-size: 14px;">Delete this post</p>
+				<button class="button-main button-main-md button-danger"
+					onclick="deletePost('<%= postId %>', '<%= postTypeId %>')">Delete</button>
+			</div>
 		</div>
-		<div id="inputs-container" style="width: 100%;">
-			<input type="hidden" name="modelName" value="<%= modelName %>">
-			<input type="hidden" name="postName" value="<%= postName %>">
-
-
-			<% if(dataObject) { Object.keys(dataObject).forEach(item => { 
-				if(dataObject[item] == 'String' || dataObject[item] == 'Number') {	
-			%>
-				<div class="section-input-container">
-					<label class="form-label" for="<%= item %>">
-						<%= item %>
-					</label>
-					<input class="form-control mb-3" type="<%= dataObject[item] == 'String' ? 'text': dataObject[item] == 'Number' ? 'number' :'text' %>" name="<%= item %>" value="<%= postData ? postData[item] : '' %>">
-				</div>
-			<% } else if(dataObject[item] == 'Mixed') { %>
-				<div class="section-input-container">
-					<label class="form-label" for="<%= item %>">
-						<%= item %>
-					</label>
-					<textarea class="mb-3" name="<%= item %>">
-						<%= postData ? postData[item] : '' %>
-					</textarea>
-				</div>
-			<% } }); }%>
+		<div
+			style="color: #484848;font-weight:500;font-size: 13px;background-color: #fff;border-radius: 8px; padding: 10px; width: 100%;border: 1px solid rgba(0,0,0,0.25);display: flex;flex-direction: column;gap: 5px;">
+			<h5
+				style="font-weight: 600; font-size: 13px; text-transform: uppercase;margin-bottom: 15px; border-bottom: 1px solid rgba(0,0,0,0.25);padding-bottom: 5px;">
+				ACF DATA</h5>
+			<div style="display: flex;align-items: center;gap: 10px;">
+				<i style="text-align: center;width: 15px;display: inline-block;color: #484848;font-size: 14px;"
+					class="fa-solid fa-link"></i>
+				<span style="display: inline-block;font-weight: 600;">Linked ACF:</span>
+			</div>
+			<% if(!Object.keys(dataObject).length> 0) { %>
+				<p style="margin: 0; color: #a1a1a1;">No fields linked yet</p>
+				<a href="/api/v1/manage/all-models" class="button-secondary">Add Custom Field</a>
+				<% } %>
+					<% if(customFields.length> 0) { %>
+						<ul>
+							<% customFields.forEach((item, index)=> { %>
+								<li>
+									<p style="margin: 0;font-size: 13px;">
+										<%= item %> <span><a href="/api/v1/manage/rendermodel?modelname=<%= item %>"
+													style="color: #2a5298;font-weight: 600;margin-left: 10px;">View</a></span>
+									</p>
+								</li>
+								<% }) %>
+						</ul>
+						<% } %>
 		</div>
-		<button style="border:none;background-color: #315BC1;color: #fff;padding: 7px 26px;font-size: 13x;font-weight: 600;" onclick="handlesubmit()">Update Model</button>
-	<script>	
+		<div
+			style="color: #484848;font-weight:500;font-size: 13px;background-color: #fff;border-radius: 8px; padding: 10px; width: 100%;border: 1px solid rgba(0,0,0,0.25);display: flex;flex-direction: column;gap: 5px;">
+			<h5
+				style="font-weight: 600; font-size: 13px; text-transform: uppercase;margin-bottom: 15px; border-bottom: 1px solid rgba(0,0,0,0.25);padding-bottom: 5px;">
+				Category</h5>
+			<div style="display: flex;align-items: center;gap: 10px;">
+				<i style="text-align: center;width: 15px;display: inline-block;color: #484848;font-size: 14px;"
+					class="fa-solid fa-link"></i>
+				<span style="display: inline-block;font-weight: 600;">Linked Categories:</span>
+			</div>
+			<% if(category?.length> 0) { %>
+				<ul style="padding: 0;">
+					<% category.forEach((item, index)=> { %>
+						<li
+							style="background: #f1f1f1;border-bottom: 1px solid rgba(0,0,0,0.25);list-style: none;padding: 5px;display: flex;align-items:center;justify-content: space-between;">
+							<p style="margin: 0;font-size: 13px;">
+								<%= item?.categoryName %>
+							</p>
+							<p style="margin: 0;cursor: pointer;"
+								onclick="removeCategory('<%= item?.categoryName %>','<%= item?._id %>','<%= postName %>', '<%= postTypeId %>')">
+								<i style="font-size: 12px;color: #484848;" class="fa-solid fa-link-slash"></i></p>
+						</li>
+						<% }) %>
+				</ul>
+			<% } else { %>
+				<p style="margin: 0; color: #a1a1a1;">No categories linked yet</p>
+			<% } %>
+			<div style="display: flex;align-items: center;gap: 10px; margin-top: 15px;">
+				<i style="text-align: center;width: 15px;display: inline-block;color: #484848;font-size: 14px;"
+					class="fa-solid fa-plus"></i>
+				<span style="display: inline-block;font-weight: 600;">Add Categories:</span>
+			</div>
+			<form action="/api/v1/manage/add-post-category" method="POST" style="width: 100%;">
+				<input type="hidden" name="postName" value="<%= postName %>">
+				<input type="hidden" name="postTypeId" value="<%= postTypeId %>">
+				<select name="postCategoryIdSelect" id="post-category-selector"
+					style="padding: 5px;background-color: aliceblue;width: 100%;">
+					<option value="">Choose a category</option>
+					<% if(allCategories?.length> 0) { allCategories.forEach((item, index) => { %>
+						<option value="<%= item?._id %>">
+							<%= item?.categoryName %>
+						</option>
+						<% })} %>
+				</select>
+				<button class="button-main button-main-md mt-2">Add</button>
+			</form>
+			<div>
+				<div
+					style="display: flex;align-items: center;gap: 10px; margin-top: 15px; margin-bottom: 10px;">
+					<i style="text-align: center;width: 15px;display: inline-block;color: #484848;font-size: 14px;"
+						class="fa-solid fa-scroll"></i>
+					<span style="display: inline-block;font-weight: 600;">New Category:</span>
+				</div>
+				<form action="/api/v1/manage/create-post-category" method="POST">
+					<input type="hidden" name="postName" value="<%= postName %>">
+					<input type="hidden" name="postTypeId" value="<%= postTypeId %>">
+					<label for="newCategoryName" style="font-size: 12px;color: #7e7c7c;">category
+						name</label>
+					<input type="text" name="newCategoryName"
+						style="outline:none;border-radius: 6px;border: 1px solid rgba(0,0,0,0.25);padding: 5px;width: 100%;"
+						id="newCategoryName">
+					<button class="button-secondary" style="margin: 10px 0px;">Create new category</button>
+				</form>
+			</div>
+		</div>
+	</div>
+	<script src="https://unpkg.com/sortablejs@1.14.0/Sortable.min.js"></script>
+	<script>
+		let arrayItemNamePointer;
+		let multifilescontainer;
 		window.addEventListener("DOMContentLoaded", () => {
-			const textareaElements = document.querySelectorAll('textarea');
+
+			const textareaElements = document.querySelectorAll('textarea:not(#jsonContent)');
 			textareaElements.forEach(textarea => {
 				CKEDITOR.replace(textarea, {
 					on: {
 						instanceReady: function (evt) {
-							// Store the textarea name along with the CKEditor instance
 							evt.editor.textareaName = textarea.getAttribute("name");
 						}
 					}
 				});
-			})
+			});
+			new Sortable(document.querySelector('.sortable'), {
+				animation: 150, // Customize the animation speed
+				direction: 'vertical', // Allow vertical sorting only
+				onEnd: function (evt) {
+					var newOrder = Array.from(evt.from.children).map(function (el) {
+						const dataElem = el.querySelector("td:nth-child(3)")
+
+						return dataElem.textContent.trim()
+					});
+					const postName = document.getElementById("post-name-glb").value;
+					const postTypeId = document.getElementById("post-type-id-glb").value;
+					fetch("/api/v1/manage/order-post-array-item", {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify({ postName, postTypeId, arrayItemNamePointer: evt.to.dataset.arrayname, order: newOrder })
+					})
+						.then(res => res.json())
+						.then(data => { })
+				},
+			});
 		});
 
-function handlesubmit() {
-    let data = {};
-    const inputContainer = document.getElementById("inputs-container");
-    const postName = inputContainer.querySelector("input[name='postName']").value;
-    const modelName = inputContainer.querySelector("input[name='modelName']").value;
-	const allInputs = inputContainer.querySelectorAll('input:not([name="modelName"]):not([name="postName"])');
-    allInputs.forEach(input => {
-        const itemName = input.name;
-        const inputValue = input.value;
-        data[itemName] = inputValue;
-    });
+		function handleAddRepeaterItem(buttonElement) {
+			const itemsContainer = buttonElement.closest(".repeater-item-container");
+			const allInputs = itemsContainer.querySelectorAll("input:not([type='file'])");
+			const allFileInputs = itemsContainer.querySelectorAll("input[type='file']")
+			const formData = new FormData();
+			allInputs.forEach(input=>{
+				formData.append(input.getAttribute("name"), input.value);
+				console.log(input.getAttribute("name"), input.value);
+			})
+			allFileInputs.forEach(fileInput=>{
+				formData.append(fileInput.getAttribute("name"), fileInput.files[0])
+				console.log(fileInput.getAttribute("name"), fileInput.files[0]?.name);
+			})
 
-	for (var instanceName in CKEDITOR.instances) {
-		if (CKEDITOR.instances.hasOwnProperty(instanceName)) {
-			var editor = CKEDITOR.instances[instanceName];
-			var editorContent = editor.getData();
-			data[editor.textareaName] = editorContent
+			fetch("/api/v1/manage/add-post-repeater-item", {
+				method:"POST",
+				body:formData
+			})
+			.then(res => res.json())
+			.then(data => window.location.reload())
 		}
-	}
 
-    fetch("/manage/add-post-data", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            postName,
-            modelName,
-            postData: data
-        })
-    }).then(res => res.json()).then(data => {
-        if (data.success) {
-            window.location.href = `/manage/render-post?postname=${encodeURIComponent(postName)}`;
-        } else {
-            console.error("Submission failed:", data.message);
-        }
-    });
-}
+		function deleteArrayItem(arrayName, itemId) {
+			
+			const postName = document.getElementById("post-name-glb").value;
+			const postTypeId = document.getElementById("post-type-id-glb").value;
+
+			fetch("/api/v1/manage/delete-post-array-item", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify({ postName, postTypeId, arrayName, itemId })
+			})
+			.then(res => res.json())
+			.then(data => window.location.reload())
+		}
+
+		function openJSONViewer(arrayName, itemId, itemType, itemValue, index) {
+			document.getElementById("jsonviewModal").style.display = "block";
+			document.getElementById("jsonContent").value = itemValue;
+			document.getElementById("itemId").value = itemId;
+			document.getElementById("arrayName").value = arrayName;
+			document.getElementById("arrayIndex").value = index;
+		}
+
+		function closeJsonViewModel() {
+			document.getElementById("jsonviewModal").style.display = "none";
+		}
+
+		function updateJSON() {
+			const itemValue = document.getElementById("jsonContent").value;
+			const itemType = "JSON";
+			const itemId = document.getElementById("itemId").value;
+			const postName = document.getElementById("post-name-glb").value;
+			const postTypeId = document.getElementById("post-type-id-glb").value;
+			const arrayName = document.getElementById("arrayName").value;
+			const arrayIndex = document.getElementById("arrayIndex").value;
+
+			fetch("/api/v1/manage/update-post-array-item", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify({ postName, postTypeId, arrayName, arrayIndex, itemId, itemType, itemValue })
+			})
+				.then(res => res.json())
+				.then(data => window.location.reload())
+		}
+
+		function addItem() {
+			
+			const formData = new FormData();
+			const container = document.querySelector("#modal-input-container");
+			const selector = container.querySelector("#itemType");
+			formData.append(selector.getAttribute("name"), selector.value);
+			const allInputs = container.querySelectorAll("input:not([type='file'])");
+			if (allInputs?.length > 0) {
+				allInputs.forEach(input => {
+					formData.append(input.getAttribute("name"), input.value);
+				})
+			}
+			const textarea = container.querySelector("#array-item-textarea");
+			if (textarea) {
+				formData.append(textarea.getAttribute("name"), textarea.value);
+			}
+			const allFileInputs = container.querySelectorAll("input[type='file']");
+			if (allFileInputs?.length > 0) {
+				allFileInputs.forEach(fileInput => {
+					formData.append(fileInput.getAttribute("name"), fileInput.files[0])
+				});
+			}
+			fetch("/api/v1/manage/add-post-array-item", {
+				method: "POST",
+				body: formData
+			})
+			.then(res => res.json())
+			.then(data => window.location.reload())
+		}
+
+		function addRepeaterItem() {
+			
+			const formData = new FormData();
+			const container = document.querySelector("#repeater-modal-input-container");
+			const selector = container.querySelector("#repeaterArrayItemType");
+			formData.append(selector.getAttribute("name"), selector.value);
+			const allInputs = container.querySelectorAll("input:not([type='file'])");
+			if (allInputs?.length > 0) {
+				allInputs.forEach(input => {
+					formData.append(input.getAttribute("name"), input.value);
+				})
+			}
+			const textarea = container.querySelector("#array-item-textarea");
+			if (textarea) {
+				formData.append(textarea.getAttribute("name"), textarea.value);
+			}
+			const allFileInputs = container.querySelectorAll("input[type='file']");
+			if (allFileInputs?.length > 0) {
+				allFileInputs.forEach(fileInput => {
+					formData.append(fileInput.getAttribute("name"), fileInput.files[0])
+				});
+			}
+			fetch("/api/v1/manage/add-post-repeater-array-item", {
+				method: "POST",
+				body: formData
+			})
+			.then(res => res.json())
+			.then(data => console.log(data))
+		}
+
+
+		function removeCategory(categoryName, categoryId, postName, postTypeId) {
+			
+			fetch("/api/v1/manage/unlink-category", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify({ categoryName, categoryId, postName, postTypeId })
+			})
+				.then(res => res.json)
+				.then(data => {
+					window.location.reload();
+				})
+				.catch(err => console.log(err))
+		}
+
+		function deletePost(postId, postTypeId) {
+			
+			Swal.fire({
+				title: 'Do you want to delete this post?',
+				showDenyButton: true,
+				showCancelButton: false,
+				confirmButtonText: 'Delete',
+				denyButtonText: 'Cancel',
+				customClass: {
+					actions: 'my-actions',
+					cancelButton: 'order-1 right-gap',
+					confirmButton: 'order-2',
+				},
+			}).then((result) => {
+				if (result.isConfirmed) {
+					fetch("/api/v1/manage/remove-post", {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify({ postId })
+					})
+						.then(res => res.json())
+						.then(data => { window.location.href = `/api/v1/manage/show-posts-by-post-type/${postTypeId}`; })
+				} else if (result.isDenied) {
+					Swal.fire('Changes are not saved', '', 'info')
+				}
+			})
+		}
+
+
+
+		function openRepeaterItem(buttonElement,repeaterName, dataObjectString) {
+			console.log(repeaterName, dataObjectString);
+			const parent = buttonElement.closest(".repeater-item-parent");
+			parent.querySelector(".repeater-item-container").style.display = "block"
+			parent.querySelector(".repeater-item-container").querySelector("input[name='repeaterName']").value = repeaterName;
+		}
+
+		function closeRepeaterItemModal() {
+			document.getElementById("repeater-item-container").style.display = "none"
+		}
+
+		function openRepeaterArrayModal(buttonElement, arrayName, repeaterName) {
+			console.log("opening repeater array modal", arrayName);
+			// const parent = buttonElement.closest(".repeater-item-container");
+			// const input = parent.querySelector("input[name='repeaterName']")
+			// input.value = arrayName;
+			const container = document.getElementById("repeaterArrayItemModal");
+			container.style.display = 'block';
+			container.querySelector("input[name='arrayName']").value = arrayName;
+			container.querySelector("input[name='repeaterName']").value = repeaterName;
+		}
+		function closeRepeaterArrayModal(){
+			document.getElementById("repeaterArrayItemModal").style.display = "none"
+		}
+
+		function openItemModal(itemName) {
+			arrayItemNamePointer = itemName;
+			document.getElementById("arrayItemModal").style.display = "block"
+		}
+		function closeArrayItemModal() {
+			document.getElementById("arrayItemModal").style.display = "none"
+		}
+		function chooseItemType() {
+			
+			const select = document.getElementById("itemType");
+			const clear = document.getElementById("new-item-container");
+			if (clear) {
+				const parentElement = clear.parentNode;
+				parentElement.removeChild(clear);
+			}
+			if (select.value === "") {
+				const parent = document.getElementById("item-modal-content");
+				parent.removeChild(document.getElementById("new-item-container"));
+				arrayItemNamePointer = "";
+				document.getElementById("arrayItemNamePointer").value = arrayItemNamePointer;
+				return;
+			} else {
+				if (select.value === "String") {
+					const htmlText = `
+					<label class="mb-3" for="elementName">ITEM CONTENT:</label>
+					<input name="itemValue" style="width: 100%;display: block;" type="text">`;
+					const elem = document.getElementById("add-item-last-btn");
+					const newElement = document.createElement("div");
+					newElement.id = 'new-item-container'
+					newElement.innerHTML = htmlText;
+					elem.parentNode.insertBefore(newElement, elem);
+					document.getElementById("arrayItemNamePointer").value = arrayItemNamePointer;
+				} else if (select.value === "Textarea") {
+					const htmlText = `
+					<label class="mb-3" for="elementName">ITEM CONTENT:</label>
+					<textarea id="array-item-textarea" style="width: 100%;display: block;" rows="8" cols="50"  name="itemValue" type="text"></textarea>`;
+					const elem = document.getElementById("add-item-last-btn");
+					const newElement = document.createElement("div");
+					newElement.id = 'new-item-container'
+					newElement.innerHTML = htmlText;
+					elem.parentNode.insertBefore(newElement, elem);
+					document.getElementById("arrayItemNamePointer").value = arrayItemNamePointer;
+				} else if (select.value === "JSON") {
+					const htmlText = `
+					<label class="mb-3" for="elementName">JSON DATA:</label>
+					<textarea id="array-item-textarea" style="width: 100%;display: block;" rows="8" cols="50" type="text" name="itemValue"></textarea>`;
+					const elem = document.getElementById("add-item-last-btn");
+					const newElement = document.createElement("div");
+					newElement.id = 'new-item-container'
+					newElement.innerHTML = htmlText;
+					elem.parentNode.insertBefore(newElement, elem);
+					// var jsonInput = CodeMirror.fromTextArea(document.getElementById("array-item-textarea"), {
+					// 	lineNumbers: true,
+					// 	mode: "application/json",
+					// 	gutters: ["CodeMirror-lint-markers"],
+					// 	lint: true,
+					// });
+					document.getElementById("arrayItemNamePointer").value = arrayItemNamePointer;
+				} else if (select.value === "Image") {
+					const htmlText = `
+					<label class="mb-3" for="elementName">ITEM CONTENT:</label>
+					<input name="itemValue" style="width: 100%;display: block;" type="file">`;
+					const elem = document.getElementById("add-item-last-btn");
+					const newElement = document.createElement("div");
+					newElement.id = 'new-item-container';
+					newElement.innerHTML = htmlText;
+					elem.parentNode.insertBefore(newElement, elem);
+					document.getElementById("arrayItemNamePointer").value = arrayItemNamePointer;
+				}
+			}
+		}
+
+		function chooseRepeaterArrayItemType() {
+			
+			const select = document.getElementById("repeaterArrayItemType");
+			const clear = document.getElementById("new-item-container");
+			if (clear) {
+				const parentElement = clear.parentNode;
+				parentElement.removeChild(clear);
+			}
+			if (select.value === "") {
+				const parent = document.getElementById("item-modal-content");
+				parent.removeChild(document.getElementById("new-item-container"));
+				repeaterName = "";
+				document.getElementById("repeaterName").value = repeaterName;
+				return;
+			} else {
+				if (select.value === "String") {
+					const htmlText = `
+					<label class="mb-3" for="elementName">ITEM CONTENT:</label>
+					<input name="itemValue" style="width: 100%;display: block;" type="text">`;
+					const elem = document.getElementById("repeater-add-item-last-btn");
+					const newElement = document.createElement("div");
+					newElement.id = 'new-item-container'
+					newElement.innerHTML = htmlText;
+					elem.parentNode.insertBefore(newElement, elem);
+				} else if (select.value === "Textarea") {
+					const htmlText = `
+					<label class="mb-3" for="elementName">ITEM CONTENT:</label>
+					<textarea id="array-item-textarea" style="width: 100%;display: block;" rows="8" cols="50"  name="itemValue" type="text"></textarea>`;
+					const elem = document.getElementById("repeater-add-item-last-btn");
+					const newElement = document.createElement("div");
+					newElement.id = 'new-item-container'
+					newElement.innerHTML = htmlText;
+					elem.parentNode.insertBefore(newElement, elem);
+				} else if (select.value === "JSON") {
+					const htmlText = `
+					<label class="mb-3" for="elementName">JSON DATA:</label>
+					<textarea id="array-item-textarea" style="width: 100%;display: block;" rows="8" cols="50" type="text" name="itemValue"></textarea>`;
+					const elem = document.getElementById("repeater-add-item-last-btn");
+					const newElement = document.createElement("div");
+					newElement.id = 'new-item-container'
+					newElement.innerHTML = htmlText;
+					elem.parentNode.insertBefore(newElement, elem);
+				} else if (select.value === "Image") {
+					const htmlText = `
+					<label class="mb-3" for="elementName">ITEM CONTENT:</label>
+					<input name="itemValue" style="width: 100%;display: block;" type="file">`;
+					const elem = document.getElementById("repeater-add-item-last-btn");
+					const newElement = document.createElement("div");
+					newElement.id = 'new-item-container';
+					newElement.innerHTML = htmlText;
+					elem.parentNode.insertBefore(newElement, elem);
+				}
+			}
+		}
+
+		function handlemultifileinput(event) {
+			
+			const files = event.target.files;
+			const fileListDiv = document.getElementById("fileList");
+			for (let i = 0; i < files.length; i++) {
+				const file = files[i];
+				const fileItem = document.createElement("div");
+				fileItem.textContent = file.name;
+				const removeButton = document.createElement("button");
+				removeButton.textContent = "Remove";
+				removeButton.onclick = function () {
+					removeFile(fileItem, i);
+				};
+				fileItem.appendChild(removeButton);
+				fileListDiv.appendChild(fileItem);
+			}
+		}
+
+		function removeFile(fileItem, index) {
+			const fileListDiv = document.getElementById("fileList");
+			fileListDiv.removeChild(fileItem);
+		}
+
+		function handlesubmit() {
+			
+			let data = {};
+			const formData = new FormData();
+			const inputContainer = document.getElementById("inputs-container");
+			const postName = inputContainer.querySelector("input[name='postName']").value;
+			const modelName = inputContainer.querySelector("input[name='modelName']").value;
+			const allInputs = inputContainer.querySelectorAll('input:not([name="modelName"]):not([name="postName"]):not([type="file"])');
+			const allFiles = inputContainer.querySelectorAll('input[type="file"]:not([multiple])');
+
+			allFiles.forEach(fileInput => {
+				if (fileInput.files.length > 0) {
+					formData.append('files', fileInput.files[0]);
+					data[fileInput.getAttribute('name')] = fileInput.files[0].name
+				}
+			})
+
+			allInputs.forEach(input => {
+				const itemName = input.name;
+				const inputValue = input.value;
+				data[itemName] = inputValue;
+			});
+
+			formData.append("postName", postName);
+			formData.append("modelName", modelName);
+
+			for (var instanceName in CKEDITOR.instances) {
+				if (CKEDITOR.instances.hasOwnProperty(instanceName)) {
+					var editor = CKEDITOR.instances[instanceName];
+					var editorContent = editor.getData();
+					data[editor.textareaName] = editorContent;
+				}
+			}
+			formData.append("postData", JSON.stringify(data));
+			fetch("/api/v1/manage/add-post-data", {
+				method: "POST",
+				body: formData
+			}).then(res => res.json()).then(data => {
+				if (data.success) {
+					window.location.href = `/api/v1/manage/render-post?postname=${encodeURIComponent(postName)}`;
+				} else {
+					console.error("Submission failed:", data.message);
+				}
+			});
+		}
 	</script>
 </div>

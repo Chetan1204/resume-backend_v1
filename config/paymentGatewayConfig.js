@@ -1,4 +1,6 @@
 const Razorpay = require("razorpay");
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const Paytm = require('paytm-pg-node-sdk');
 
 const razorpayInstance = new Razorpay({
 	key_id: process.env.key_id,
@@ -11,4 +13,4 @@ const razorpayInstance = new Razorpay({
 // example
 // instance.payments.fetch(paymentId);
 
-module.exports = {razorpayInstance}
+module.exports = {razorpayInstance, stripe}

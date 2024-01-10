@@ -12,18 +12,29 @@
   "license": "ISC",
   "dependencies": {
     "@ckeditor/ckeditor5-build-classic": "^40.1.0",
+    "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
     "ckeditor5": "^40.1.0",
     "connect-flash": "^0.1.1",
+    "connect-mongo": "^5.1.0",
+    "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "ejs": "^3.1.9",
     "express": "^4.18.2",
     "express-ejs-layouts": "^2.5.1",
     "express-flash": "^0.0.2",
+    "express-session": "^1.17.3",
     "express-validator": "^7.0.1",
     "fs": "^0.0.1-security",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.3.0",
     "mongoose": "^8.0.3",
+    "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
-    "razorpay": "^2.9.2"
+    "nodemailer": "^6.9.7",
+    "paytm-pg-node-sdk": "^1.0.4",
+    "razorpay": "^2.9.2",
+    "stripe": "^14.10.0",
+    "uuid": "^9.0.1"
   }
 }

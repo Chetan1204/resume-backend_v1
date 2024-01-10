@@ -1,9 +1,29 @@
 const mongoose = require("mongoose");
+const {CategorySchema} = require('./categoryModel');
 
 const PostSchema = new mongoose.Schema({
+	postType:{
+		type:mongoose.Schema.Types.ObjectId,
+		ref:"PostTypes"
+	},
 	postName:String,
-	modelName:String,
-	postData:mongoose.Schema.Types.Mixed
+	customField:[String],
+	category:[CategorySchema],
+	defaultPostTitle:String,
+	defaultPostContent:String,
+	postData:mongoose.Schema.Types.Mixed,
+	status:{
+		type:String,
+		enum:["published", "draft"]
+	},
+	revisions:{
+		type:Number,
+		default:0
+	},
+	visibility:{
+		type:String,
+		enum:["visible", "unlisted"]
+	}
 });
 
 const postModel = mongoose.model("Post", PostSchema);

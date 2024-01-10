@@ -141,7 +141,7 @@
 		const ejsPageName = document.getElementById("ejspageName").textContent;
 		const sectionName = document.getElementById("sectionName").value;
 
-		fetch("/manage/add-section", {
+		fetch("/api/v1/manage/add-section", {
 			method:"POST",
 			headers:{
 				"Content-Type":"application/json"
@@ -206,14 +206,12 @@
 		const checked = document.querySelectorAll(".section-choose-checkbox");
 		let elementObject = undefined;
 		let sectionName = undefined;
-		console.log(checked);
 		checked.forEach(checkItem => {
 			if(checkItem.checked){
 				var parentDiv = checkItem.parentNode.parentNode;
 				sectionName = parentDiv.querySelector("div h5").textContent;
 				// Find the sibling div with class "inputFieldsContainer"
 				const inputFieldsContainer = parentDiv.querySelector('.inputFieldsContainer');
-				console.log("ITEM CHECKED, GETTING FIELD CONTAINER", inputFieldsContainer);
 				if (elementType === 'input') {
 					elementObject = {
 						elementName:"input",
@@ -265,7 +263,7 @@
 					// 	});
 				}
 				if(elementObject && sectionName){
-					fetch("/manage/add-element", {
+					fetch("/api/v1/manage/add-element", {
 						method:"POST",
 						headers:{
 							"Content-Type":"application/json"
@@ -297,8 +295,7 @@
 		};
 
 		try {
-			console.log(requestData, "<<<");
-			const response = await fetch('/manage/save-field', {
+			const response = await fetch('/api/v1/manage/save-field', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
