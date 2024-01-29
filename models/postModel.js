@@ -22,8 +22,15 @@ const PostSchema = new mongoose.Schema({
 	},
 	visibility:{
 		type:String,
-		enum:["visible", "unlisted"]
+		enum:["visible", "hidden"]
+	},
+	permaLink:{
+		type:String,
+		required:false,
+		default:"/"
 	}
+},{
+	timestamps:true
 });
 
 const postModel = mongoose.model("Post", PostSchema);

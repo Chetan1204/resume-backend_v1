@@ -23,6 +23,8 @@ const AdminSchema = new mongoose.Schema({
 	status:{
 		type:Boolean,
 	},
+	otp:String,
+	themeName:String,
 	access_token:String
 })
 

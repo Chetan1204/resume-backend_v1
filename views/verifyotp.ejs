@@ -1,0 +1,45 @@
+<div style="width: 100%;position: fixed;top: 0;left: 0; right: 0;bottom: 0;z-index: 100;background-color: #f5f7f7;">
+	<div class="center-wr" style="background-color: #f5f7f7;">
+		<div style="display: flex; flex-direction: column; align-items: center; justify-content: start;width: 100%;height: 100%;">
+			<div style="width: 100%;height: calc(100%);display: flex;align-items: center;justify-content: center;">
+				
+				<div style="width: 450px; background-color: #fff;display: flex;flex-direction: column;align-items: start;justify-content: start;padding: 15px;box-shadow: 4px 4px 12px 4px #e6e6e6;">
+					<figure style="display: flex;align-items: center; justify-content: start;width: 100%;">
+						<img src="/static/icons8-login-64.png" width="64" alt="Sign In">
+						<figcaption style="font-weight: 600;font-size: 18px;">Your branding here</figcaption>
+					</figure>
+					<div class="login-heading-wr" style="padding: 0px">
+						<!-- <img src="/static/icons8-secure-50.png" style="margin-right: 10px;" width="50" alt="Login"> -->
+						<h3>Forgot Password</h3>
+						<p style="margin-top: 5px;margin-bottom:0;"><strong>email:</strong><%= email%> </p>
+					</div>
+			
+					<form style="width: 100%;" action="/api/v1/manage/auth/add-new-password" method="POST">
+                        <input type="hidden" value="<%=email%>" name="email">
+                        <div class="inputContainer" style="margin: 40px 0;">
+                            <input required="required" maxlength="1" type="text" class="otp-input" id="otp-input1" name="otp1">
+                            <input required="required" maxlength="1" type="text" class="otp-input" id="otp-input2" name="otp2">
+                            <input required="required" maxlength="1" type="text" class="otp-input" id="otp-input3" name="otp3">
+                            <input required="required" maxlength="1" type="text" class="otp-input" id="otp-input4" name="otp4"> 
+                            
+                           </div>
+						<button type="submit" class="button-main button-main-md" style="width: 100%;padding: 10px;">Verify Otp</button>
+					</form>
+			
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+  document.addEventListener('input', function (e) {
+    if (e.target.classList.contains('otp-input') && e.target.value.length >= 1) {
+      var index = Array.prototype.indexOf.call(e.target.parentElement.children, e.target);
+      var nextInput = e.target.parentElement.children[index + 1];
+      if (nextInput) {
+        nextInput.focus();
+      }
+    }
+  });
+</script>

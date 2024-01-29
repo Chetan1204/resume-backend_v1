@@ -6,12 +6,13 @@ exports.verifyLogin = async (req, res, next) => {
 		const {access_token} = req.session;
 		if(!access_token) return res.redirect("/api/v1/manage/auth/")
 		const decoded = jwt.verify(access_token, process.env.ACCESS_TOKEN_SECRET);
-		if(!decoded) return res.redirect("/api/v1/manage/auth/")
+		if(!decoded) return res.redirect("/api/v1/manage/auth")
 		const match = await adminModel.findOne({email: decoded.email});
 		if(match && access_token === match.access_token){
+			req.jwt = {decoded}
 			next();
 		} else{
-			res.redirect("/api/v1/manage/auth/")
+			res.redirect("/api/v1/manage/auth")
 		}
 	} catch (error) {
 		console.log(error);
@@ -29,7 +30,7 @@ exports.verifyAdmin = async (req, res, next) => {
 		if(match && match.roles.indexOf("admin") !== -1){
 			next();
 		} else{
-			res.redirect("/api/v1/manage/auth/")
+			res.redirect("/api/v1/manage/auth")
 		}
 	} catch (error) {
 		console.log(error);

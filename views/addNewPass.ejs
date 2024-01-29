@@ -1,0 +1,38 @@
+<div class="ejs-inner-container" >
+	<div class="center-wr" class="primary-bg-color">
+		<div class="login-page-container">
+			<div class="login-form-wr">
+				
+				<div class="login-form-container">
+					<figure>
+						<img src="/static/icons8-login-64.png" width="64" alt="Sign In">
+						<figcaption>Start your CMS journey in style</figcaption>
+					</figure>
+					<div class="login-heading-wr">
+						<h3>Reset Password</h3>
+						<p>Add new password</p>
+						<p style="color: red;""><%=message%></p>
+					</div>
+			
+					<form action="/api/v1/manage/auth/update-password" method="POST">
+						<div>
+                            <input type="hidden" value="<%=email%>" name="email">
+							<input  class="new-pwd-input"
+							required
+							type="text"
+							id="email"
+							name="password" value="" placeholder="new password">
+                            <input class="new-pwd-input"
+							required
+							type="text"
+							id="email"
+							name="confirmPassword" value="" placeholder="confirm new password">
+						</div>
+						<button type="submit" class="button-main button-main-md add-new-pass-signup" >Update Password</button>
+					</form>
+				
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

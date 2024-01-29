@@ -102,9 +102,9 @@
 								<% if(pageData.sections[i].sectionContent[j].elementItems?.length > 0) { %>
 									<table width="100%" cellpadding="0" cellspacing="0">
 										<thead>
-											<tr style="border-bottom: 1px solid rgba(0,0,0,0.25);">
+											<tr style="border-bottom: 1px solid rgba(0,0,0,0.25);background-color: aliceblue;">
 												<th></th>
-												<th>Item</th>
+												<th style="padding: 10px 0px;">Item</th>
 												<th>Id</th>
 												<th>Item Type</th>
 												<th>Actions</th>
@@ -112,7 +112,7 @@
 										</thead>
 										<tbody class="sortable" data-sectionname="<%= pageData.sections[i].sectionName %>" data-arrayname="<%= pageData.sections[i].sectionContent[j].elementAttrName %>">
 											<% pageData.sections[i].sectionContent[j].elementItems.forEach((arrayitem, index)=> { %>
-												<tr style="border-bottom: 1px solid rgba(0,0,0,0.25);">
+												<tr style="border-bottom: 1px solid rgba(0,0,0,0.25);background-color: #fff;">
 													<td
 														style="padding: 5px 10px;font-size: 13px;font-weight: 600;">
 														<i class="fa-solid fa-grip-vertical"></i></td>

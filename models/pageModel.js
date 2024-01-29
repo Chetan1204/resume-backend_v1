@@ -44,7 +44,7 @@ const PageSchema = new mongoose.Schema({
 		},
 		sectionContent:[ElementSchema]
 	}]
-})
+},{timestamps:true})
 
 
 

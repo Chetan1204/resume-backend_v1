@@ -1,8 +1,8 @@
-exports.defaultPage = (sanitizedPageName) => `
+
 
 <div style="width:80%;border-right: 1px solid rgba(0,0,0,0.25);overflow-y:scroll;height:100%">
 	<div class="page-name" style="display:flex; align-items:center;justify-content:space-between;padding:8px 24px;">
-		<h1 id="ejspageName">${sanitizedPageName}</h1>
+		<h1 id="ejspageName">OurCulture</h1>
 	</div>
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<style>
@@ -446,7 +446,7 @@ exports.defaultPage = (sanitizedPageName) => `
 		sectionNamePointer = sectionName;
 		document.getElementById("jsonviewModal").style.display = "block";
 		const editor = CKEDITOR.instances['jsonContent'];
-		editor.setData(\`\$\{itemValue?.replaceAll('"','')\}\`);
+		editor.setData(`${itemValue?.replaceAll('"','')}`);
 		// document.getElementById("jsonContent").value = itemValue;
 		document.getElementById("itemId").value = itemId;
 		document.getElementById("arrayName").value = arrayName;
@@ -523,9 +523,9 @@ exports.defaultPage = (sanitizedPageName) => `
 				return;
 			} else {
 				if (select.value === "String") {
-					const htmlText = \`
+					const htmlText = `
 					<label class="mb-3" for="elementName">ITEM CONTENT:</label>
-					<input name="itemValue" style="width: 100%;display: block;" type="text">\`;
+					<input name="itemValue" style="width: 100%;display: block;" type="text">`;
 					const elem = document.getElementById("add-item-last-btn");
 					const newElement = document.createElement("div");
 					newElement.id = 'new-item-container'
@@ -533,9 +533,9 @@ exports.defaultPage = (sanitizedPageName) => `
 					elem.parentNode.insertBefore(newElement, elem);
 					document.getElementById("arrayItemNamePointer").value = arrayItemNamePointer;
 				} else if (select.value === "Textarea") {
-					const htmlText = \`
+					const htmlText = `
 					<label class="mb-3" for="elementName">ITEM CONTENT:</label>
-					<textarea id="array-item-textarea" style="width: 100%;display: block;" rows="8" cols="50"  name="itemValue" type="text"></textarea>\`;
+					<textarea id="array-item-textarea" style="width: 100%;display: block;" rows="8" cols="50"  name="itemValue" type="text"></textarea>`;
 					const elem = document.getElementById("add-item-last-btn");
 					const newElement = document.createElement("div");
 					newElement.id = 'new-item-container'
@@ -551,9 +551,9 @@ exports.defaultPage = (sanitizedPageName) => `
 						}
 					});
 				} else if (select.value === "JSON") {
-					const htmlText = \`
+					const htmlText = `
 					<label class="mb-3" for="elementName">JSON DATA:</label>
-					<textarea id="array-item-textarea" style="width: 100%;display: block;" rows="8" cols="50" type="text" name="itemValue"></textarea>\`;
+					<textarea id="array-item-textarea" style="width: 100%;display: block;" rows="8" cols="50" type="text" name="itemValue"></textarea>`;
 					const elem = document.getElementById("add-item-last-btn");
 					const newElement = document.createElement("div");
 					newElement.id = 'new-item-container'
@@ -567,9 +567,9 @@ exports.defaultPage = (sanitizedPageName) => `
 					// });
 					document.getElementById("arrayItemNamePointer").value = arrayItemNamePointer;
 				} else if (select.value === "Image") {
-					const htmlText = \`
+					const htmlText = `
 					<label class="mb-3" for="elementName">ITEM CONTENT:</label>
-					<input name="itemValue" style="width: 100%;display: block;" type="file">\`;
+					<input name="itemValue" style="width: 100%;display: block;" type="file">`;
 					const elem = document.getElementById("add-item-last-btn");
 					const newElement = document.createElement("div");
 					newElement.id = 'new-item-container';
@@ -969,15 +969,3 @@ exports.defaultPage = (sanitizedPageName) => `
 		.then(()=>{ window.location.reload() }).catch(err => console.log(err))
 	}
 </script>
-`
-
-exports.newPageSection = (sectionTitle) => `<div  style="border-bottom: 1px solid rgba(0,0,0,0.25);width: 100%;padding: 15px;">
-<div style="width: 80%;">
-	<div>
-		<h5>${sectionTitle}</h5>
-	</div>
-	<div id="${sectionTitle.toLowerCase()}-container">
-		
-	</div>
-</div>
-</div>`

@@ -1,5 +1,13 @@
 <div style="display: flex;width: 100%;align-items: start;justify-content: start;height: 100%;">
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<style>
+		tbody tr:nth-child(odd){
+			background-color: #f6f7f7;
+		}
+		tbody tr:nth-child(even){
+			background-color: #fff;
+		}
+	</style>
 	<div style="width: 80%;height: 100%;padding: 20px;overflow-y: scroll;border-right: 1px solid rgba(0,0,0,0.25);">
 		<div>
 			<h3>
@@ -73,129 +81,7 @@
 										<%= postData ? postData[item] : '' %>
 									</textarea>
 								</div>
-								<% } else if(dataObject[item].value=='Repeater' ) { %>
-									<div class="repeater-item-parent" style="font-size: 13px;">
-										<label class="form-label mt-3">
-											<%= item %>
-										</label>
-										<button onclick="openRepeaterItem(this, '<%= item %>', '<%= JSON.stringify(dataObject[item]?.data) %>')" type="button"
-											class="button-secondary" style="display: block;margin-bottom: 15px;">
-											<i class="fa-solid fa-plus" style="margin-right: 10px;"></i>Add new item
-										</button>
-										<div class="repeater-item-container" style="display: none; border:1px solid rgba(0,0,0,0.25);background-color: #fff;padding: 15px;border-radius: 6px;margin-bottom: 15px;">
-											<input form="repeater-form" type="hidden" name="repeaterName">
-											<input form="repeater-form" type="hidden" name="postName" value="<%= postName %>">
-											<input form="repeater-form" type="hidden" name="postTypeId" value="<%= postTypeId %>">
-											<h5>Add Repeater Data:</h5>
-											<p style="margin:15px 0px;font-size: 12px;padding: 15px; border-radius: 10px;background-color: #7bd4ea52;"><strong>Note that</strong> the details provided in this repeater will be accessible seperately. This is a new repeater entry.</p>
-											<% if(Object.keys(dataObject[item]?.data)?.length > 0 ){ Object.keys(dataObject[item]?.data)?.forEach(innerItem => { 
-												if(dataObject[item]?.data[innerItem] == 'String' || dataObject[item]?.data[innerItem] == 'Number') { %>
-												<div class="section-input-container">
-													<label class="form-label mt-3" for="<%= innerItem %>">
-														<%= innerItem %>
-													</label>
-													<input form="repeater-form" class="form-control mb-3"
-														type="<%= dataObject[item]?.data[innerItem] == 'String' ? 'text': dataObject[item]?.data[innerItem] == 'Number' ? 'number' :'text' %>"
-														name="<%= innerItem %>" value="">
-												</div>
-											<% } else if(dataObject[item]?.data[innerItem] == 'Image') { %>
-												<div class="section-input-container">
-					
-													<label class="mb-3 mt-3" style="display: block;">
-														<%= innerItem %>
-													</label>
-													<div class="mb-3">
-														<img src="" alt="">
-													</div>
-													<p style="font-size: 14px;margin: 0; padding: 10px 0px;">Currently Chosen: <span
-															style="display: inline-block; margin-left: 10px;font-weight: 600;">
-															No Image Chosen
-														</span></p>
-													<input form="repeater-form" class="form-control mb-3" type="file" name="<%= innerItem %>" value="">
-												</div>
-											<% } else if(dataObject[item]?.data[innerItem] == 'Multiple Images') { %>
-												<div class="section-input-container">
-													<label class="mb-3 mt-3" style="display: block;">
-														<%= innerItem %>
-													</label>
-													<div class="mb-3" style="display: flex;align-items: center;gap: 10px;">
-														an array of images here
-													</div>
-													<input form="repeater-form" class="form-control mb-3" type="file" multiple name="<%= innerItem %>" value="">
-													<div></div>
-												</div>
-											<% } else if(dataObject[item]?.data[innerItem] == 'Mixed') { %>
-												<div class="section-input-container">
-													<label class="form-label mt-3" for="<%= item %>">
-														<%= innerItem %>
-													</label>
-													<textarea form="repeater-form" class="mb-3" name="<%= innerItem %>">
-														
-													</textarea>
-												</div>
-											<% } else if(dataObject[item]?.data[innerItem] == 'Array') { %>
-												<div style="font-size: 13px;">
-													<label class="form-label mt-3">
-														<%= innerItem %>
-													</label>
-													<button onclick="openRepeaterArrayModal(this, '<%= innerItem %>', '<%= item %>')" type="button"
-														class="button-secondary" style="display: block;margin-bottom: 15px;">
-														<i class="fa-solid fa-plus" style="margin-right: 10px;"></i>Add new item
-													</button>
-													<table width="100%" cellpadding="0" cellspacing="0">
-														<thead>
-															<tr style="border-bottom: 1px solid rgba(0,0,0,0.25);">
-																<th></th>
-																<th>Index</th>
-																<th>Id</th>
-																<th>Item</th>
-																<th>Item Type</th>
-																<th>Actions</th>
-															</tr>
-														</thead>
-														<tbody class="sortable" data-arrayname="<%= innerItem %>">
-															
-														</tbody>
-													</table>
-												</div>
-											<% }})} %>
-											<button type="button" onclick="handleAddRepeaterItem(this)" class="button-main button-main-md">Update</button>
-										</div>
-										<table width="100%" cellpadding="0" cellspacing="0">
-											<thead>
-												<tr style="border-bottom: 1px solid rgba(0,0,0,0.25);">
-													<th></th>
-													<th>Item</th>
-													<th>Actions</th>
-												</tr>
-											</thead>
-											<tbody class="sortable">
-												<% if(postData[item]?.length > 0) { postData[item]?.forEach( repeaterItem => { %>
-													<tr style="border-bottom:1px solid rgba(0,0,0,0.25);background-color: #f5f5f5;">
-														<td style="padding: 5px 10px;font-size: 13px;font-weight: 500;padding: 10px;">
-															<i class="fa-solid fa-grip-vertical"></i>
-														</td>
-														<td style="padding: 5px 10px;font-size: 13px;font-weight: 500;color: #54b2ff;">
-															<%= JSON.stringify(repeaterItem)?.slice(0,70)+'...' %>
-														</td>
-														<td>
-															<i style="font-size: 13px;margin-right: 5px;" class="fa-solid fa-pencil"></i>
-															<i style="font-size: 13px;" class="fa-solid fa-trash"></i>
-														</td>
-													</tr>
-												<% })} else { %>
-													<tr>
-														<td colspan="6">
-															<div style="background-color: #f5f5f5;border: 1px solid rgba(0,0,0,0.25);display: flex; align-items: center;justify-content: center;padding: 25px;">
-																<h5>No Repeater data added</h5>
-															</div>
-														</td>
-													</tr>
-												<% } %>
-											</tbody>
-										</table>
-									</div>
-								<% } else if(dataObject[item]=='Array') { %>
+								<% } else if(dataObject[item]=='Array') {	 %>
 									<div style="font-size: 13px;">
 										<label class="form-label mt-3">
 											<%= item %>	
@@ -205,11 +91,11 @@
 											<i class="fa-solid fa-plus" style="margin-right: 10px;"></i>Add new item
 										</button>
 										<% if(postData && postData[item] && postData[item]?.length> 0) { %>
-											<table width="100%" cellpadding="0" cellspacing="0">
+											<table width="100%" cellpadding="0" cellspacing="0" style="border: 1px solid rgba(0,0,0,0.25);">
 												<thead>
-													<tr style="border-bottom: 1px solid rgba(0,0,0,0.25);">
+													<tr style="border-bottom: 1px solid rgba(0,0,0,0.25);background-color:#fff;">
 														<th></th>
-														<th>Index</th>
+														<th style="padding: 10px;">Index</th>
 														<th>Id</th>
 														<th>Item</th>
 														<th>Item Type</th>
@@ -218,16 +104,14 @@
 												</thead>
 												<tbody class="sortable" data-arrayname="<%= item %>">
 													<% postData[item].forEach((arrayitem, index)=> { %>
-														<tr style="border-bottom: 1px solid rgba(0,0,0,0.25);">
-															<td
-																style="padding: 5px 10px;font-size: 13px;font-weight: 600;">
-																<i class="fa-solid fa-grip-vertical"></i></td>
-															<td
-																style="padding: 5px 10px;font-size: 13px;font-weight: 600;">
+														<tr style="border-bottom: 1px solid rgba(0,0,0,0.25);color: #2271B7;">
+															<td style="padding: 5px 10px;font-size: 13px;font-weight: 600;">
+																<i style="cursor: grab;" class="fa-solid fa-grip-vertical"></i>
+															</td>
+															<td style="padding: 5px 10px;font-size: 13px;font-weight: 600;">
 																<%= index+1 %>
 															</td>
-															<td
-																style="padding: 5px 10px;font-size: 13px;font-weight: 600;">
+															<td style="padding: 5px 10px;font-size: 13px;font-weight: 600;">
 																<%= arrayitem?.id %>
 															</td>
 															<td
@@ -235,10 +119,9 @@
 																<% if(arrayitem.type==="String" ) { %>
 																	<%= arrayitem.value %>
 																<% } else if(arrayitem.type==="Textarea" ) { %>
-																			<button class="button-secondary"><strong
-																					style="color: #2a5298;">Text
-																					Content</strong> (Click to
-																				View)</button>
+																			<button class="button-secondary">
+																				<strong style="color: #2a5298;">Text Content</strong> (Click to View)
+																			</button>
 																			<% } else if(arrayitem.type==="JSON" ) { %>
 																				<button type="button"
 																					onclick="openJSONViewer('<%= item %>', '<%= arrayitem.id %>', '<%= arrayitem.type %>', '<%= JSON.stringify(arrayitem.value) %>', '<%= index %>' )"
@@ -252,15 +135,11 @@
 																						width="50" alt="">
 																					<% } %>
 															</td>
-															<td
-																style="padding: 5px 10px;font-size: 13px;font-weight: 600;">
+															<td style="padding: 5px 10px;font-size: 13px;font-weight: 600;">
 																<%= arrayitem.type %>
 															</td>
-															<td
-																style="padding: 5px 10px;font-size: 13px;font-weight: 600;">
-																<i class="fa-solid fa-trash-can"
-																	style="cursor: pointer;"
-																	onclick="deleteArrayItem('<%= item %>', '<%= arrayitem.id %>')"></i>
+															<td style="padding: 5px 10px;font-size: 13px;font-weight: 600;">
+																<i class="fa-solid fa-trash-can" style="cursor: pointer;" onclick="deleteArrayItem('<%= item %>', '<%= arrayitem.id %>')"></i>
 															</td>
 														</tr>
 														<% }) %>
@@ -268,7 +147,54 @@
 											</table>
 											<% } %>
 									</div>
-									<% } }); } else { %>
+									<% } else if(item === 'repeaters' && dataObject[item]?.length > 0) { dataObject[item]?.forEach(repeaterItem => {  %>
+										<div style="margin-bottom: 15px;">
+											<label style="display: block;margin:10px 0px" for=""><%= repeaterItem?.repeaterLabel %></label>
+											<button type="button" onclick="openRepeaterModal('<%= repeaterItem?.id %>', '<%= JSON.stringify(repeaterItem) %>')" class="button-secondary">Add Repeater Item</button>
+										</div>
+										<% if(postData[item]?.filter(postrepeaterItem => postrepeaterItem?.repeaterId == repeaterItem?.id )?.length > 0){ 
+											postData[item]?.filter(postrepeaterItem => postrepeaterItem?.repeaterId == repeaterItem?.id ).forEach( postRepItem => {
+										%>
+											<div style="overflow-x: auto;width: 100%;">
+												<table style="width: 100%;" cellpadding="0" cellspacing="0" style="border: 1px solid rgba(0,0,0,0.25);">
+													<thead>
+														<tr style="border: 1px solid rgba(0,0,0,0.25); background-color: #fff;">
+															<% repeaterItem?.fields?.forEach(modelField=> { %>
+																<th style="padding: 10px;font-size: 13px;font-weight: 500;"><%= modelField?.fieldLabel %></th>
+															<% }) %>
+															<th style="padding: 10px;font-size: 13px;font-weight: 500;">Actions</th>
+														</tr>
+													</thead>
+													<tbody>
+														<% postRepItem?.data?.forEach( (dataField, dataFieldIndex) => { %>
+															<tr style="border: 1px solid rgba(0,0,0,0.25);color: #2271B7;">
+																<% 	repeaterItem?.fields?.forEach(fieldItem => { %>
+																<td style="padding: 5px 10px;font-size: 13px;font-weight: 500;">
+																	<% if(repeaterItem.fields.find(obj => obj.fieldName == fieldItem?.fieldName).fieldType == "Text") { %>
+																		<input disabled class="form-control" style="border: 1px solid rgba(0,0,0,0.25);width: 150px;" type="text" value="<%= dataField[fieldItem?.fieldName] || '' %>">
+																	<% } else if(repeaterItem.fields.find(obj => obj.fieldName == fieldItem?.fieldName).fieldType == "Editor") { %>
+																		<textarea disabled style="height: 100px;width: 200px;border: 1px solid rgba(0,0,0,0.25);" class="repeater-textarea" ><%= dataField[fieldItem?.fieldName] || "" %></textarea>
+																	<% } else if (repeaterItem.fields.find(obj => obj.fieldName == fieldItem?.fieldName).fieldType == "Image") { %>
+																		<img src="/images/<%= dataField[fieldItem?.fieldName] || 'placeholder.jpg' %>" style="object-fit: cover;width: 55px;height: 55px;border: 1px solid rgba(0,0,0,0.25);border-radius: 6px;" alt="<%= dataField[fieldItem?.fieldName] %>">
+																	<% } else if(repeaterItem.fields.find(obj => obj.fieldName == fieldItem?.fieldName).fieldType == "URL") { %>
+																		<a href="<%= dataField[fieldItem?.fieldName] %>"><%= dataField[fieldItem?.fieldName] %></a>
+																	<% } else { %>
+																		<%= dataField[fieldItem?.fieldName] %>
+																	<% } %>
+																</td>
+																<% }) %>
+																<td align="center">
+																	<i onclick="viewRepeaterItem('<%= postRepItem?.repeaterId %>', '<%= dataFieldIndex %>')" style="font-size: 11px;color: #484848;margin-right: 4px;cursor: pointer;" class="fa-solid fa-eye"></i>
+																	<i style="font-size: 11px;color: #484848;cursor: pointer;" class="fa-solid fa-trash-can"></i>
+																</td>
+															</tr>
+														<% }) %>
+													</tbody>
+												</table>
+											</div>
+										<% })} %>
+
+									<%  })}})} else { %>
 										<div>
 											<div
 												style="border-bottom: 1px solid rgba(0,0,0,0.25);padding: 25px 0px;width: 100%;">
@@ -281,14 +207,13 @@
 													<textarea id="default-post-content" style="padding: 15px 25px;"
 														name="defaultPostContent" cols="30" rows="10"
 														placeholder="Start writing text or HTML">
-											<%= defaultPostContent %>
-										</textarea>
+														<%= defaultPostContent %>
+													</textarea>
 												</div>
 											</div>
 										</div>
-										<% } %>
+									<% } %>
 			</div>
-
 		</form>
 
 		<div id="arrayItemModal" class="modal">
@@ -313,29 +238,24 @@
 			</div>
 		</div>
 
-		<div id="repeaterArrayItemModal" class="modal">
-			<div class="modal-content" id="repeater-modal-input-container">
-				<span class="close" onclick="closeRepeaterArrayModal()">&times;</span>
-				<input type="hidden" name="modelName" value="<%= modelName %>">
-				<input type="hidden" name="repeaterName" id="repeaterName"> 
-				<input type="hidden" name="arrayName"> 
-				<input type="hidden" name="postName" value="<%= postName %>">
-				<input type="hidden" name="postTypeId" value="<%= postTypeId %>">
-				<div id="item-modal-content" style="padding: 20px 0;font-size: 13px;">
-					<label for="repeaterArrayItemType" class="mb-3">Choose the item type</label>
-					<select onchange="chooseRepeaterArrayItemType()" name="itemType" id="repeaterArrayItemType"
-						style="display: block;width: 100%;padding: 5px 10px; background-color: aliceblue;margin-bottom: 5px;">
-						<option value="">Choose a type</option>
-						<option value="String">String</option>
-						<option value="Textarea">Textarea</option>
-						<option value="JSON">JSON</option>
-						<option value="Image">Image</option>
-					</select>
-					<button id="repeater-add-item-last-btn" class="mt-3 button-main button-main-md" onclick="addRepeaterItem()">Add Item</button>
-				</div>
+		<div id="repeaterModal" class="modal">
+			<div class="modal-content">
+				<span class="close" onclick="closeRepeaterModal()">&times;</span>
+				<form action="/api/v1/manage/add-post-repeater-item" method="post" enctype="multipart/form-data">
+					<input type="hidden" name="modelName" value="<%= modelName %>">
+					<input type="hidden" name="postName" value="<%= postName %>">
+					<input type="hidden" name="postTypeId" value="<%= postTypeId %>">
+					<h5 style="margin: 15px 0px;">Enter Repeater details</h5>
+					<p style="font-size: 12px;margin: 0px;padding: 10px;background-color: #54f4ff41;border-radius: 6px;"><strong>Note that</strong> the data you add for this repeater will be accessible seperately, only the fields specified in the repeater custom field can be added. Edit the repeater custom fields to add more data.</p>
+					<div id="repeater-fields-container">
+						
+					</div>
+					<div style="text-align: right;">
+						<button class="button-secondary" style="border: 1px solid #54b2ff; color: #54b2ff;background-color: #fff;font-weight: 600;">Update Data</button>
+					</div>
+				</form>
 			</div>
 		</div>
-
 
 		<div id="jsonviewModal" class="modal">
 			<div class="modal-content" id="modal-input-container">
@@ -354,8 +274,7 @@
 			</div>
 		</div>
 	</div>
-	<div
-		style="width: 20%;display: flex;flex-direction: column;padding: 20px;align-items: start; justify-content: start;gap: 15px;">
+	<div style="width: 20%;display: flex;flex-direction: column;padding: 20px;align-items: start; justify-content: start;gap: 15px;">
 		<div
 			style="background-color: #fff;border-radius: 8px; padding: 10px; width: 100%;border: 1px solid rgba(0,0,0,0.25);display: flex;flex-direction: column;gap: 5px;">
 			<h5
@@ -370,7 +289,7 @@
 					</td>
 					<td>
 						<div class="dropdown">
-							<span class="sidemenu-summary-btn dropdown-toggle" data-bs-auto-close="outside" style="width: 100%;padding: 5px;display: inline-block;font-weight:600;font-size: 13px;text-transform: uppercase;color:<%= status == 'published' ? '#65B741' : '#484848'  %>" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+							<span class="sidemenu-summary-btn dropdown-toggle" data-bs-auto-close="outside" style="width: 100%;padding: 5px;display: inline-block;font-weight:600;font-size: 13px;text-transform: uppercase;color:<%= status == 'published' ? '#65B741' : '#2a5298'  %>" type="button" data-bs-toggle="dropdown" aria-expanded="false">
 							  <%= status || "unset" %>
 							</span>
 							<div class="dropdown-menu" style="box-shadow: 4px 4px 12px 0 rgba(0,0,0,0.25);">
@@ -378,14 +297,13 @@
 									<h5 style="font-size: 14px;">Publish this post:</h5>
 									<p style="margin: 0;font-size: 11px;font-weight: 400;margin-bottom: 10px;">Manage the status of this post, a only posts that are published will be accessible publicly.</p>
 									<div style="display: flex;align-items: center;padding: 5px;gap: 5px;">
-										<input type="radio" name="pageStatus" id="publishPage">
+										<input type="radio" value="published" onchange="handlePageStatus()" <%= status == "published" && "checked" %> name="pageStatus" id="publishPage">
 										<label for="publishPage" style="font-size: 12px;font-weight: 500;">Publish</label>
 									</div>
 									<div style="display: flex;align-items: center;padding: 5px;gap: 5px;margin-bottom: 10px;">
-										<input type="radio" name="pageStatus" id="withdrawPage">
-										<label for="withdrawPage" style="font-size: 12px;font-weight: 500;">Withdraw</label>
+										<input type="radio" value="draft" onchange="handlePageStatus()" <%= status == "draft" && "checked" %> name="pageStatus" id="withdrawPage">
+										<label for="withdrawPage" style="font-size: 12px;font-weight: 500;">Draft</label>
 									</div>
-									<button class="button-main button-main-sm">Save</button>
 								</div>
 							</div>
 						</div>
@@ -393,24 +311,23 @@
 				</tr>
 				<tr>
 					<td>
-						<!-- <i style="text-align: center;width: 15px;display: inline-block;color: #484848;font-size: 14px;" class="fa-solid fa-eye"></i> -->
 						<span style="display: inline-block;color: #484848;font-weight:500;font-size: 13px;">Visibility</span>
 					</td>
 					<td>
 						<div class="dropdown">
-							<span class="sidemenu-summary-btn dropdown-toggle" data-bs-auto-close="outside" style="width: 100%;padding: 5px;display: inline-block;color: #484848;font-weight:500;font-size: 13px;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-							  <%= 'Visible' %>
+							<span class="sidemenu-summary-btn dropdown-toggle" data-bs-auto-close="outside" style="width: 100%;padding: 5px;display: inline-block;color: #484848;font-weight:500;font-size: 13px;text-transform: uppercase;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+							  <%= visibility || 'unset' %>
 							</span>
 							<div class="dropdown-menu" style="box-shadow: 4px 4px 12px 0 rgba(0,0,0,0.25);">
 								<div style="display: flex;align-items: start;justify-content: start;flex-direction: column;padding: 10px;width: 300px;">
 									<h5 style="font-size: 14px;">Page Visibility:</h5>
 									<p style="margin: 0;font-size: 11px;font-weight: 400;margin-bottom: 10px;">Manage the visibility of this page, a only posts that are visible will be accessible publicly.</p>
 									<div style="display: flex;align-items: center;padding: 5px;gap: 5px;">
-										<input type="radio" name="pageVisibility" id="makePageVisible">
+										<input onchange="handlePostVisibility()" <%= visibility =="visible" && "checked" %> value="visible" type="radio" name="pageVisibility" id="makePageVisible">
 										<label for="makePageVisible" style="font-size: 12px;font-weight: 500;">Visible (Public)</label>
 									</div>
 									<div style="display: flex;align-items: center;padding: 5px;gap: 5px;">
-										<input type="radio" name="pageVisibility" id="makePageHidden">
+										<input onchange="handlePostVisibility()" <%= visibility =="hidden" && "checked" %> value="hidden" type="radio" name="pageVisibility" id="makePageHidden">
 										<label for="makePageHidden" style="font-size: 12px;font-weight: 500;">Hidden</label>
 									</div>
 								</div>
@@ -420,7 +337,6 @@
 				</tr>
 				<tr>
 					<td>
-						<!-- <i style="text-align: center;width: 15px;display: inline-block;color: #484848;font-size: 14px;" class="fa-solid fa-code-compare"></i> -->
 						<span style="display: inline-block;color: #484848;font-weight:500;font-size: 13px;">Revisions</span>
 					</td>
 					<td>
@@ -431,19 +347,25 @@
 				</tr>
 				<tr>
 					<td>
-						<!-- <i style="text-align: center;width: 15px;display: inline-block;color: #484848;font-size: 14px;" class="fa-solid fa-code-compare"></i> -->
 						<span style="display: inline-block;color: #484848;font-weight:500;font-size: 13px;">URL</span>
 					</td>
 					<td>
 						<div class="dropdown">
 							<span class="sidemenu-summary-btn dropdown-toggle" style="width: 100%;padding: 5px;display: inline-block;color: #54b2ff;font-weight:600;font-size: 13px;font-family: Arial, Helvetica, sans-serif;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-							  <%= 'url not found' %>
+							  <%= permaLink || 'url not found' %>
 							</span>
 							<div class="dropdown-menu" style="box-shadow: 4px 4px 12px 0 rgba(0,0,0,0.25);">
 								<div style="display: flex;align-items: start;justify-content: start;flex-direction: column;padding: 10px;width: 300px;">
 									<p style="margin: 0;font-size: 11px;font-weight: 400;">This slug will be used as a unique route for your webpage or webpost.</p>
-									<label for="url-post" style="font-size: 12px;margin-top: 10px;">permalink</label>
-									<input class="form-control" type="text" name="postUrlSlug" id="url-post">
+									<form action="/api/v1/manage/update-post-permalink" method="post">
+										<label for="url-post" style="font-size: 12px;margin-top: 10px;">permalink</label>
+										<div style="display: flex;align-items: center;">
+											<input style="font-weight: 600;font-size: 12px !important;" class="form-control" type="text" name="permalink" id="url-post" value="<%= permaLink %>">
+											<input type="hidden" name="postName" value="<%= postName %>">
+											<input type="hidden" name="postTypeId" value="<%= postTypeId %>">
+											<button class="button-secondary" style="background-color: #42be6c42;text-transform: uppercase;font-size: 11px;font-weight: 600;">Publish</button>
+										</div>
+									</form>
 								</div>
 							</div>
 						</div>
@@ -451,8 +373,7 @@
 				</tr>
 			</table>
 			<button type="submit" form="add-post-data-form" class="mt-3 button-main button-main-md">Update Post</button>
-			<div
-				style="display: flex;align-items: center;justify-content: space-between;border-top:1px solid rgba(0,0,0,0.25);padding: 10px;">
+			<div style="display: flex;align-items: center;justify-content: space-between;border-top:1px solid rgba(0,0,0,0.25);padding: 10px;">
 				<p style="margin: 0;font-weight: 500;color: #872341;font-size: 14px;">Delete this post</p>
 				<button class="button-main button-main-md button-danger"
 					onclick="deletePost('<%= postId %>', '<%= postTypeId %>')">Delete</button>
@@ -460,9 +381,9 @@
 		</div>
 		<div
 			style="color: #484848;font-weight:500;font-size: 13px;background-color: #fff;border-radius: 8px; padding: 10px; width: 100%;border: 1px solid rgba(0,0,0,0.25);display: flex;flex-direction: column;gap: 5px;">
-			<h5
-				style="font-weight: 600; font-size: 13px; text-transform: uppercase;margin-bottom: 15px; border-bottom: 1px solid rgba(0,0,0,0.25);padding-bottom: 5px;">
-				ACF DATA</h5>
+			<h5 style="font-weight: 600; font-size: 13px; text-transform: uppercase;margin-bottom: 15px; border-bottom: 1px solid rgba(0,0,0,0.25);padding-bottom: 5px;">
+				ACF DATA
+			</h5>
 			<div style="display: flex;align-items: center;gap: 10px;">
 				<i style="text-align: center;width: 15px;display: inline-block;color: #484848;font-size: 14px;"
 					class="fa-solid fa-link"></i>
@@ -471,36 +392,38 @@
 			<% if(!Object.keys(dataObject).length> 0) { %>
 				<p style="margin: 0; color: #a1a1a1;">No fields linked yet</p>
 				<a href="/api/v1/manage/all-models" class="button-secondary">Add Custom Field</a>
-				<% } %>
-					<% if(customFields.length> 0) { %>
-						<ul>
-							<% customFields.forEach((item, index)=> { %>
-								<li>
-									<p style="margin: 0;font-size: 13px;">
-										<%= item %> <span><a href="/api/v1/manage/rendermodel?modelname=<%= item %>"
-													style="color: #2a5298;font-weight: 600;margin-left: 10px;">View</a></span>
-									</p>
-								</li>
-								<% }) %>
-						</ul>
-						<% } %>
+			<% } %>
+			<% if(customFields.length> 0) { %>
+				<ul>
+					<% customFields.forEach((item, index)=> { %>
+						<li>
+							<p style="margin: 0;font-size: 13px;">
+								<%= item %> 
+								<span>
+									<a href="/api/v1/manage/rendermodel?modelname=<%= customFieldIds[index] %>" style="color: #2a5298;font-weight: 600;margin-left: 10px;">View</a>
+								</span>
+							</p>
+						</li>
+					<% }) %>
+				</ul>
+			<% } %>
 		</div>
 		<div
 			style="color: #484848;font-weight:500;font-size: 13px;background-color: #fff;border-radius: 8px; padding: 10px; width: 100%;border: 1px solid rgba(0,0,0,0.25);display: flex;flex-direction: column;gap: 5px;">
-			<h5
-				style="font-weight: 600; font-size: 13px; text-transform: uppercase;margin-bottom: 15px; border-bottom: 1px solid rgba(0,0,0,0.25);padding-bottom: 5px;">
-				Category</h5>
+			<h5 style="font-weight: 600; font-size: 13px; text-transform: uppercase;margin-bottom: 15px; border-bottom: 1px solid rgba(0,0,0,0.25);padding-bottom: 5px;">
+				Category
+			</h5>
 			<div style="display: flex;align-items: center;gap: 10px;">
 				<i style="text-align: center;width: 15px;display: inline-block;color: #484848;font-size: 14px;"
 					class="fa-solid fa-link"></i>
 				<span style="display: inline-block;font-weight: 600;">Linked Categories:</span>
 			</div>
 			<% if(category?.length> 0) { %>
-				<ul style="padding: 0;">
+				<ul style="padding: 0; height: 80px;overflow-y: scroll;">
 					<% category.forEach((item, index)=> { %>
 						<li
-							style="background: #f1f1f1;border-bottom: 1px solid rgba(0,0,0,0.25);list-style: none;padding: 5px;display: flex;align-items:center;justify-content: space-between;">
-							<p style="margin: 0;font-size: 13px;">
+							style="background: #fff;border-bottom: 1px solid rgba(0,0,0,0.25);list-style: none;padding: 5px;display: flex;align-items:center;justify-content: space-between;">
+							<p style="margin: 0;font-size: 12px;">
 								<%= item?.categoryName %>
 							</p>
 							<p style="margin: 0;cursor: pointer;"
@@ -513,8 +436,7 @@
 				<p style="margin: 0; color: #a1a1a1;">No categories linked yet</p>
 			<% } %>
 			<div style="display: flex;align-items: center;gap: 10px; margin-top: 15px;">
-				<i style="text-align: center;width: 15px;display: inline-block;color: #484848;font-size: 14px;"
-					class="fa-solid fa-plus"></i>
+				<i style="text-align: center;width: 15px;display: inline-block;color: #484848;font-size: 14px;" class="fa-solid fa-plus"></i>
 				<span style="display: inline-block;font-weight: 600;">Add Categories:</span>
 			</div>
 			<form action="/api/v1/manage/add-post-category" method="POST" style="width: 100%;">
@@ -527,7 +449,7 @@
 						<option value="<%= item?._id %>">
 							<%= item?.categoryName %>
 						</option>
-						<% })} %>
+					<% })} %>
 				</select>
 				<button class="button-main button-main-md mt-2">Add</button>
 			</form>
@@ -553,11 +475,15 @@
 	</div>
 	<script src="https://unpkg.com/sortablejs@1.14.0/Sortable.min.js"></script>
 	<script>
+		let repeaterFormDataGlb = new FormData();
+		function resetRepeaterFormData() {
+			repeaterFormDataGlb = new FormData();
+		}
 		let arrayItemNamePointer;
 		let multifilescontainer;
 		window.addEventListener("DOMContentLoaded", () => {
 
-			const textareaElements = document.querySelectorAll('textarea:not(#jsonContent)');
+			const textareaElements = document.querySelectorAll('textarea:not(#jsonContent):not(.repeater-textarea)');
 			textareaElements.forEach(textarea => {
 				CKEDITOR.replace(textarea, {
 					on: {
@@ -573,7 +499,6 @@
 				onEnd: function (evt) {
 					var newOrder = Array.from(evt.from.children).map(function (el) {
 						const dataElem = el.querySelector("td:nth-child(3)")
-
 						return dataElem.textContent.trim()
 					});
 					const postName = document.getElementById("post-name-glb").value;
@@ -586,35 +511,119 @@
 						body: JSON.stringify({ postName, postTypeId, arrayItemNamePointer: evt.to.dataset.arrayname, order: newOrder })
 					})
 						.then(res => res.json())
-						.then(data => { })
+						.then(data => {})
 				},
 			});
 		});
 
-		function handleAddRepeaterItem(buttonElement) {
-			const itemsContainer = buttonElement.closest(".repeater-item-container");
-			const allInputs = itemsContainer.querySelectorAll("input:not([type='file'])");
-			const allFileInputs = itemsContainer.querySelectorAll("input[type='file']")
-			const formData = new FormData();
-			allInputs.forEach(input=>{
-				formData.append(input.getAttribute("name"), input.value);
-				console.log(input.getAttribute("name"), input.value);
-			})
-			allFileInputs.forEach(fileInput=>{
-				formData.append(fileInput.getAttribute("name"), fileInput.files[0])
-				console.log(fileInput.getAttribute("name"), fileInput.files[0]?.name);
-			})
+		function viewRepeaterItem(repeaterId, repeaterItemIndex) {
+			console.log("View Repeater Item...")
+			const modelName = document.getElementById("model-name-glb").value;
+			const postName = document.getElementById("post-name-glb").value;
+			const postTypeId = document.getElementById("post-type-id-glb").value;
+			const redirect_url = `/api/v1/manage/render-post-repeater-item?modelName=${encodeURIComponent(modelName)}&postName=${encodeURIComponent(postName)}&postTypeId=${encodeURIComponent(postTypeId)}&repeaterId=${encodeURIComponent(repeaterId)}&repeaterItemIndex=${encodeURIComponent(repeaterItemIndex)}`
+			window.location.href = redirect_url;
+		}
 
-			fetch("/api/v1/manage/add-post-repeater-item", {
+		function openRepeaterModal(repeaterId, repeaterFieldData) {
+			console.log("opening repeater modal...")
+			const repeaterFieldsObject = JSON.parse(repeaterFieldData);
+			document.querySelector('#repeaterModal').style.display = "block";
+			const container = document.querySelector("#repeater-fields-container");
+			const inputelem = document.createElement("input");
+			inputelem.type = 'hidden'
+			inputelem.setAttribute('name', 'repeaterId')
+			inputelem.value = repeaterId;
+			container.appendChild(inputelem);
+			repeaterFieldsObject.fields?.forEach(fieldItem => {
+				if(fieldItem?.fieldType === "Text"){
+					const element = document.createElement("div");
+					const htmlText = `
+						<label class="form-label mt-3">
+							${fieldItem?.fieldLabel}
+						</label>
+						<input class="form-control mb-3" type="text" name="${fieldItem?.fieldName}">
+					`;
+					element.innerHTML = htmlText;
+					container.appendChild(element);
+				} else if (fieldItem?.fieldType === "Editor"){
+					const element = document.createElement("div");
+					const htmlText = `
+						<label class="form-label mt-3">
+							${fieldItem?.fieldLabel}
+						</label>
+						<textarea class="form-control mb-3" type="text" name="${fieldItem?.fieldName}"></textarea>
+					`;
+					element.innerHTML = htmlText;
+					container.appendChild(element);
+				} else if (fieldItem?.fieldType === "Image"){
+					const element = document.createElement("div");
+					const htmlText = `
+						<label class="form-label mt-3">
+							${fieldItem?.fieldLabel}
+						</label>
+						<div style="margin:10px 0px;"><img src="" alt="" ></div>	
+						<input class="form-control mb-3" type="file" name="${fieldItem?.fieldName}">
+					`;
+					element.innerHTML = htmlText;
+					container.appendChild(element);
+				} else if (fieldItem?.fieldType === "URL"){
+					const element = document.createElement("div");
+					const htmlText = `
+						<label class="form-label mt-3">
+							${fieldItem?.fieldLabel}
+						</label>
+						<input class="form-control mb-3" type="text" name="${fieldItem?.fieldName}">
+					`;
+					element.innerHTML = htmlText;
+					container.appendChild(element);
+				}
+			})
+		}
+
+		function closeRepeaterModal(){
+			console.log("closing repeater modal...");
+			document.querySelector('#repeaterModal').style.display = "none";
+			const container = document.querySelector("#repeater-fields-container");
+			container.innerHTML ="";
+		}
+
+		function handlePostVisibility() {
+			console.log("handle page visibility called...")
+			const selectedValue = document.querySelector('input[name="pageVisibility"]:checked').value;
+			const postName = document.getElementById("post-name-glb").value;
+			const postTypeId = document.getElementById("post-type-id-glb").value;
+			fetch("/api/v1/manage/change-post-visibility", {
 				method:"POST",
-				body:formData
+				headers:{
+					"Content-Type":"application/json"
+				},
+				body:JSON.stringify({postName, postTypeId, selectedValue})
+				
 			})
 			.then(res => res.json())
-			.then(data => window.location.reload())
+			.then(data => {})
+		}
+
+		function handlePageStatus() {
+			console.log("handle page status called...");
+			const selectedValue = document.querySelector('input[name="pageStatus"]:checked').value;
+			const postName = document.getElementById("post-name-glb").value;
+			const postTypeId = document.getElementById("post-type-id-glb").value;
+			fetch("/api/v1/manage/change-post-status", {
+				method:"POST",
+				headers:{
+					"Content-Type":"application/json"
+				},
+				body:JSON.stringify({postName, postTypeId, selectedValue})
+				
+			})
+			.then(res => res.json())
+			.then(data => {})
 		}
 
 		function deleteArrayItem(arrayName, itemId) {
-			
+			console.log("deleting array item...");
 			const postName = document.getElementById("post-name-glb").value;
 			const postTypeId = document.getElementById("post-type-id-glb").value;
 
@@ -630,6 +639,7 @@
 		}
 
 		function openJSONViewer(arrayName, itemId, itemType, itemValue, index) {
+			console.log("opening JSON viewer...");
 			document.getElementById("jsonviewModal").style.display = "block";
 			document.getElementById("jsonContent").value = itemValue;
 			document.getElementById("itemId").value = itemId;
@@ -642,6 +652,7 @@
 		}
 
 		function updateJSON() {
+			console.log("updating JSON data...");
 			const itemValue = document.getElementById("jsonContent").value;
 			const itemType = "JSON";
 			const itemId = document.getElementById("itemId").value;
@@ -662,7 +673,7 @@
 		}
 
 		function addItem() {
-			
+			console.log("adding array item...");
 			const formData = new FormData();
 			const container = document.querySelector("#modal-input-container");
 			const selector = container.querySelector("#itemType");
@@ -691,39 +702,8 @@
 			.then(data => window.location.reload())
 		}
 
-		function addRepeaterItem() {
-			
-			const formData = new FormData();
-			const container = document.querySelector("#repeater-modal-input-container");
-			const selector = container.querySelector("#repeaterArrayItemType");
-			formData.append(selector.getAttribute("name"), selector.value);
-			const allInputs = container.querySelectorAll("input:not([type='file'])");
-			if (allInputs?.length > 0) {
-				allInputs.forEach(input => {
-					formData.append(input.getAttribute("name"), input.value);
-				})
-			}
-			const textarea = container.querySelector("#array-item-textarea");
-			if (textarea) {
-				formData.append(textarea.getAttribute("name"), textarea.value);
-			}
-			const allFileInputs = container.querySelectorAll("input[type='file']");
-			if (allFileInputs?.length > 0) {
-				allFileInputs.forEach(fileInput => {
-					formData.append(fileInput.getAttribute("name"), fileInput.files[0])
-				});
-			}
-			fetch("/api/v1/manage/add-post-repeater-array-item", {
-				method: "POST",
-				body: formData
-			})
-			.then(res => res.json())
-			.then(data => console.log(data))
-		}
-
-
 		function removeCategory(categoryName, categoryId, postName, postTypeId) {
-			
+			console.log("Removing category...");
 			fetch("/api/v1/manage/unlink-category", {
 				method: "POST",
 				headers: {
@@ -739,7 +719,7 @@
 		}
 
 		function deletePost(postId, postTypeId) {
-			
+			console.log("Deleting post...");
 			Swal.fire({
 				title: 'Do you want to delete this post?',
 				showDenyButton: true,
@@ -768,33 +748,6 @@
 			})
 		}
 
-
-
-		function openRepeaterItem(buttonElement,repeaterName, dataObjectString) {
-			console.log(repeaterName, dataObjectString);
-			const parent = buttonElement.closest(".repeater-item-parent");
-			parent.querySelector(".repeater-item-container").style.display = "block"
-			parent.querySelector(".repeater-item-container").querySelector("input[name='repeaterName']").value = repeaterName;
-		}
-
-		function closeRepeaterItemModal() {
-			document.getElementById("repeater-item-container").style.display = "none"
-		}
-
-		function openRepeaterArrayModal(buttonElement, arrayName, repeaterName) {
-			console.log("opening repeater array modal", arrayName);
-			// const parent = buttonElement.closest(".repeater-item-container");
-			// const input = parent.querySelector("input[name='repeaterName']")
-			// input.value = arrayName;
-			const container = document.getElementById("repeaterArrayItemModal");
-			container.style.display = 'block';
-			container.querySelector("input[name='arrayName']").value = arrayName;
-			container.querySelector("input[name='repeaterName']").value = repeaterName;
-		}
-		function closeRepeaterArrayModal(){
-			document.getElementById("repeaterArrayItemModal").style.display = "none"
-		}
-
 		function openItemModal(itemName) {
 			arrayItemNamePointer = itemName;
 			document.getElementById("arrayItemModal").style.display = "block"
@@ -802,8 +755,9 @@
 		function closeArrayItemModal() {
 			document.getElementById("arrayItemModal").style.display = "none"
 		}
+
 		function chooseItemType() {
-			
+			console.log("Choosing item type...")
 			const select = document.getElementById("itemType");
 			const clear = document.getElementById("new-item-container");
 			if (clear) {
@@ -846,12 +800,6 @@
 					newElement.id = 'new-item-container'
 					newElement.innerHTML = htmlText;
 					elem.parentNode.insertBefore(newElement, elem);
-					// var jsonInput = CodeMirror.fromTextArea(document.getElementById("array-item-textarea"), {
-					// 	lineNumbers: true,
-					// 	mode: "application/json",
-					// 	gutters: ["CodeMirror-lint-markers"],
-					// 	lint: true,
-					// });
 					document.getElementById("arrayItemNamePointer").value = arrayItemNamePointer;
 				} else if (select.value === "Image") {
 					const htmlText = `
@@ -867,63 +815,8 @@
 			}
 		}
 
-		function chooseRepeaterArrayItemType() {
-			
-			const select = document.getElementById("repeaterArrayItemType");
-			const clear = document.getElementById("new-item-container");
-			if (clear) {
-				const parentElement = clear.parentNode;
-				parentElement.removeChild(clear);
-			}
-			if (select.value === "") {
-				const parent = document.getElementById("item-modal-content");
-				parent.removeChild(document.getElementById("new-item-container"));
-				repeaterName = "";
-				document.getElementById("repeaterName").value = repeaterName;
-				return;
-			} else {
-				if (select.value === "String") {
-					const htmlText = `
-					<label class="mb-3" for="elementName">ITEM CONTENT:</label>
-					<input name="itemValue" style="width: 100%;display: block;" type="text">`;
-					const elem = document.getElementById("repeater-add-item-last-btn");
-					const newElement = document.createElement("div");
-					newElement.id = 'new-item-container'
-					newElement.innerHTML = htmlText;
-					elem.parentNode.insertBefore(newElement, elem);
-				} else if (select.value === "Textarea") {
-					const htmlText = `
-					<label class="mb-3" for="elementName">ITEM CONTENT:</label>
-					<textarea id="array-item-textarea" style="width: 100%;display: block;" rows="8" cols="50"  name="itemValue" type="text"></textarea>`;
-					const elem = document.getElementById("repeater-add-item-last-btn");
-					const newElement = document.createElement("div");
-					newElement.id = 'new-item-container'
-					newElement.innerHTML = htmlText;
-					elem.parentNode.insertBefore(newElement, elem);
-				} else if (select.value === "JSON") {
-					const htmlText = `
-					<label class="mb-3" for="elementName">JSON DATA:</label>
-					<textarea id="array-item-textarea" style="width: 100%;display: block;" rows="8" cols="50" type="text" name="itemValue"></textarea>`;
-					const elem = document.getElementById("repeater-add-item-last-btn");
-					const newElement = document.createElement("div");
-					newElement.id = 'new-item-container'
-					newElement.innerHTML = htmlText;
-					elem.parentNode.insertBefore(newElement, elem);
-				} else if (select.value === "Image") {
-					const htmlText = `
-					<label class="mb-3" for="elementName">ITEM CONTENT:</label>
-					<input name="itemValue" style="width: 100%;display: block;" type="file">`;
-					const elem = document.getElementById("repeater-add-item-last-btn");
-					const newElement = document.createElement("div");
-					newElement.id = 'new-item-container';
-					newElement.innerHTML = htmlText;
-					elem.parentNode.insertBefore(newElement, elem);
-				}
-			}
-		}
-
 		function handlemultifileinput(event) {
-			
+			console.log("handle multi file input called...");
 			const files = event.target.files;
 			const fileListDiv = document.getElementById("fileList");
 			for (let i = 0; i < files.length; i++) {
@@ -946,7 +839,7 @@
 		}
 
 		function handlesubmit() {
-			
+			console.log("handle submit function called...");
 			let data = {};
 			const formData = new FormData();
 			const inputContainer = document.getElementById("inputs-container");

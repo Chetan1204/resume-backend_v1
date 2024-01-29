@@ -6,6 +6,7 @@ const DataSchema = new mongoose.Schema({
 		required:true
 	},
 	modelSlug:String,
+	description:String,
 	pin:Boolean,
 	dataObject:{
 		type:mongoose.Schema.Types.Mixed,

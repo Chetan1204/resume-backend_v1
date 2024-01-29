@@ -1,39 +1,92 @@
 <div style="width: 100%;height: 100%;padding: 15px;">
 	<div>
-		<h3>Pages</h3>
-		<p>Create, edit, and manage the pages on your site.</p>
+		<div style="display: flex; align-items: center;gap: 15px;">
+			<h3 style="font-size: 18px;font-weight: 500;">Pages </h3>
+			<span
+				class="button-secondary-blue" style="background-color: #fff;"
+				id="openModalBtn">Add New Page</span>
+		</div>
+		<div style="display: flex;align-items: center;justify-content: space-between;width: 100%;">
+				<p style="font-size: 13px;margin: 0;"> <a class="nrm-txt" style="font-weight: 400;text-decoration: none;color: #484848;" href="/api/v1/manage/all-pages/">All <span style="color: #969696;" >(<%= allPages?.length %>)</span> |</a> <a class="nrm-txt" style="font-weight: 400;text-decoration: none;color: #484848;" href="/api/v1/manage/show-published-pages">Published <span style="color: #969696;" >(<%= published?.length %>)</span> |</a> <a class="nrm-txt" style="font-weight: 400;text-decoration: none;color: #484848;" href="/api/v1/manage/show-hidden-pages">Hidden <span style="color: #969696;" >(<%= hidden?.length %>)</span></a></p>
+
+				<div style="display: flex;align-items: center;gap: 5px;">
+					<form action="/api/v1/manage/search-pages-by-name" method="post">
+						<input style="padding: 5px;outline: none;border: 1px solid rgba(0,0,0,0.25);" type="text" name="searchName" id="searchName">
+						<button class="button-secondary-blue" style="border-radius: 2px;">Search Pages</button>
+					</form>
+				</div>
+			</div> 
+			<div style="display: flex;align-items: center;justify-content: space-between;width: 100%;padding: 10px 0px;">
+				<div style="display: flex;align-items: center;gap: 5px;">
+						<select class="form-select" id="bulkActionSelect" style="font-size: 13px;border: 1px solid #8C8F94;border-radius: 2px;width: 150px;" aria-label="Default select example">
+							<option selected>Bulk Actions</option>
+							<option value="publish all">Publish All</option>
+							<option value="hide all">Hide All</option>
+						</select>
+						<button class="button-secondary-blue" style="border-radius: 2px;"onclick="applyBulkAction()">Apply</button>
+					<form style="display: flex;align-items: center;gap: 5px;" action="/api/v1/manage/filter-pages" method="post">
+						<select name="filterDate" class="form-select" style="font-size: 13px;border: 1px solid #8C8F94;border-radius: 2px;width: 150px;" aria-label="Filter By Date">
+							<option value="All Dates" selected>All Dates</option>
+							<% dates.forEach(item => { %>
+								<option value="<%= item?.split('&&')[0] %>"><%= item?.split('&&')[1] %></option>
+							<% }) %>
+						</select>
+						<select name="filterCategory" class="form-select" style="font-size: 13px;border: 1px solid #8C8F94;border-radius: 2px;width: 150px;" aria-label="Filter By Category">
+							<option value="All Categories" selected>All Authors</option>
+							<% authors.forEach(author => { %>
+								<option value="<%= author %>"><%= author %></option>
+							<% }) %> 
+						</select>
+						<button class="button-secondary-blue" style="border-radius: 2px;padding: 5px 15px;">Filter</button>
+					</form>
+				</div>
+				<div>
+					<nav aria-label="Page navigation example">
+						<ul class="pagination" style="margin: 0;">
+						  <li class="page-item <%= currentpage == 1 ? 'disabled' :'' %> "><a class="page-link button-secondary" style="border-radius: 2px;" href="/api/v1/manage/all-pages?currentpage=<%= parseInt(currentpage)-1 %>&paginationtype=<%= paginationtype %>&searchquery=<%= searchquery %>&filterdate=<%= filterdate %>&filtercategory=<%= filtercategory %>"><span aria-hidden="true">&laquo;</span></a></li>
+						  <% for(let i=1; i<= parseInt(numberOfPages); i++) { %>
+							<li class="page-item  <%= i == currentpage ? 'active':'' %>"><a class="page-link button-secondary" style="border-radius: 2px;" href="/api/v1/manage/all-pages?currentpage=<%= i %>&paginationtype=<%= paginationtype %>&searchquery=<%= searchquery %>&filterdate=<%= filterdate %>&filtercategory=<%= filtercategory %>"><span aria-hidden="true"><%= i %></span></a></li>
+						  <% } %>
+						  <li class="page-item <%= currentpage == numberOfPages ? 'disabled' :'' %>"><a class="page-link button-secondary" style="border-radius: 2px;" href="/api/v1/manage/all-pages?currentpage=<%= parseInt(currentpage)+1 %>&paginationtype=<%= paginationtype %>&searchquery=<%= searchquery %>&filterdate=<%= filterdate %>&filtercategory=<%= filtercategory %>"><span aria-hidden="true">&raquo;</span></a></li>
+						</ul>
+					</nav>
+				</div>
+			</div>
 	</div>
 	<style>
 		tbody tr:nth-child(odd){
-			background-color: aliceblue;
+			background-color: #f6f7f7;
 		}
 		tbody tr:nth-child(even){
-			background-color: #f5f5f5;
+			background-color: #fff;
 		}
 	</style>
-	<table cellspacing="0" cellpadding="0" width="100%">
-		<thead style="border-bottom: 2px solid #d8d8d8;">
+	<table cellspacing="0" cellpadding="0" width="100%" style="border: 1px solid rgba(0,0,0,0.25);">
+		<thead style="border-bottom: 2px solid #d8d8d8;background-color: #fff;">
 			<tr>
 				<th>
-					<div style="display: flex; align-items: center; justify-content: start;">
-						<h3 style="font-weight: 600;font-size: 12px;text-transform: uppercase;margin: 0px;">Page Name</h3>
+					<div style="display: flex; align-items: center; justify-content: start;padding: 10px;">
+						<h3 style="font-size: 13px;margin: 0px;">Title</h3>
+					</div>
+				</th>
+				<th>
+					<div style="display: flex; align-items: center; justify-content: start;padding: 10px;">
+						<h3 style="font-size: 13px;margin: 0px;">Author</h3>
+					</div>
+				</th>
+				<th>
+					<div style="display: flex; align-items: center; justify-content: start;padding: 10px;">
+						<h3 style="font-size: 13px;margin: 0px;">Date</h3>
+					</div>
+				</th>
+				<th>
+					<div style="display: flex; align-items: center; justify-content: start;padding: 10px;">
+						<h3 style="font-size: 13px;margin: 0px;">Visibility</h3>
 					</div>
 				</th>
 				<th>
 					<div style="display: flex; align-items: center; justify-content: start;">
-						<h3 style="font-weight: 600;font-size: 12px;text-transform: uppercase;margin: 0px;">Page Author</h3>
-					</div>
-				</th>
-				<th>
-					<div style="display: flex; align-items: center; justify-content: start;">
-						<h3 style="font-weight: 600;font-size: 12px;text-transform: uppercase;margin: 0px;">Page Actions</h3>
-					</div>
-				</th>
-				<th>
-					<div style="display: flex; align-items: center; justify-content: end;padding-bottom: 5px;">
-						<span
-							class="button-main button-main-md"
-							id="openModalBtn">Add New Page</span>
+						<h3 style="font-size: 13px;margin: 0px;">Page Actions</h3>
 					</div>
 				</th>
 			</tr>
@@ -41,19 +94,35 @@
 		<tbody>
 			<% if(allPages.length > 0 ){ allPages.forEach(page=> { %>
 				<tr style="border-bottom: 1px solid rgba(0,0,0,0.25);">
-					<td style="padding: 5px 10px;">
-						<span style="font-weight: 600;font-size: 13px;font-weight: 600;">	
+					<td style="padding: 5px 10px;font-size: 13px;">
+						<span style="color: #2271B7;font-weight: 500;">	
 							<%= page.name %>
 						</span>
 					</td>
 					<td style="padding: 5px 10px;">
 						<div style="display: flex;align-items: center;justify-content: flex-start;">
-							<p style="margin-bottom: 0px;font-size: 13px;font-weight: 600;">
+							<p style="color: #2271B7; margin-bottom: 0px;font-size: 13px;font-weight: 400;">
 								<%= page.author %>
 							</p>
 						</div>
 					</td>
-					<td colspan="2" style="padding: 5px 10px;">
+					<td style="padding: 5px 10px;">
+						<div style="font-size: 13px;">
+							<span style="text-transform: capitalize;"><i class="fa-solid fa-circle" style="font-size: 10px;margin-right: 5px;color: <%= page?.status == 'published' ? '#74DC2E' :'#2271B7' %>;"></i><%= page?.status || "Unset" %></span>
+							<span class="nrm-txt" style="font-weight: 400;display: block;color: #484848;">
+								<%= new Date(page?.createdAt).toLocaleString() %>
+							</span>
+						</div>
+					</td>
+					<td style="padding: 5px 10px;">
+						<div style="font-size: 13px;">
+							<span style="font-weight: 400;text-transform: capitalize;">
+								<i class="fa-solid fa-circle" style="font-size: 12px;color: <%= page?.visibility == 'visible' ? '#74DC2E' :'#2271B7' %>;"></i>
+								<%= page?.visibility || "Unset" %>
+							</span>
+						</div>
+					</td>
+					<td style="padding: 5px 10px;">
 						<div style="display: flex;width: 100%;align-items: center;justify-content: flex-start;gap: 10px;">
 							<span style="display: inline-block;">
 								<span style="cursor: pointer;font-size: 12px;padding: 0px; font-weight: 600;" onclick="editPage('<%= page.name %>')"><i class="fa-solid fa-pen"></i></span>
@@ -164,16 +233,35 @@
 			fetch(`/delete-page/${pageName}`, {
 				method: 'DELETE',
 			})
-				.then(response => {
-					if (response.ok) {
-						window.location.reload();
-					} else {
-						console.error('Failed to delete page:', response.statusText);
-					}
-				})
-				.catch(error => {
-					console.error('Error deleting page:', error);
-				});
+			.then(response => {
+				if (response.ok) {
+					window.location.reload();
+				} else {
+					console.error('Failed to delete page:', response.statusText);
+				}
+			})
+			.catch(error => {
+				console.error('Error deleting page:', error);
+			});
 		}
 	}
+
+	function applyBulkAction() {
+        const selectedAction = document.getElementById('bulkActionSelect').value;
+        fetch('/api/v1/manage/page-bulk-actions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ action: selectedAction }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data.message);
+			window.location.reload()
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
 </script>

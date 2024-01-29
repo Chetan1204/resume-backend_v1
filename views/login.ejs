@@ -1,30 +1,59 @@
-<div style="display: flex; align-items: center; justify-content: center;position: fixed;top: 0;left: 0; right: 0;bottom: 0;z-index: 100;background-color: aliceblue;">
-	<div style="width: 30%; background-color: #fff;display: flex;flex-direction: column;align-items: start;justify-content: start;padding: 15px;">
-		<div style="width: fit-content;margin: 0 auto;display: flex;align-items: center;padding: 15px 0px;">
-			<img src="/static/icons8-secure-50.png" style="margin-right: 10px;" width="50" alt="Login">
-			<h3 style="margin: 0;font-weight: 600;">LOG IN</h3>
+<div class="ejs-inner-container" >
+	<div class="center-wr" class="primary-bg-color">
+		<div class="login-page-container">
+			<div class="login-form-wr">
+				
+				<div class="login-form-container">
+					<figure>
+						<img src="/static/icons8-login-64.png" width="64" alt="Sign In">
+						<figcaption>Your Branding</figcaption>
+					</figure>
+					<h1>Start your CMS journey in style.</h1>
+					<div class="login-heading-wr">
+						<h3>Sign In</h3>
+						<p>Start managing your website.</p>
+					</div>
+					<div class="login-error-msg-wr">
+						<% if(message[0]?.success == false) { %>
+							<p><%= message[0]?.message %></p>
+						<% } %>
+					</div>
+					<form  action="/api/v1/manage/auth/admin-login" method="POST">
+						<div class="login-email-container">
+							<input
+							required
+							type="text"
+							id="email"
+							name="email" value="" placeholder="Email">
+						</div>
+						<div class="password-wr">
+							<input class="login-pswd-input"
+							required
+							type="password"
+							id="password"
+							name="password" value="" placeholder="Password">
+							<p onclick="togglePasswordViewState(this)">show</p>
+						</div>
+						<a class="forgot-pwd-wr" href="/api/v1/manage/auth/forgot-password">Forgot password</a>
+						<button type="submit" class="button-main button-main-md login-submit-btn" >Sign In</button>
+					</form>
+					<p class="login-additional-p"><span>or</span></p>
+					<button class="button-secondary signup">Sign Up</button>
+				</div>
+			</div>
 		</div>
-		<form style="width: 100%;" action="/api/v1/manage/auth/admin-login" method="POST">
-			<div style="width: 100%;">
-				<label class="form-label mt-3" for="email">
-				EMAIL
-			</label>
-			<input class="form-control mb-3"
-			type="text"
-			id="email"
-			name="email" value="" placeholder="xzy@example.com">
-			</div>
-			<div style="width: 100%;">
-				<label class="form-label mt-3" for="password">
-					PASSWORD
-				</label>
-				<input class="form-control"
-				type="password"
-				id="password"
-				name="password" value="">
-				<span style="display: block;font-size: 12px;margin-top: 5px;color: #787878;" class="mb-3">Passwords are end to end encrypted</span>
-			</div>
-			<button type="submit" class="button-main button-main-md" style="width: 100%;padding: 10px;">Login</button>
-		</form>
 	</div>
 </div>
+<script>
+	function togglePasswordViewState(toggleElement) {
+		const parent = toggleElement.closest(".password-wr");
+		const input = parent.querySelector("input");
+		if(toggleElement.textContent == 'show'){
+			input.type = 'text'
+			toggleElement.textContent = 'hide'
+		} else if (toggleElement.textContent == 'hide'){
+			input.type = 'password'
+			toggleElement.textContent = 'show'
+		}
+	}
+</script>

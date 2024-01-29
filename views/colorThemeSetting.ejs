@@ -1,0 +1,207 @@
+<div style="width: 100%;height: 100%;padding: 15px;">
+	<div>
+		<div style="display: flex;flex-direction: column; align-items:flex-start;gap: 15px;">
+			<h3 style="font-size: 24px;font-weight: 500;">Profile </h3>
+			<h3 style=" font-size: 20px;font-weight: 600;">Personal Options </h3>            
+		</div>
+		<div style="display: flex;align-items: center;justify-content: space-between;width: 100%;">
+         <div class="setting-container">
+            <div class="setting-inner-cont">
+                <h3>Visual Editor</h3>
+                <label class="custom-checkbox">
+                    <input style="vertical-align: middle;" type="checkbox">
+                    <span  style="vertical-align: middle;" class="checkmark"></span>
+                    <span  style="vertical-align: text-bottom;color: #555B61;font-weight:200;font-size: 12px;padding: 0 5px;" >
+                        Disable the visual editor when writting
+                    </span>
+                  </label>
+            </div>
+            <div class="setting-inner-cont">
+                <h3>Syntax Highlighting</h3>
+                <label class="custom-checkbox">
+                    <input style="vertical-align: middle;" type="checkbox">
+                    <span style="vertical-align: middle;" class="checkmark"></span>
+                    <span style="vertical-align: text-bottom;color: #555B61;font-weight:200;font-size: 12px;padding: 0 5px;">
+                        Disable syntax highlighting when editing code
+                    </span>
+                  </label>
+            </div>
+            <div class="setting-inner-cont">
+                <h3>Admin Color Scheme</h3>
+
+
+                <form action="/api/v1/manage/change-color-theme" method="post">
+                    <input type="hidden" name="email" value="piyushtest98@gmail.com">
+                    <div class="form-flex-parent-wr">
+                        <div class="form-child-cont">
+                            <div class="color-theme-radio-cont">
+                                <label>
+                                    <input type="radio" name="themeName" value="Default">
+                                    <span>Default</span>
+                                <div class="color-table-wr">
+                                    <table>
+                                        <tr>
+                                            <td style="background-color: #1D2327;"></td>
+                                            <td style="background-color: #2C3338;"></td>
+                                            <td style="background-color: #2271B1;"></td>
+                                            <td style="background-color: #72AEE6;"></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </label>
+                            </div>
+
+                            <div class="color-theme-radio-cont">
+                                <label>
+                                <input type="radio" name="themeName" value="Light" >
+                                    <span>
+                                        Light
+                                    </span>
+                                <div class="color-table-wr">
+                                    <table>
+                                        <tr>
+                                            <td style="background-color: #E5E5E5;"></td>
+                                            <td style="background-color: #999999;"></td>
+                                            <td style="background-color: #D64E07;"></td>
+                                            <td style="background-color: #04A4CC;"></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </label>
+                            </div>
+
+                            <div class="color-theme-radio-cont">
+                                <label>
+                                <input type="radio" name="themeName" value="Modern" >
+                                <span>Modern</span>
+                                <div class="color-table-wr">
+                                    <table>
+                                        <tr>
+                                            <td style="background-color: #1E1E1E;width:107px;"></td>
+                                            <td style="background-color: #3858E9;width:107px;"></td>
+                                            <td style="background-color: #33F078;width:107px;"></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </label>
+                            </div>
+                            <div class="color-theme-radio-cont">
+                                <label>
+                                <input type="radio" name="themeName" value="Blue" >
+                                    <span>Blue</span>
+                                   
+                                <div class="color-table-wr">
+                                    <table>
+                                        <tr>
+                                            <td style="background-color: #096484;"></td>
+                                            <td style="background-color: #4796B3;"></td>
+                                            <td style="background-color: #52ACCC;"></td>
+                                            <td style="background-color: #74B6CE;"></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </label>
+                            </div>
+                        </div>
+                        <div class="form-child-cont">
+                            <div class="color-theme-radio-cont">
+                                <label>
+                                <input type="radio" name="themeName" value="Coffee" >
+                                    <span>Coffee</span>
+                                <div class="color-table-wr">
+                                    <table>
+                                        <tr>
+                                            <td style="background-color: #46403C;"></td>
+                                            <td style="background-color: #59524C;"></td>
+                                            <td style="background-color: #C7A589;"></td>
+                                            <td style="background-color: #9EA476;"></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </label>
+                            </div>
+                            <div class="color-theme-radio-cont">
+                                <label>
+                                <input type="radio" name="themeName" value="Ectoplasm" >
+                                    <span>Ectoplasm</span>
+                                <div class="color-table-wr">
+                                    <table>
+                                        <tr>
+                                            <td style="background-color: #413256;"></td>
+                                            <td style="background-color: #523F6D;"></td>
+                                            <td style="background-color: #A3B745;"></td>
+                                            <td style="background-color: #D46F15;"></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </label>
+                            </div>
+                            <div class="color-theme-radio-cont">
+                                <label>
+                                <input type="radio" name="themeName" value="Midnight" >
+                                    <span>Midnight</span>
+                                <div class="color-table-wr">
+                                    <table>
+                                        <tr>
+                                            <td style="background-color: #25282B;"></td>
+                                            <td style="background-color: #363B3F;"></td>
+                                            <td style="background-color: #69A8BB;"></td>
+                                            <td style="background-color: #E14D43;"></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </label>
+                            </div>
+                            <div class="color-theme-radio-cont">
+                                <label>
+                                <input type="radio" name="themeName" value="Ocean" >
+                                <span>Ocean</span>
+                                <div class="color-table-wr">
+                                    <table>
+                                        <tr>
+                                            <td style="background-color: #627C83;"></td>
+                                            <td style="background-color: #738E96;"></td>
+                                            <td style="background-color: #9EBAA0;"></td>
+                                            <td style="background-color: #AA9D88;"></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </label>
+                            </div>
+                        </div>
+                        <div class="form-child-cont">
+                            <div class="color-theme-radio-cont">
+                                <label>
+                                <input type="radio" name="themeName" value="Sunrise" >
+                                    <span>Sunrise</span>
+                                <div class="color-table-wr">
+                                    <table>
+                                        <tr>
+                                            <td style="background-color: #B43C38;"></td>
+                                            <td style="background-color: #CF4944;"></td>
+                                            <td style="background-color: #DD823B;"></td>
+                                            <td style="background-color: #CCAF0B;"></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </label>
+                            </div>
+                         
+                   
+                        </div>
+                    </div>
+
+                    <div class="theme-submit-btn ">
+                        <button type="submit" class="cmn-outline-btn">Apply</button>
+                    </div>
+             
+        </form>
+
+            </div>
+                
+            </div>
+         </div>
+		</div> 
+	</div>
+
+</div>

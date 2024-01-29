@@ -1,0 +1,44 @@
+<div style="width:80%;border-right: 1px solid rgba(0,0,0,0.25);overflow-y:scroll;height:100%">
+	<div class="page-name" style="display:flex; align-items:center;justify-content:space-between;padding:8px 24px;">
+		<h1 style="font-size: 18px;text-transform: uppercase;">Edit Repeater Item:</h1>
+	</div>
+	<form id="repeater-item-form" action="/api/v1/manage/update-post-repeater-item" method="POST" enctype="multipart/form-data">
+		<input type="hidden" name="postName" id="postName" value="<%= postName %>">
+		<input type="hidden" name="postTypeId" id="postTypeId" value="<%= postTypeId %>">
+		<input type="hidden" name="repeaterId" id="repeaterId" value="<%= repeaterId %>">
+		<input type="hidden" name="repeaterItemIndex" id="repeaterItemIndex" value="<%= repeaterItemIndex %>">
+		<input type="hidden" name="modelId" id="modelId" value="<%= modelId %>">
+		<div style="padding: 10px; width: 100%;padding:8px 24px;">
+			<% repeaterFields?.forEach(item => { %>
+				<label style="display: block; margin: 25px 0px 15px;" for="<%= item?.fieldName %>"><%= item?.fieldLabel %></label>
+				<% if(item?.fieldType === 'Text'|| item?.fieldType === 'URL') { %>
+					<input style="width: 100%;" class="form-control" type="text" id="<%= item?.fieldName %>" name="<%= item?.fieldName %>" value="<%= repeaterData[item?.fieldName] %>">
+				<% } else if (item?.fieldType === 'Editor') { %>
+					<textarea style="width: 100%;" id="<%= item?.fieldName %>" name="<%= item?.fieldName %>" id="" cols="30" rows="10"><%= repeaterData[item?.fieldName] %></textarea>
+				<% } else if (item?.fieldType === 'Image') { %>
+					<img src="/images/<%= repeaterData[item?.fieldName] || 'placeholder.jpg' %>" style="margin-bottom: 10px;" alt="" width="100">
+					<input style="width: 100%;" class="form-control" id="<%= item?.fieldName %>" type="file" name="<%= item?.fieldName %>">
+			<% }}) %>
+		</div>
+	</form>
+</div>
+<div id="sidebar" style="width:20%;height: 100%;padding: 10px;display: flex;flex-direction: column;align-items: center;justify-content: start;gap: 15px;" class="sidebar custom-field">
+	<div style="background-color: #fff;border-radius: 8px; padding: 10px; width: 100%;border: 1px solid rgba(0,0,0,0.25);display: flex;flex-direction: column;gap: 5px;">
+		<h5 style="font-weight: 600; font-size: 14px; text-transform: uppercase;margin-bottom: 15px; border-bottom: 1px solid rgba(0,0,0,0.25);padding-bottom: 5px;">Publish</h5>
+		<button type="submit" form="repeater-item-form" class="button-main button-main-md">Update</button>
+	</div>
+</div>
+<script>
+	window.addEventListener("DOMContentLoaded", ()=>{
+		const allTextareas = document.querySelectorAll("textarea");
+		allTextareas.forEach(textarea => {
+			CKEDITOR.replace(textarea, {
+				on: {
+					instanceReady: function (evt) {
+						evt.editor.textareaName = textarea.getAttribute("name");
+					}
+				}
+			});
+		})
+	})
+</script>

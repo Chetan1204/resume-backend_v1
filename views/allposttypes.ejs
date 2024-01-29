@@ -1,50 +1,56 @@
 <div style="width: 100%;height: 100%;padding: 15px;">
 	<div style="display: flex;align-items: center;justify-content: space-between;">
-		<div id="all-posts-top-heading">
-			<h3>All Post Types</h3>
-			<p>Create, edit, and manage the Posts of your site.</p>
+		<div id="all-posts-top-heading" style="display: flex;align-items: center;gap: 15px;">
+			<h3 style="font-size: 18px;font-weight: 500;">All Post Types</h3>
+			<button class="button-secondary-blue" style="background-color: #fff;" onclick="handleAddNewPostType()">Add New Post Type</button>
 		</div>
 		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	</div>
+	<div style="display: flex;align-items: center;justify-content: space-between;width: 100%;margin-bottom: 15px;">
+		<p style="font-size: 13px;margin: 0;"> <a class="nrm-txt" style="font-weight: 400;text-decoration: none;color: #484848;" href="/api/v1/manage/show-posts-by-post-type/">All <span style="color: #969696;" >(122)</span> |</a> <a class="nrm-txt" style="font-weight: 400;text-decoration: none;color: #484848;" href="/api/v1/manage/show-posts-by-post-type/?published=true">Published <span style="color: #969696;" >(106)</span> |</a> <a class="nrm-txt" style="font-weight: 400;text-decoration: none;color: #484848;" href="/api/v1/manage/show-posts-by-post-type/?hidden=true">Hidden <span style="color: #969696;" >(16)</span></a></p>
+
+		<div style="display: flex;align-items: center;gap: 5px;">
+			<form action="/api/v1/manage/search-posts-by-name" method="post">
+				<input style="padding: 5px;outline: none;border: 1px solid rgba(0,0,0,0.25);" type="text" name="searchName" id="searchName">
+				<button class="button-secondary-blue" style="border-radius: 2px;">Search Pages</button>
+			</form>
+		</div>
+	</div>
 	<style>
 		tbody tr:nth-child(odd) {
-			background-color: aliceblue;
+			background-color: #f6f7f7;
 		}
 
 		tbody tr:nth-child(even) {
-			background-color: #f5f5f5;
+			background-color: #fff;
 		}
 	</style>
-	<table width="100%" cellspacing="0" cellpadding="0">
-		<thead style="border-bottom: 2px solid #d8d8d8;">
+	<table width="100%" cellspacing="0" cellpadding="0" style="border: 1px solid rgba(0,0,0,0.25);">
+		<thead style="border-bottom: 2px solid #d8d8d8;background-color: #fff;">
 			<tr>
 				<th>
-					<div style="display: flex; align-items: center; justify-content: start;">
-						<h3 style="font-size: 12px;text-transform: uppercase;font-weight: 700;margin: 0px;">Name</h3>
+					<div style="display: flex; align-items: center; justify-content: start;padding: 10px;">
+						<h3 style="font-size: 12px;margin: 0px;">Title</h3>
 					</div>
 				</th>
 				<th>
-					<div style="display: flex; align-items: center; justify-content: start;">
-						<h3 style="font-size: 12px;text-transform: uppercase;font-weight: 700;margin: 0px;">Slug</h3>
+					<div style="display: flex; align-items: center; justify-content: start;padding: 10px;">
+						<h3 style="font-size: 12px;margin: 0px;">Slug</h3>
 					</div>
 				</th>
 				<th>
-					<div style="display: flex; align-items: center; justify-content: start;">
-						<h3 style="font-size: 12px;text-transform: uppercase;font-weight: 700;margin: 0px;">Custom Field
-						</h3>
+					<div style="display: flex; align-items: center; justify-content: start;padding: 10px;">
+						<h3 style="font-size: 12px;margin: 0px;">Custom Field</h3>
 					</div>
 				</th>
 				<th>
-					<div style="display: flex; align-items: center; justify-content: start;">
-						<h3 style="font-size: 12px;text-transform: uppercase;font-weight: 700;margin: 0px;">Post Actions
-						</h3>
+					<div style="display: flex; align-items: center; justify-content: start;padding: 10px;">
+						<h3 style="font-size: 12px;margin: 0px;">Post Count</h3>
 					</div>
 				</th>
 				<th>
-					<div
-						style="display: flex; align-items: center; justify-content: end;gap: 10px;padding-bottom: 5px;">
-						<button class="button-main button-main-md" onclick="handleAddNewPostType()">Add New Post
-							Type</button>
+					<div style="display: flex; align-items: center; justify-content: start;padding: 10px;">
+						<h3 style="font-size: 12px;margin: 0px;">Actions</h3>
 					</div>
 				</th>
 			</tr>
@@ -53,28 +59,35 @@
 
 			<% allPostTypes.forEach(post=> { %>
 				<tr style="border-bottom: 1px solid rgba(0,0,0,0.25);">
-					<td style="padding: 5px 10px;">
+					<td style="padding: 10px;">
 						<div style="font-size: 13px;">
-							<span style="font-weight: 600;">
+							<span style="color: #2271B7;font-weight: 500;">
 								<%= post.postTypeName %>
 							</span>
 						</div>
 					</td>
-					<td style="padding: 5px 10px;">
+					<td style="padding: 10px;">
 						<div style="font-size: 13px;">
-							<span style="font-weight: 600;">
-								<%= post.postTypeSlug %>
+							<span style="color: #2271B7;font-weight: 500;">
+								<i class="fa-solid fa-key" style="color: #969696;margin-right: 5px;"></i><%= post.postTypeSlug %>
 							</span>
 						</div>
 					</td>
-					<td style="padding: 5px 10px;">
+					<td style="padding: 10px;">
 						<div style="font-size: 13px;">
-							<span style="font-weight: 600;">
+							<span style="color: #2271B7;font-weight: 500;">
 								<%= post.customField.length> 0 ? post.customField[0] : "Unselected" %>
 							</span>
 						</div>
 					</td>
-					<td colspan="2" style="padding: 5px 10px;">
+					<td style="padding: 10px;">
+						<div style="font-size: 13px;">
+							<span style="color: #484848;font-weight: 500;">
+								<%= post.postCount %>
+							</span>
+						</div>
+					</td>
+					<td style="padding: 10px;">
 						<div
 							style="display: flex;width: 100%;align-items: center;justify-content: flex-start;gap: 10px;">
 							<span

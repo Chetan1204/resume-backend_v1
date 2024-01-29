@@ -1,5 +1,5 @@
 <div style="width: 100%;height: 100%; display: flex;align-items: start;justify-content: start;">
-	<div style="width: 50%;height: 100%;padding: 20px;overflow-y: scroll;border-right: 1px solid rgba(0, 0, 0, 0.25);">
+	<div style="width: 45%;height: 100%;padding: 20px;overflow-y: scroll;border-right: 1px solid rgba(0, 0, 0, 0.25);">
 		<div>
 			<h3><%= modelData?.modelName %></h3>
 			<p>Edit model this model accross the website.</p>
@@ -10,24 +10,40 @@
 		</div>
 		<div id="inputs-container" style="width: 100%;">
 			<input type="hidden" name="modelName" value="<%= modelData?.modelName %>">
-			<% if(modelData?.dataObject && Object.keys(modelData?.dataObject)?.length > 0) { Object.keys(modelData?.dataObject).forEach(item => { %>
+			<input type="hidden" name="modelId" id="modelId" value="<%= modelData?._id %>">
+			<% if(modelData?.dataObject && Object.keys(modelData?.dataObject)?.length > 0) { Object.keys(modelData?.dataObject).forEach(item => { 
+				if(item == "repeaters"){ modelData?.dataObject[item]?.forEach( repeaterItem => {
+				%>
+					<div style="display: flex;align-items: center;justify-content: space-between;background-color: #fff;color: #2a5298;padding: 10px;border-radius: 6px;border: 1px solid rgba(0, 0, 0, 0.25);font-size: 13px;margin-bottom: 15px;">
+						<div style="display: flex; align-items: center;gap: 15px;">
+							<p style="margin: 0; font-weight: 600;">
+								REPEATER
+							</p>
+							<p style="margin: 0;">
+								<%= repeaterItem?.repeaterName %>
+							</p>
+						</div>
+						<p style="margin: 0;">
+							<i onclick="editRepeaterData('<%= JSON.stringify(repeaterItem) %>')" class="fa-solid fa-pen" style="cursor: pointer;margin-right: 5px;"></i>
+							<i onclick="removeRepeaterFromModel('<%= modelData?._id %>','<%= repeaterItem?.repeaterName %>', '<%= repeaterItem?.id %>')" style="cursor: pointer;" class="fa-solid fa-trash-can"></i>
+						</p>
+					</div>
+				<% })} else { %>
 				<div class="input-group mb-3">
 					<span style="color:#484848;background-color: #f5f5f5;font-weight: 500;border-radius: 0px;font-size: 13px;border:1px solid rgba(0, 0, 0, 0.25)" class="button-secondary">Key Name</span>
 					<input type="text" class="form-control" placeholder="Enter a key" name="<%= item %>" value="<%= item %>" aria-label="Enter a key" required style="font-size: 13px;">
 					<span style="color:#484848;background-color: #f5f5f5;font-weight: 500;border-radius: 0px;font-size: 13px;border:1px solid rgba(0, 0, 0, 0.25)" class="button-secondary">Data Type</span>
-					<select onchange="handleRepeater(this)" class="form-select" aria-label="Default select example" name="<%= item %>" style="font-size: 13px;">
+					<select class="form-select" aria-label="Default select example" name="<%= item %>" style="font-size: 13px;">
 						<option <%= modelData?.dataObject[item] == "String" && "selected" %> value="String">String</option>
 						<option <%= modelData?.dataObject[item] == "Boolean" && "selected" %> value="Boolean">Boolean</option>
 						<option <%= modelData?.dataObject[item] == "Number" && "selected" %> value="Number">Number</option>
 						<option <%= modelData?.dataObject[item] == "Image" && "selected" %> value="Image">Image</option>
-						<option <%= modelData?.dataObject[item] == "Multiple Images" && "selected" %> value="Multiple Images">Multiple Images</option>
-						<option <%= modelData?.dataObject[item] == "Mixed" && "selected" %> value="Mixed">Mixed</option>
+						<option <%= modelData?.dataObject[item] == "Mixed" && "selected" %> value="Mixed">Editor</option>
 						<option <%= modelData?.dataObject[item] == "Array" && "selected" %> value="Array">Array</option>
-						<option <%= modelData?.dataObject[item].value == "Repeater" && "selected" %> value="<%= JSON.stringify(modelData?.dataObject[item]) %>">Repeater</option>
 					</select>
-					<button style="display:<%= modelData?.dataObject[item].value == 'Repeater' ?  'inline-block':'none' %>;" onclick="openSubDocModal(this)" class="btn button-secondary" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Link a custom field"><i class="fa-solid fa-link"></i></button>
+					<span onclick="deleteModelField('<%= item %>','<%= modelData?._id %>')" style="cursor: pointer;;color:#484848;background-color: #f5f5f5;font-weight: 500;border-radius: 0px;font-size: 13px;border:1px solid rgba(0, 0, 0, 0.25)" class="button-secondary delete-btn"><i class="fa-solid fa-trash-can" style="font-size: 13px;"></i></span>
 				</div>
-			<% }); } else { %>
+			<% } }); } else { %>
 				<div id="empty-model-wr" style="display: flex;align-items: center;justify-content: center;gap: 20px;">
 					<figure style="width: 100px;margin: 0;">
 						<img src="/images/empty-box-svgrepo-com.svg" width="100" alt="No content">
@@ -37,17 +53,62 @@
 			<% } %>
 		</div>
 	</div>
-	<div style="width: 50%;padding: 20px; display: flex;flex-direction: column;gap: 15px;">
+	<div style="width: 55%;padding: 20px; display: flex;flex-direction: column;gap: 15px;height: 100%;overflow-y: scroll;">
 		<div style="background-color: #fff;border-radius: 8px; padding: 10px; width: 100%;border: 1px solid rgba(0,0,0,0.25);display: flex;flex-direction: column;gap: 5px;">
 			<h5 style="font-weight: 600; font-size: 13px; text-transform: uppercase;margin-bottom: 15px; border-bottom: 1px solid rgba(0,0,0,0.25);padding-bottom: 5px;">Publish</h5>
 			<button class="button-main button-main-md" onclick="handlesubmit()">Update Model</button>
 		</div>
 		<div style="background-color: #fff;border-radius: 8px; padding: 10px; width: 100%;border: 1px solid rgba(0,0,0,0.25);display: flex;flex-direction: column;gap: 5px;">
-			<h5 style="font-weight: 600; font-size: 13px; text-transform: uppercase;margin-bottom: 15px; border-bottom: 1px solid rgba(0,0,0,0.25);padding-bottom: 5px;">Edit Fields</h5>
-			<button class="button-secondary" type="button" onclick="addfield();">Add new field</button>
+			<h5 style="font-weight: 600; font-size: 13px; text-transform: uppercase;margin-bottom: 15px; border-bottom: 1px solid rgba(0,0,0,0.25);padding-bottom: 5px;">Model Description</h5>
+			<div style="display: flex;align-items: center;gap: 10px;">
+				<form action="/api/v1/manage/add-model-description" method="post" style="width: 100%;">
+					<input type="hidden" name="modelId" id="modelId" value="<%= modelData?._id %>">
+					<textarea class="form-control" name="description" style="width: 100%;height: 25px;border:1px solid rgba(0, 0, 0, 0.25);font-size: 13px;"><%= modelData?.description %></textarea>
+					<button class="button-secondary" style="margin-top: 10px;">Update</button>
+				</form>
+			</div>
 		</div>
+		<div style="background-color: #fff;border-radius: 8px; padding: 10px; width: 100%;border: 1px solid rgba(0,0,0,0.25);display: flex;flex-direction: column;gap: 5px;">
+			<h5 style="font-weight: 600; font-size: 13px; text-transform: uppercase;margin-bottom: 15px; border-bottom: 1px solid rgba(0,0,0,0.25);padding-bottom: 5px;">Edit Fields</h5>
+			<div style="display: flex;align-items: center;gap: 10px;">
+				<button class="button-secondary" type="button" onclick="addfield();">Add new field</button>
+				<button class="button-secondary-blue" type="button" onclick="addRepeater();"><i class="fa-solid fa-plus"></i> Repeater</button>
+			</div>
+		</div>
+		<div id="repeater-parent" style="background-color: #fff;border-radius: 8px; padding: 10px; width: 100%;border: 1px solid rgba(0,0,0,0.25);display: none;flex-direction: column;gap: 5px;">
+			<h5 style="font-weight: 600; font-size: 13px; text-transform: uppercase;margin-bottom: 15px; border-bottom: 1px solid rgba(0,0,0,0.25);padding-bottom: 5px;">Repeater</h5>
+			<div class="repeater-warning-container">
 
-
+			</div>
+			<input type="hidden" name="existingRepeater" id="existingRepeater">
+			<label for="repeaterName" style="text-transform: capitalize;font-weight: 500;">Repeater Name</label>
+			<input type="text" class="form-control" id="repeaterName" name="repeaterName" style="width: 50%;" >
+			<label for="repeaterLabel" style="text-transform: capitalize;font-weight: 500;margin-top: 25px;">Repeater Label</label>
+			<input type="text" class="form-control" id="repeaterLabel" name="repeaterLabel" style="width: 50%;" >
+			<p style="margin: 15px 0px; font-size: 13px;font-weight: 600;">Sub Fields:</p>
+			<div style="border: 1px solid rgba(0, 0, 0, 0.25);border-radius: 6px;">
+				<div style="display: flex;align-items: center;justify-content: space-between;padding: 10px;">
+					<p style="margin: 0;font-size: 14px;font-weight: 400;"><img src="/static/puzzle-svgrepo-com.svg" width="20" style="transform: rotate(-45deg);margin-right: 10px;" alt="fields ">Fields</p>
+					<button onclick="handleAddRepeaterSubField()" class="button-secondary"><i class="fa-solid fa-plus" style="margin-right: 10px;"></i>Add Field</button>
+				</div>
+				<div style="padding: 10px;border-top: 1px solid rgba(0, 0, 0, 0.25);background-color: #f5f5f5;">
+					<table style="width: 100%;" id="repeater-table">
+						<thead>
+							<th style="font-size: 13px; font-weight: 500;">#</th>
+							<th style="font-size: 13px; font-weight: 500;">Label</th>
+							<th style="font-size: 13px; font-weight: 500;">Name</th>
+							<th style="font-size: 13px; font-weight: 500;">Key</th>
+							<th style="font-size: 13px; font-weight: 500;">Type</th>
+						</thead>
+						<!-- REPEATER TABLE FIELDS WILL COME HERE -->
+					</table>
+				</div>
+			</div>
+			<div style="text-align: right;padding: 10px;">
+				<button class="button-secondary" onclick="resetRepeater()" >Close</button>
+				<button onclick="saveRepeaterData()" class="button-secondary" style="border: 1px solid #39a8d8;color: #39a8d8;background-color: #39a8d8;color: #fff;font-weight: 500;letter-spacing: 0.25px;">Save Fields</button>
+			</div>
+		</div>
 		<div style="display: flex; flex-direction: column; align-items: start; justify-content: start; width: 100%;padding: 10px;margin-bottom: 10px;background-color: #fff;border: 1px solid rgba(0, 0, 0, 0.25);border-radius: 6px;">
 			<h5 style="width: 100%;font-weight: 600; font-size: 13px; text-transform: uppercase;margin-bottom: 15px; border-bottom: 1px solid rgba(0,0,0,0.25);padding-bottom: 5px;">Link Post-types</h5>
 			<p style="font-size: 13px;margin-bottom: 5px;">Link this custom field to a post type</p>
@@ -105,61 +166,222 @@
 			<h5 style="font-weight: 600; font-size: 13px; text-transform: uppercase;margin-bottom: 15px; border-bottom: 1px solid rgba(0,0,0,0.25);padding-bottom: 5px;">Customize Repeater</h5>
 			<button class="button-secondary" type="button">Add new field</button>
 		</div>
-		<div id="subDocModal" class="modal">
-			<div class="modal-content">
-				<span class="close" onclick="closeSubDocModal()">&times;</span>
-				<div style="padding: 20px 0;">
-					<label for="currentlyLinkedRepeater"></label>
-					<input type="hidden" id="fieldName" name="fieldName">
-					<input type="hidden" id="modelId" name="modelId" value="<%= modelData?._id %>">
-					<label class="pb-2" for="buttonTitle">Choose Custom Field:</label>
-					<select id="linkingModelId" class="form-select" aria-label="Default select example" style="font-size: 13px;">
-						<% if(allModels?.length > 0) { allModels?.forEach(item => { %>
-							<option value="<%= item?._id %>"><%= item?.modelName %></option>
-						<% })} %>
-					</select>
-					<button class="mt-3 button-main button-main-md" onclick="linkSubDocument()">Add / Update</button>
-				</div>
-			</div>
-		</div>
 	</div>
 	<script>
-		window.addEventListener("DOMContentLoaded", ()=>{
-			const container = document.getElementById("inputs-container");
-			const children = container.querySelectorAll(".input-group");
-			if(chidren?.length == 0){
-				addfield();
-				addfield();
-			}
-			const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-			const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-		})
 
-		function openSubDocModal(buttonElement) {
-			document.getElementById('subDocModal').style.display = 'block'
-			var parentDiv = buttonElement.closest('.input-group.mb-3');
-			const inputElement = parentDiv.querySelector('input.form-control');
-			document.getElementById("fieldName").value = inputElement.value;
-		}
-		function closeSubDocModal() {
-			document.getElementById('subDocModal').style.display = 'none'
+		// Functions and logic for repeaters:
+		
+		/**
+		 * FUNCTION CALLED WHEN REPEATER BUTTON CLICKED:
+		 * this function will open a form like structure where users can customize their repeater
+		 * */
+
+		function addRepeater() {
+			document.querySelector("#repeater-parent").style.display = "flex";
 		}
 
-		function linkSubDocument() {
-			const modelId = document.getElementById("modelId").value;
-			const fieldName = document.getElementById("fieldName").value;
-			const linkingModelId = document.getElementById("linkingModelId").value;
+		function resetRepeater() {
+			const parent = document.querySelector("#repeater-parent");
+			parent.style.display = "none";
+			const warningContainer = parent.querySelector(".repeater-warning-container");
+			warningContainer.innerHTML ="";
+			document.querySelector("#repeaterName").value = "";
+			document.querySelector("#repeaterLabel").value = "";
+			const table = document.querySelector("#repeater-table");
+			const allRows = table.querySelectorAll('tr:not(thead tr)');
+			allRows.forEach(row => {
+				row.remove();
+			})
+		}
+		
+		function editRepeaterData(repeaterItem) {
+			resetRepeater();
+			const repeaterItemObj = JSON.parse(repeaterItem);
+			const parent = document.querySelector("#repeater-parent");
+			parent.style.display = "flex";
+			const warningContainer = parent.querySelector(".repeater-warning-container");
+			const htmlText = `
+				<div style="border:1px solid rgba(0,0,0,0.25);border-radius:6px;display:flex;align-items:center;gap:10px;background-color:#4CB9E71a;padding:10px 15px">
+					<figure style="margin:0px">
+						<img src="/static/icons8-website-error-30.png" alt="">
+					</figure>
+					<p style="font-size:12px;font-weight:500;margin:0px;color:#484848">
+						Note that editing repeater fields, or adding or removing fields will not affect the data that has been previously stored for the repeater. Please make updates to data seperately.
+					</p>
+				</div>
+			`
+			warningContainer.innerHTML = htmlText;
+			document.querySelector("#repeaterName").value = repeaterItemObj?.repeaterName;
+			document.querySelector("#repeaterLabel").value = repeaterItemObj?.repeaterLabel;
+			document.querySelector("#existingRepeater").value = repeaterItemObj?.id;
+			const table = document.getElementById("repeater-table");
+			const rows = table.rows.length;
+			repeaterItemObj.fields?.forEach((field, index) => {
+				const htmlText = `
+					<td><p style="margin:0;font-size:12px;font-weight:500;color:#484848;padding:10px">${index+1}</p></td>
+					<td style="padding:10px 0px">
+						<input style="width:80%" type="text" class="form-control" value="${field?.fieldLabel}" name="repeaterItemFieldLabel" />
+					</td>
+					<td>
+						<input style="width:80%" type="text" class="form-control" value="${field?.fieldName}"  name="repeaterItemFieldName" />
+					</td>
+					<td>
+						<p style="margin:0;font-size:12px;font-weight:600;color:#484848;">${field?.id}</p>
+					</td>
+					<td>
+						<div class="dropdown">
+							<button class="button-secondary dropdown-toggle" style="display:flex;align-items:center;border:none;color:#6096B4" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<div style="cursor:pointer;margin:0;font-size:11px;font-weight:500;color:#484848;padding:5px 10px;display:flex;align-items:center;">
+									<img src="${field?.fieldType === "Editor" ? "/static/icons8-pencil-30.png": field?.fieldType === "Text" ? "/static/icons8-text-30.png" : field?.fieldType === "Image" ? "/static/icons8-image-30.png" : "/static/icons8-url-30.png" }" alt="" style="margin-right:20px" >
+									<p style="margin:0px;font-size:12px;">${field?.fieldType}</p>	
+								</div>
+							</button>
+							<input type="hidden" name="fieldType" value="${field?.fieldType}">
+							<ul class="dropdown-menu">
+								<li onclick="setFieldType(this, 'Text')" style="cursor:pointer;margin:0;font-size:11px;font-weight:500;color:#484848;padding:5px 10px;display:flex;align-items:center;">
+									<img src="/static/icons8-text-30.png" alt="" style="margin-right:20px" >
+									<p style="margin:0px;font-size:12px;">Text</p>	
+								</li>
+								<li onclick="setFieldType(this, 'Editor')" style="cursor:pointer;margin:0;font-size:11px;font-weight:500;color:#484848;padding:5px 10px;display:flex;align-items:center;">
+									<img src="/static/icons8-pencil-30.png" alt="" style="margin-right:20px" >
+									<p style="margin:0px;font-size:12px;">Editor</p>	
+								</li>
+								<li onclick="setFieldType(this, 'URL')" style="cursor:pointer;margin:0;font-size:11px;font-weight:500;color:#484848;padding:5px 10px;display:flex;align-items:center;">
+									<img src="/static/icons8-url-30.png" alt="" style="margin-right:20px" >
+									<p style="margin:0px;font-size:12px;">URL</p>	
+								</li>
+								<li onclick="setFieldType(this, 'Image')" style="cursor:pointer;margin:0;font-size:11px;font-weight:500;color:#484848;padding:5px 10px;display:flex;align-items:center;">
+									<img src="/static/icons8-image-30.png" alt="" style="margin-right:20px" >
+									<p style="margin:0px;font-size:12px;">Image</p>	
+								</li>
+							</ul>
+						</div>
+					</td>
+				`;
+				const newRow = document.createElement("tr");
+				newRow.innerHTML = htmlText;
+				newRow.style.borderTop = '1px solid rgba(0,0,0,0.20)'
+				table.appendChild(newRow);
+			})
+			
+		}
 
-			fetch("/api/v1/manage/link-model-repeater", {
+		function deleteModelField(fieldName, modelId) {
+			fetch("/api/v1/manage/delete-model-field", {
 				method:"POST",
 				headers:{
 					"Content-Type":"application/json"
 				},
-				body:JSON.stringify({modelId, fieldName, linkingModelId})
+				body:JSON.stringify({fieldName, modelId})
 			})
 			.then(res => res.json())
-			.then(data => {console.log(data); closeSubDocModal();} )
+			.then(data => window.location.reload());
 		}
+
+		function removeRepeaterFromModel(modelId, repeaterName, repeaterId) {
+			fetch("/api/v1/manage/delete-repeater", {
+				method:"POST",
+				headers:{
+					"Content-Type":"application/json"
+				},
+				body:JSON.stringify({modelId, repeaterName, repeaterId})
+			})
+			.then(res => res.json())
+			.then(data => {console.log(data); window.location.reload()})
+		}
+
+		function saveRepeaterData() {
+			const data = {fields:[]};
+			const repeaterName = document.querySelector("#repeaterName").value;
+			const existingRepeater = document.querySelector("#existingRepeater").value;
+			const repeaterLabel = document.querySelector("#repeaterLabel").value;
+			const modelId = document.querySelector("#modelId").value;
+			data.modelId = modelId;
+			data.repeaterLabel = repeaterLabel;
+			data.repeaterName = repeaterName;
+			data.existingRepeater = existingRepeater;
+			const table = document.querySelector("#repeater-table");
+			const allRows = table.querySelectorAll('tr:not(thead tr)');
+			allRows.forEach(row => {
+				const fieldLabel = row.querySelector("td:nth-child(2) input[name='repeaterItemFieldLabel']").value;
+				const fieldName = row.querySelector('td:nth-child(3) input[name="repeaterItemFieldName"]').value;
+				const id = row.querySelector("td:nth-child(4) p").textContent;
+				const fieldType = row.querySelector("td:nth-child(5) .dropdown input").value;
+				data.fields.push({
+					id,
+					fieldName,
+					fieldLabel,
+					fieldType
+				})
+			});
+			fetch("/api/v1/manage/add-repeater-to-model", {
+				method:"POST",
+				headers:{
+					"Content-Type":"application/json"
+				},
+				body:JSON.stringify(data)
+			})
+			.then(res => res.json())
+			.then(data => {console.log(data); resetRepeater();})
+		}
+
+		function generateUUID() {
+			return 'xxxx-fieldset-4xxx-yxxx-xxxx'.replace(/[xy]/g, function(c) {
+				var r = Math.random() * 16 | 0,
+					v = c === 'x' ? r : (r & 0x3 | 0x8);
+				return v.toString(16);
+			});
+		}
+
+		function handleAddRepeaterSubField() {
+			const table = document.getElementById("repeater-table");
+			const rows = table.rows.length;
+			const newUUID = generateUUID();
+			const htmlText = `
+					<td><p style="margin:0;font-size:12px;font-weight:500;color:#484848;padding:10px">${rows}</p></td>
+					<td style="padding:10px 0px">
+						<input style="width:80%" type="text" class="form-control" name="repeaterItemFieldLabel" />
+					</td>
+					<td>
+						<input style="width:80%" type="text" class="form-control" name="repeaterItemFieldName" />
+					</td>
+					<td>
+						<p style="margin:0;font-size:12px;font-weight:600;color:#484848;">${newUUID}</p>
+					</td>
+					<td>
+						<div class="dropdown">
+							<button class="button-secondary dropdown-toggle" style="display:flex;align-items:center;border:none;color:#6096B4" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+								Field Type
+							</button>
+							<input type="hidden" name="fieldType">
+							<ul class="dropdown-menu">
+								<li onclick="setFieldType(this, 'Text')" style="cursor:pointer;margin:0;font-size:11px;font-weight:500;color:#484848;padding:5px 10px;display:flex;align-items:center;">
+									<img src="/static/icons8-text-30.png" alt="" style="margin-right:20px" >
+									<p style="margin:0px;font-size:12px;">Text</p>	
+								</li>
+								<li onclick="setFieldType(this, 'Editor')" style="cursor:pointer;margin:0;font-size:11px;font-weight:500;color:#484848;padding:5px 10px;display:flex;align-items:center;">
+									<img src="/static/icons8-pencil-30.png" alt="" style="margin-right:20px" >
+									<p style="margin:0px;font-size:12px;">Editor</p>	
+								</li>
+								<li onclick="setFieldType(this, 'URL')" style="cursor:pointer;margin:0;font-size:11px;font-weight:500;color:#484848;padding:5px 10px;display:flex;align-items:center;">
+									<img src="/static/icons8-url-30.png" alt="" style="margin-right:20px" >
+									<p style="margin:0px;font-size:12px;">URL</p>	
+								</li>
+								<li onclick="setFieldType(this, 'Image')" style="cursor:pointer;margin:0;font-size:11px;font-weight:500;color:#484848;padding:5px 10px;display:flex;align-items:center;">
+									<img src="/static/icons8-image-30.png" alt="" style="margin-right:20px" >
+									<p style="margin:0px;font-size:12px;">Image</p>	
+								</li>
+							</ul>
+						</div>
+					</td>
+			`;
+			const newRow = document.createElement("tr");
+			newRow.innerHTML = htmlText;
+			newRow.style.borderTop = '1px solid rgba(0,0,0,0.20)'
+			table.appendChild(newRow);
+		}
+
+		
 
 		function handleRepeater(selectElement) {
 			var buttonElement = selectElement.nextElementSibling;
@@ -168,6 +390,22 @@
 			} else {
 				buttonElement.style.display='none';
 			}
+		}
+
+		function setFieldType(element, fieldType) {
+			const parent = element.closest(".dropdown");
+			const input = parent.querySelector("input[name='fieldType']");
+			input.value = fieldType;
+			const imgsrc = element.querySelector("img").src || "";
+			const textcontent = element.querySelector("p").textContent;
+			const targetButton = parent.querySelector("button");
+			const htmlText = `
+				<div style="cursor:pointer;margin:0;font-size:11px;font-weight:500;color:#484848;padding:5px 10px;display:flex;align-items:center;">
+					<img src="${imgsrc}" alt="" style="margin-right:20px" >
+					<p style="margin:0px;font-size:12px;">${textcontent}</p>	
+				</div>
+			`
+			targetButton.innerHTML = htmlText;
 		}
 
 		function handlePostTypeConfirmation() {
@@ -192,21 +430,18 @@
 			// const empty = document.getElementById("empty-model-wr").style.display = "none";
 			const inputsContainer = document.getElementById("inputs-container");
 			const newdiv = document.createElement('div');
-			newdiv.innerHTML = `<div class="input-group mb-3" font-size: 13px;">
-				<span style="background-color: #d5d5d5;font-weight: 500;border-radius: 0px;font-size:13px;" class="input-group-text">Key Name</span>
+			newdiv.innerHTML = `<div class="input-group mb-3">
+				<span style="color:#484848;background-color: #f5f5f5;font-weight: 500;border-radius: 0px;font-size: 13px;border:1px solid rgba(0, 0, 0, 0.25)" class="button-secondary">Key Name</span>
 				<input type="text" style="font-size:13px;" class="form-control" placeholder="Enter a key" aria-label="Enter a key" required>
-				<span style="background-color: #d5d5d5;font-weight: 500;border-radius: 0px;font-size:13px;" class="input-group-text">Data Type</span>
+				<span style="color:#484848;background-color: #f5f5f5;font-weight: 500;border-radius: 0px;font-size: 13px;border:1px solid rgba(0, 0, 0, 0.25)" class="button-secondary">Data Type</span>
 				<select class="form-select" onchange="handleRepeater(this)" style="font-size:13px;" aria-label="Default select example" required>
 					<option selected value="String">String</option>
 					<option value="Boolean">Boolean</option>
 					<option value="Number">Number</option>
 					<option value="Image">Image</option>
-					<option value="Multiple Images">Multiple Images</option>
-					<option value="Mixed">Mixed</option>
+					<option value="Mixed">Editor</option>
 					<option value="Array">Array</option>
-					<option value="Repeater">Repeater</option>
 				</select>
-				<button style="display: none;" onclick="openSubDocModal(this)" class="btn button-secondary" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Link a custom field"><i class="fa-solid fa-link"></i></button>
 			</div>`;
 			inputsContainer.appendChild(newdiv);
 			window.scroll({
@@ -238,9 +473,9 @@
 
 		function handlesubmit() {
 			let data = {};
-			const inputContainer = document.getElementById("inputs-container");
+			const inputContainer = document.querySelector("#inputs-container");
 			const modelName = inputContainer.querySelector("input[name='modelName']").value;
-			const allInputs = inputContainer.querySelectorAll('input:not([name="modelName"])');
+			const allInputs = inputContainer.querySelectorAll('input:not([name="modelName"]):not([name="modelId"])');
 			allInputs.forEach(input => {
 				const parent = input.closest(".input-group");
 				const selectItem = parent.querySelector(".form-select");
