@@ -833,6 +833,12 @@ tbody tr:nth-child(even) {
   .wcms__about-content.Default{
 	background-color: #044B7A;
   }
+  .wcms__support-top-bar.Default{
+	background-color: #2271B1;
+  }
+  .wcms__support-banner.Default{
+	background-image: linear-gradient(to bottom, #2271b167, #2271b167), url('https://www.asus.com/support/images/imageDist/kv-img.jpg?97df159bbb40b4ef7ff1509654371f55');
+  }
 
   /**
   	LIGHT THEME
@@ -885,6 +891,12 @@ tbody tr:nth-child(even) {
   .wcms__about-content.Light{
 	background-color: #04A4CC;
   }
+  .wcms__support-top-bar.Light{
+	background-color: #04A4CC;
+  }
+  .wcms__support-banner.Light{
+	background-image: linear-gradient(to bottom, #04A4CC67, #04A4CC67), url('https://www.asus.com/support/images/imageDist/kv-img.jpg?97df159bbb40b4ef7ff1509654371f55');
+  }
 
   /**
   	MODERN THEME
@@ -934,7 +946,12 @@ tbody tr:nth-child(even) {
   .wcms__about-content.Modern{
 	background-color: #3858E9;
   }
-
+  .wcms__support-top-bar.Modern{
+	background-color: #3858E9;
+  }
+  .wcms__support-banner.Modern{
+	background-image: linear-gradient(to bottom, #33F07867, #33F07867), url('https://www.asus.com/support/images/imageDist/kv-img.jpg?97df159bbb40b4ef7ff1509654371f55');
+  }
     /**
   	  BLUE THEME
     **/
@@ -980,7 +997,12 @@ tbody tr:nth-child(even) {
   .wcms__about-content.Blue{
 	background-color: #096484;
   }
-
+  .wcms__support-top-bar.Blue{
+	background-color: #096484;
+  }
+  .wcms__support-banner.Blue{
+	background-image: linear-gradient(to bottom, #52ACCC67, #52ACCC67), url('https://www.asus.com/support/images/imageDist/kv-img.jpg?97df159bbb40b4ef7ff1509654371f55');
+  }
     /**
   	  COFFEE THEME
     **/
@@ -1024,6 +1046,12 @@ tbody tr:nth-child(even) {
 	  }
 	  .wcms__about-content.Coffee{
 		background-color: #46403C;
+	  }
+	  .wcms__support-top-bar.Coffee{
+		background-color: #46403C;
+	  }
+	  .wcms__support-banner.Coffee{
+		background-image: linear-gradient(to bottom, #C7A58967, #C7A58967), url('https://www.asus.com/support/images/imageDist/kv-img.jpg?97df159bbb40b4ef7ff1509654371f55');
 	  }
 	/**
   	  ECTOPLASM THEME
@@ -1069,6 +1097,13 @@ tbody tr:nth-child(even) {
 	  .wcms__about-content.Ectoplasm{
 		background-color: #413256;
 	  }
+	  .wcms__support-top-bar.Ectoplasm{
+		background-color: #D46F15;
+	  }
+	  .wcms__support-banner.Ectoplasm{
+		background-image: linear-gradient(to bottom, #A3B74567, #A3B74567), url('https://www.asus.com/support/images/imageDist/kv-img.jpg?97df159bbb40b4ef7ff1509654371f55');
+	  }
+
 	/**
   	  MIDNIGHT THEME
     **/
@@ -1112,6 +1147,12 @@ tbody tr:nth-child(even) {
 	  }
 	  .wcms__about-content.Midnight{
 		background-color: #E14D43;
+	  }
+	  .wcms__support-top-bar.Midnight{
+		background-color: #69A8BB;
+	  }
+	  .wcms__support-banner.Midnight{
+		background-image: linear-gradient(to bottom, #69A8BB67, #69A8BB67), url('https://www.asus.com/support/images/imageDist/kv-img.jpg?97df159bbb40b4ef7ff1509654371f55');
 	  }
     /**
   	  OCEAN THEME
@@ -1158,6 +1199,12 @@ tbody tr:nth-child(even) {
 	  .wcms__about-content.Ocean{
 		background-color: #627C83;
 	  }
+	  .wcms__support-top-bar.Ocean{
+		background-color: #627C83;
+	  }
+	  .wcms__support-banner.Ocean{
+		background-image: linear-gradient(to bottom, #9EBAA067, #9EBAA067), url('https://www.asus.com/support/images/imageDist/kv-img.jpg?97df159bbb40b4ef7ff1509654371f55');
+	  }
     /**
   	  SUNRISE THEME
     **/
@@ -1201,6 +1248,12 @@ tbody tr:nth-child(even) {
 	}
 	.wcms__about-content.Sunrise{
 		background-color: #B43C38;
+	  }
+	  .wcms__support-top-bar.Sunrise{
+		background-color: #DD823B;
+	  }	  
+	  .wcms__support-banner.Sunrise{
+		background-image: linear-gradient(to bottom, #DD823B67,#DD823B67 ), url('https://www.asus.com/support/images/imageDist/kv-img.jpg?97df159bbb40b4ef7ff1509654371f55');
 	  }
   /* theme styles keep it lowered always */
 

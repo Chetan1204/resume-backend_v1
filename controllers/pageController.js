@@ -1799,6 +1799,7 @@ exports.addLink = async (req, res) => {
 exports.addElement = async (req, res) => {
 	try {
 		console.log("adding element...");
+		let nameCheckSuccess = true;
 		const { ejsPageName, sectionName, elementData } = req.body;
 		const sanitizedPageName = ejsPageName.replace(/\s/g, '-');
 		if (ejsPageName) {
@@ -1807,13 +1808,20 @@ exports.addElement = async (req, res) => {
 				pageMatch.sections.map(item => {
 					if (item.sectionName === sectionName) {
 						item.sectionSlug = sectionName.toLowerCase().split(" ").join("-") + "-section-slug";
+						if(Array.from(new Set(item.sectionContent?.map(item => item?.elementAttrName))).indexOf(elementData?.elementAttrName) !== -1 ) {
+							nameCheckSuccess = false;
+							return item;
+						}
 						item.sectionContent.push(elementData);
 						return item;
 					} else return item;
 				})
 				await pageMatch.save();
-				console.log("element added to section "+sectionName+" successfully");
-				res.status(200).json({ success: true });
+				if(nameCheckSuccess){
+					res.status(200).json({ success: true });
+				} else {
+					res.status(200).json({ success: false, message:"element with same name attribute already exists" });
+				}
 			} else {
 				res.status(400).json({ success: false, message: "Cannot find the page data." });
 			}

@@ -13,4 +13,8 @@ router.use("/", paymentsAndOrdersRouter)
 router.get("/about", (req, res)=>{
 	res.render("aboutUs")
 })
+router.get("/support", (req, res)=>{
+	res.render("supportPage")
+})
+
 module.exports = router
