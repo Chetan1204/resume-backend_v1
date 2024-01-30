@@ -11,6 +11,7 @@ const AdminSchema = new mongoose.Schema({
 		required:true,
 		unique:true
 	},
+	profileImage:String,
 	password:{
 		type:String,
 		required:true,
@@ -25,7 +26,10 @@ const AdminSchema = new mongoose.Schema({
 	},
 	otp:String,
 	themeName:String,
-	access_token:String
+	access_token:String,
+	websiteName:String,
+	websiteUrl:String,
+	websiteLogo:String
 })
 
 const adminModel = mongoose.model("admin", AdminSchema);

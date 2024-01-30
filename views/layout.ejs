@@ -52,6 +52,14 @@ function updateThemeClass() {
 	secondaryButtons.forEach(button => button.classList.add(currentThemeName))
 	const mainButtons = document.querySelectorAll(".button-main");
 	mainButtons.forEach(button => button.classList.add(currentThemeName));
+	const menuTitleListItems = document.querySelectorAll(".menu-title-list li");
+	menuTitleListItems.forEach(item => item.classList.add(currentThemeName));
+	const messageboxes = document.querySelectorAll(".msg");
+	messageboxes.forEach(msg => msg.classList.add(currentThemeName));
+	const dropdowns = document.querySelectorAll(".header-strip .dropdown ul");
+	dropdowns.forEach(item => item.classList.add(currentThemeName));
+	document.querySelector("#hero-icon").classList.add(currentThemeName);
+	document.querySelector('.wcms__about-content').classList.add(currentThemeName);
 }
 window.onload = fetchThemename;
 </script>
@@ -74,7 +82,7 @@ window.onload = fetchThemename;
 		}
 
 		.eeEjFz {
-			border: 0.5px solid rgb(69, 75, 100);
+			border: 0.5px solid rgb(50, 51, 54);
 			flex: 0 0 auto;
 			order: 3;
 			align-self: stretch;
@@ -89,38 +97,69 @@ window.onload = fetchThemename;
 		}
 
 	</style>
-	<header style="height: 25px">
+	<header style="height: 35px">
 		<div id="header-strip"
 		class="header-strip"
-			style="display: flex;align-items: center;justify-content: space-between;gap: 10px;padding: 8px;height: 25px;">
-			<p style="font-weight: 600;font-size: 13px;margin: 0px;">Express Backend Server</p>
+			style="display: flex;align-items: center;justify-content: space-between;gap: 10px;padding: 8px;height: 35px;">
+			<div style="display: flex;align-items: center;gap: 10px;">
+				<div id="hero-icon" class="dropdown">
+					<i class="fa-solid fa-shield-halved dropdown-toggle"  data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>
+					<ul class="dropdown-menu">
+						<li><a class="dropdown-item" href="/api/v1/manage/about">About</a></li>
+						<li><a class="dropdown-item" href="#">Guides</a></li>
+						<li><a class="dropdown-item" href="#">Documentation</a></li>
+						<li><a class="dropdown-item" href="#">Support</a></li>
+						<li><a class="dropdown-item" href="#">Feedback</a></li>
+					</ul>
+				</div>
+				<div id="hero-icon" class="dropdown">
+					<p id="website-name-hldr" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="font-weight: 600;font-size: 13px;margin: 0px;margin: 0px 10px 0px 10px;cursor: pointer;width: 165px;display: flex;align-items: center;gap: 5px;"><i class="fa-solid fa-house-chimney"></i> Website Name</p>
+					<ul class="dropdown-menu">
+						<li><a id="website-url-hldr" class="dropdown-item" href="#">Visit Site</a></li>
+					</ul>
+				</div>
+				<p style="font-weight: 600;font-size: 13px;margin: 0px;margin-right: 10px;"><i style="margin-right: 10px;" class="fa-solid fa-rotate"></i> 17 </p>
+				<div id="hero-icon" class="dropdown">
+					<p class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="font-weight: 600;font-size: 13px;margin: 0px;cursor: pointer;"><i style="margin-right: 10px;" class="fa-solid fa-plus"></i> New</p>
+					<ul class="dropdown-menu">
+						<li><a class="dropdown-item" href="/api/v1/manage/render-add-post-type">Post Type</a></li>
+						<li><a class="dropdown-item" href="/api/v1/manage/add-new-page">Page</a></li>
+						<li><a class="dropdown-item" href="/api/v1/manage/add-new-model">Custom Field</a></li>
+						<li><a class="dropdown-item" href="#">Media</a></li>
+					</ul>
+				</div>
+			</div>
 			<div class="dropdown">
-				<button class="dropdown-toggle" style="height: 25px; font-size: 13px;background-color: transparent;border: none;outline: none;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-				  Howdy, Conative IT Solutions
+				<button id="dropdown-username-btn" class="dropdown-toggle" style="height: 25px; font-size: 13px;background-color: transparent;border: none;outline: none;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+				  Howdy, Conative IT Solutions <img class="avatar-profile" src="/static/avatar_placeholder.jpg" width="17px" alt="avatar">
 				</button>
-				<ul class="dropdown-menu">
-					<li style="padding: 5px;display: flex;align-items: center;gap:10px">
-						<img src="/static/icons8-avatar-32.png" width="24" alt="Avatar">
-						<p style="margin: 0;font-size: 13px;font-weight: 500;">Welcome!</p>
+				<ul class="dropdown-menu" style="width: 275px;padding: 0px;">
+					<li style="display: flex;align-items: start;justify-content: flex-start;padding: 10px;gap: 10px;">
+						<figure style="margin: 0px;">
+							<img class="avatar-profile" src="/static/avatar_placeholder.jpg" width="90px" alt="avatar">
+						</figure>
+						<div style="display: flex;align-items: flex-start;flex-direction: column;padding: 10px;">
+							<p id="username-blk" style="font-size: 13px;cursor: pointer;margin: 0px;font-weight: 600;">User Name <span style="display: block;"><a style="font-size: 11px; color: #a5a5a5;" href="#">visit website</a></span></p>
+							<p style="font-size: 13px;cursor: pointer;margin: 0px;margin-top: 15px;"><a style="color: #c2c1c1;" href="/api/v1/manage/change-theme">Settings</a></p>
+							<p style="font-size: 13px;cursor: pointer;margin: 5px 0px 0px 0px;"><a style="color: #c2c1c1;" onclick="handleLogout()">Sign Out</a></p>
+						</div>
 					</li>
-					<li class="dropdown-item" style="font-size: 13px;cursor: pointer;"><a href="/api/v1/manage/change-theme" style="color: black;">Change theme</a></li>
-					<li class="dropdown-item" style="font-size: 13px;cursor: pointer;">Something else here</li>
-					<li class="dropdown-item" style="font-size: 13px;cursor: pointer;"><a onclick="handleLogout()">Sign Out</a></li>
+					
 				</ul>
 			  </div>
 		</div>
 	</header>
-	<main style="display: flex;height: calc(100% - 25px);">
+	<main style="display: flex;height: calc(100% - 35px);">
 		<!-- Sidebar -->
-		<div id="main-sidebar" class="flex-shrink-0 main-sidebar" style="width: 200px;height: 100%;overflow-y: scroll;">
+		<div id="main-sidebar" class="flex-shrink-0 main-sidebar" style="width: 200px;height: 100%;overflow-y: auto;">
 			<ul class="list-unstyled ps-0">
-				<li class="mb-1">
+				<!-- <li class="mb-1">
 					<div class="menu-title-item align-items-center "
 						style="width: 100%; padding:5px 12px ;  font-size: 13px;line-height: 22px;font-weight: 600;text-transform: uppercase;letter-spacing: 0.5px;text-align: center;"
 						data-bs-toggle="collapse">
 						Dashboard <i style="color: #f0f0f1;margin-left: 10px; " class="fa-solid fa-bolt"></i>
 					</div>
-				</li>
+				</li> -->
 				<li class="mb-1">
 					<div class="menu-title-item align-items-center collapsed "
 						style="width: 100%; padding:5px 12px ;  font-size: 11px;line-height: 22px;font-weight: 600;text-transform: uppercase;letter-spacing: 0.5px;"
@@ -140,7 +179,7 @@ window.onload = fetchThemename;
 						</ul>
 					</div>
 				</li>
-				<div class="Divider__StyledDivider-sc-1vy16c4-0 eeEjFz"></div>
+				<!-- <div class="Divider__StyledDivider-sc-1vy16c4-0 eeEjFz"></div> -->
 				<li class="mb-1">
 					<div class="menu-title-item align-items-center collapsed "
 						style="width: 100%; padding:5px 12px ;  font-size: 11px;line-height: 22px;font-weight: 600;text-transform: uppercase;letter-spacing: 0.5px;"
@@ -157,7 +196,7 @@ window.onload = fetchThemename;
 						</ul>
 					</div>
 				</li>
-				<div class="Divider__StyledDivider-sc-1vy16c4-0 eeEjFz"></div>
+				<!-- <div class="Divider__StyledDivider-sc-1vy16c4-0 eeEjFz"></div> -->
 				<li class="mb-1">
 					<div class="menu-title-item align-items-center collapsed "
 						style="width: 100%; padding:5px 12px ;  font-size: 11px;line-height: 22px;font-weight: 600;text-transform: uppercase;letter-spacing: 0.5px;"
@@ -214,7 +253,7 @@ window.onload = fetchThemename;
 					const newLi = document.createElement("li");
 					newLi.innerHTML = `<a id="all-pages-link" href="/api/v1/manage/rendermodel?modelname=${item?._id}"
 										class="side-menu-link"><i
-											class="fa-solid fa-thumbtack" style="color: #d1d1d1;margin-right: 10px;"></i>${item?.modelName}</a>`;
+											class="fa-solid fa-thumbtack" style="margin-right: 10px;"></i>${item?.modelName}</a>`;
 					modelList.insertBefore(newLi, lastLi)
 				})
 				setActiveLink();
@@ -229,12 +268,48 @@ window.onload = fetchThemename;
 					const newLi = document.createElement("li");
 					newLi.innerHTML = `<a id="all-pages-link" href="/api/v1/manage/show-posts-by-post-type/${encodeURIComponent(item?._id)}"
 										class="side-menu-link"><i
-											class="fa-solid fa-thumbtack" style="color: #d1d1d1;margin-right: 10px;"></i>${item?.postTypeName}</a>`;
+											class="fa-solid fa-thumbtack" style="margin-right: 10px;"></i>${item?.postTypeName}</a>`;
 					postTypeList.insertBefore(newLi, lastLi)
 				})
 				setActiveLink();
 			})
+
+			fetch("/api/v1/manage/get-user-data").then(res => res.json()).then(data => {
+				console.log("GETTNG USER DATA::",data);
+				if(data?.userData?.websiteName){
+					const element = document.querySelector("#website-name-hldr");
+					element.innerHTML = `<i class="fa-solid fa-house-chimney"></i> <span style="display:inline-block;width:120px;text-overflow:ellipsis;overflow:hidden; white-space: nowrap;">${data?.userData?.websiteName}</span> <i class="fa-solid fa-pen hover-appear" style="margin-left:5px;font-size:13px;" onclick="openAddWebsiteModal()"></i>`
+					// element.addEventListener('click', ()=>{ 
+					// 	let newTab = window.open(data?.userData?.websiteUrl?.indexOf("https://") !== -1 ? data?.userData?.websiteUrl : 'https://'+data?.userData?.websiteUrl, '_blank');
+					// 	newTab.focus();
+					// })
+					const urlElement = document.querySelector("#website-url-hldr");
+					urlElement.setAttribute("href", data?.userData?.websiteUrl?.indexOf("https://") !== -1 ? data?.userData?.websiteUrl : 'https://'+data?.userData?.websiteUrl)
+					const usernameElement = document.querySelector("#username-blk");
+					usernameElement.innerHTML = `${data?.userData?.username} <span style="display: block"><a style="font-size: 11px; color: #a5a5a5;" href="${data?.userData?.websiteUrl}">${data?.userData?.websiteName}</a></span>`;
+
+					const usernameDropDown = document.querySelector("#dropdown-username-btn");
+					usernameDropDown.innerHTML = `Howdy, ${data?.userData?.username} <img src="/static/avatar_placeholder.jpg" width="17px" alt="avatar">`;
+
+					const pics = document.querySelectorAll(".avatar-profile");
+					pics.forEach(item => {
+						if(data?.userData?.profileImage){
+							item.setAttribute('src', `/images/${data?.userData?.profileImage}`)
+						}
+					})
+				} else {
+					const element = document.querySelector("#website-name-hldr");
+					element.innerHTML = `<i class="fa-solid fa-plus"></i> Add Website`
+					element.addEventListener('click', ()=>{
+						openAddWebsiteModal();
+					});
+				}
+			})
 		});
+
+		function openAddWebsiteModal() {
+			window.location.href = "/api/v1/manage/add-project";
+		}
 
 		function handleLogout() {
 			fetch("/api/v1/manage/auth/admin-logout")

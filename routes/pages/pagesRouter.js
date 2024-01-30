@@ -7,7 +7,8 @@ const { verifyLogin } = require("../../middlewares/verifyLogin");
 
 // GENERIC
 router.get("/dash",verifyLogin, pageController.dashboard );
-
+router.get("/add-project",verifyLogin, pageController.renderAddProject);
+router.post("/add-project",verifyLogin, uploader.single("websiteLogo"), pageController.addProject);
 
 // POST TYPE ROUTES
 router.get("/get-post-types-and-links", verifyLogin, pageController.getPostTypesAndLinks)
@@ -92,7 +93,7 @@ router.post("/add-model-description", verifyLogin, pageController.addModelDescri
 router.get("/change-theme",verifyLogin, pageController.renderchangeTheme)
 router.post("/change-color-theme",verifyLogin,pageController.changeColorTheme)
 router.get("/fetch-theme-name",verifyLogin, pageController.fetchTheme)
-
+router.get("/get-user-data", verifyLogin, pageController.getUserData);
 
 
 

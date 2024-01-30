@@ -54,7 +54,7 @@ exports.handleAdminLogin = async (req, res) => {
 			match.status = true;
 			req.session.access_token = access_token;
 			await match.save();
-			res.redirect("/api/v1/manage/all-pages");
+			res.redirect("/api/v1/manage/about");
 		} else {
 			req.flash("login-message", {success:false, message:"Oops! Email and/or password are incorrect."})
 			res.redirect("/api/v1/manage/auth");
@@ -340,6 +340,28 @@ exports.updatePassword = async(req,res)=>{
 		await user.save();
 
 		res.status(200).redirect("/api/v1/manage/auth/")
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({success:false, message:error.message, error})	
+	}
+}
+
+exports.updateUserProfile = async (req, res) => {
+	try {
+		const {decoded} = req.jwt;
+		const user = await adminModel.findOneAndUpdate({email:decoded?.email},{
+			$set:{
+				"username":req.body?.username,
+				"email": req.body?.email,
+				"profileImage":req.file?.filename
+			}
+		},{new: true});
+		if(user) {
+			req.flash("toast", {type:"success", message:"user information updated successfully"});
+		} else {
+			req.flash("toast", {type:"failure", message:"some error occurred"});
+		}
+		return res.redirect("/api/v1/manage/change-theme")
 	} catch (error) {
 		console.log(error);
 		res.status(500).json({success:false, message:error.message, error})	

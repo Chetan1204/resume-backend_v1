@@ -10,5 +10,7 @@ router.use("/auth/", authRouter)
 router.use("/", dataRouter)
 router.use("/", pagesRouter)
 router.use("/", paymentsAndOrdersRouter)
-
+router.get("/about", (req, res)=>{
+	res.render("aboutUs")
+})
 module.exports = router

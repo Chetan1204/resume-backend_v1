@@ -13,6 +13,35 @@ exports.dashboard = async (req, res) => {
 	res.render('dashboard');
 }
 
+exports.renderAddProject = async (req, res) => {
+	const {decoded} = req.jwt;
+	const userData = await adminModel.findOne({email:decoded?.email}).select("email username websiteName websiteUrl roles");
+	res.render("addproject", {
+		userData
+	})
+}
+
+exports.addProject = async (req, res) => {
+	try {
+		const {decoded} = req.jwt;
+		console.log(req.file);
+		console.log(req.body);
+		const user = await adminModel.findOneAndUpdate({email:decoded?.email},{
+			$set:{
+				'websiteUrl':req.body?.websiteUrl || "",
+				'websiteName':req.body?.websiteName || "",
+				'websiteLogo':req.file?.filename || "",
+			}
+		},{new:true});
+		req.flash("toast", {message:"Website details updated", type:"success"});
+		res.redirect("/api/v1/manage/all-pages");
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({ success: true, message: "Server error", error: error });
+	}
+}
+
+
 exports.getPostTypesAndLinks = async (req, res) => {
 	try {
 		const postTypes = await postTypeModel.find({ pin: true });
@@ -149,14 +178,17 @@ exports.allPages = async (req, res) => {
 		const allPages = await pageModel.find({});
 		numberOfPages = Math.ceil(allPages?.length / ITEMS_PER_PAGE);       
 		finalPages = allPages.slice(0, ITEMS_PER_PAGE);
+
 		if(paginationtype && paginationtype === 'default'){
 			finalPages = allPages.slice(thisPage*ITEMS_PER_PAGE, thisPage*ITEMS_PER_PAGE+ITEMS_PER_PAGE);
-		} else if (paginationtype && paginationtype === 'search'){
+		} 
+		else if (paginationtype && paginationtype === 'search'){
 			const search = new RegExp(searchquery, 'i');
 			const filteredPages = await pageModel.find({name: search});
 			numberOfPages = Math.ceil(filteredPages?.length / ITEMS_PER_PAGE);
 			finalPages = filteredPages.slice(thisPage*ITEMS_PER_PAGE, thisPage*ITEMS_PER_PAGE+ITEMS_PER_PAGE)
-		} else if (paginationtype && paginationtype === 'filtered'){
+		} 
+		else if (paginationtype && paginationtype === 'filtered'){
 			if (filterdate == "All Dates") {
 			    if (filtercategory == "All Categories") {
 			        let totalPages =await pageModel.find({});
@@ -167,7 +199,8 @@ exports.allPages = async (req, res) => {
 					numberOfPages = Math.ceil(totalPages?.length / ITEMS_PER_PAGE);
 					finalPages = totalPages.slice(thisPage*ITEMS_PER_PAGE, thisPage*ITEMS_PER_PAGE + ITEMS_PER_PAGE);
 			    }
-			} else {
+			} 
+			else {
 			    const startDate = new Date(`${filterdate}-01T00:00:00Z`);
 			    const endDate = new Date(`${filterdate}-31T23:59:59Z`);
 				
@@ -214,12 +247,14 @@ exports.allPages = async (req, res) => {
 
 exports.showPublishedPages = async (req, res) => {
 	try {
-		console.log("showing all published pages")
+		console.log("showing all published pages");
+		const {currentpage, paginationtype, searchquery, filterdate, filtercategory} = req.query;
 		const allPages = await pageModel.find({});
 		const published = allPages.filter(page => page.status === 'published');
 		const hidden = allPages.filter(page => page.visibility === 'hidden');
 		const authors = [...new Set(allPages.map(page => page.author))];
 		const dates = getLastTwelveMonths();
+		let numberOfPages = Math.ceil(published?.length / ITEMS_PER_PAGE);  
 		res.render("all", { 
 			allPages:published, 
 			message: req.flash("toast"),
@@ -227,6 +262,12 @@ exports.showPublishedPages = async (req, res) => {
 			hidden,
 			authors,
 			dates,
+			paginationtype: paginationtype || 'default',
+			searchquery: searchquery || "",
+			currentpage: currentpage || 1,
+			numberOfPages,
+			filterdate: filterdate || '',
+			filtercategory: filtercategory || ''
 		})
 	} catch (error) {
 		console.error('Error fetching pages:', error);
@@ -236,11 +277,13 @@ exports.showPublishedPages = async (req, res) => {
 exports.showHiddenPages = async (req, res) => {
 	try {
 		console.log("rendering all pages");
+		const {currentpage, paginationtype, searchquery, filterdate, filtercategory} = req.query;
 		const allPages = await pageModel.find({});
 		const published = allPages.filter(page => page.status === 'published');
 		const hidden = allPages.filter(page => page.visibility === 'hidden');
 		const authors = [...new Set(allPages.map(page => page.author))];
 		const dates = getLastTwelveMonths();
+		let numberOfPages = Math.ceil(hidden?.length / ITEMS_PER_PAGE);  
 		res.render("all", { 
 			allPages:hidden, 
 			message: req.flash("toast"),
@@ -248,6 +291,12 @@ exports.showHiddenPages = async (req, res) => {
 			hidden,
 			authors,
 			dates,
+			paginationtype: paginationtype || 'default',
+			searchquery: searchquery || "",
+			currentpage: currentpage || 1,
+			numberOfPages,
+			filterdate: filterdate || '',
+			filtercategory: filtercategory || ''
 		})
 	} catch (error) {
 		console.error('Error fetching pages:', error);
@@ -314,7 +363,6 @@ exports.allPosts = async (req, res) => {
 	try {
 		console.log("rendering all posts...");
 		const {currentpage, paginationtype, searchquery, filterdate, filtercategory} = req.query;
-
 		let numberOfPages;
 		let thisPage;
 		if(currentpage) thisPage = parseInt(currentpage) -1;
@@ -343,7 +391,7 @@ exports.allPosts = async (req, res) => {
 			modelName: item.modelName
 		}))
 		console.log("rendering all posts.");
-		res.render("allposts", { 
+		res.render("allposts", {
 			allPosts: finalPosts || allPostsData, 
 			allModels: sanitizedModelData, 
 			allCategories,
@@ -1243,6 +1291,7 @@ exports.showPost = async (req, res) => {
 			let dataObject = {};
 			let modelNames = [];
 			async function processAllCustomFields(items) {
+				console.log("processign custom fields");
 				for (const item of items) {
 					const model = await dataModel.findOne({ modelName: item });
 					if (model) {
@@ -1777,8 +1826,15 @@ exports.addElement = async (req, res) => {
 
 exports.renderchangeTheme = async(req,res)=>{
 	try {
+		const user = await adminModel.findOne({email: req.jwt?.decoded?.email});
 		
-		res.render("colorThemeSetting")
+		res.render("colorThemeSetting", {
+			themeName:user?.themeName,
+			message:req.flash("toast"),
+			username:user?.username,
+			email:user?.email,
+			profileImage: user?.profileImage
+		})
 	} catch (error) {
 		console.log(error);
 		res.status(500).json({ message: "Error occurred while fetching page." });
@@ -1787,9 +1843,10 @@ exports.renderchangeTheme = async(req,res)=>{
 
 exports.changeColorTheme = async (req, res) => {
     try {
-        const { themeName, email } = req.body;
+        const { themeName } = req.body;
+		console.log("========>",req.jwt)
         const updatedUser = await adminModel.findOneAndUpdate(
-            { email: email },
+            { email: req.jwt?.decoded?.email },
             { $set: { themeName: themeName } },
             { new: true }
         );
@@ -1811,7 +1868,6 @@ exports.fetchTheme = async (req, res) => {
     try {
         const { decoded } = req.jwt;
         const email = decoded.email;
-
         const user = await adminModel.findOne({ email: email });
 
         if (user) {
@@ -1828,3 +1884,15 @@ exports.fetchTheme = async (req, res) => {
         return res.status(500).json({ message: "Error occurred while processing the request." });
     }
 };
+
+exports.getUserData = async (req, res) => {
+	try {
+		const { decoded } = req.jwt;
+        const email = decoded.email;
+		const userData = await adminModel.findOne({email}).select("email username roles websiteName websiteUrl websiteLogo profileImage");
+		res.status(200).json({success:true, userData})
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({success:false, message:"internal server error", error})
+	}
+}

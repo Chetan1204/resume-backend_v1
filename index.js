@@ -39,7 +39,7 @@ app.use(session({
 		maxAge:60*60000, // 1 hour
 	},
 	store:MongoStore.create({
-		mongoUrl:"mongodb://127.0.0.1:27017/univbackend3"
+		mongoUrl:process.env.MONGODB_URL
 	})
 }))
 app.use(flash());

@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const MONGODB_URL = 'mongodb://127.0.0.1:27017/univbackend'
+const MONGODB_URL = process.env.MONGODB_URL;
 
 async function Connectdb() {
 	try {
