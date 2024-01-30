@@ -1,0 +1,50 @@
+<div style="width: 100%; height: 100%;background-color: #f0f0f1;display: flex;align-items: start;justify-content: start;">
+    <div style="width: 60%;display: flex;flex-direction: column;padding: 25px 45px;">
+		<h1 style="font-family: 'PT Serif', serif; font-size: 56px;">Feedback</h1>
+		<form action="/api/v1/manage/submit-review" method="post">
+		<div id="Search-Bar" class="search-block">
+			<div class="search-content">
+			   <div role="search" class="search-input">
+				  <label style="margin-top: 25px;">Email</label>
+				  <input type="email" name="email" required placeholder="Email" style="border:1px solid rgba(0,0,0,0.25); outline: none;padding: 10px;" autocomplete="Off" maxlength="200" aria-label="email"> 
+			   </div>
+			</div>
+		 </div>
+		<div id="Search-Bar" class="search-block">
+			<div class="search-content">
+			   <div role="search" class="search-input">
+				  <label style="margin-top: 25px;">Full Name</label>
+				  <input type="text" name="fullName" required placeholder="Full Name" style="border:1px solid rgba(0,0,0,0.25); outline: none;padding: 10px;" autocomplete="Off" maxlength="200" aria-label="name">
+			   </div>
+			</div>
+		 </div>
+		<div id="Search-Bar" class="search-block">
+			<div class="search-content">
+			   <div role="search" class="search-input">
+				  <label style="margin-top: 25px;display: block;">Full Name</label>
+				  <textarea name="message" required placeholder="Message" style="width: 100%; height: 275px;border:1px solid rgba(0,0,0,0.25); outline: none;padding: 10px;" autocomplete="Off" maxlength="200" aria-label="name"></textarea>
+			   </div>
+			</div>
+		</div>
+		<p style="font-size: 11px;color: #777777;"><strong>DISCLAIMER: </strong>Provider has not agreed to and does not agree to treat as confidential any Feedback (as defined below) Customer provides to Provider, and nothing in this Agreement or in the parties’ dealings arising out of or related to this Agreement will restrict Provider’s right to use, profit from, disclose, publish, keep secret, or otherwise exploit Feedback, without compensating or crediting Customer. Notwithstanding Section __ (Confidential Information), Feedback will not be considered Customer’s Confidential Information or its trade secret. (“Feedback” refers to any suggestion or idea for improving or otherwise modifying any of Provider’s products or services. Feedback does not include any suggestion or idea to the extent that it solely addresses Customer’s products or services.)</p>
+		<button class="button-main button-main-md" style="width: 100%;padding: 15px;margin-top: 25px;">Submit</button>
+	</form>
+	</div>
+	<div class="af-sp-announcement" style="width: 40%;height: 100%;">
+		<div style="padding: 11px 0; text-align: center;color: #fff;height: 50px;" class="wcms__support-top-bar">
+			<a style="color: #fff;" href="#">
+			W-CMS Announcement Regarding Custom Field Documentation
+			</a>
+		</div>
+		<div style="height: calc(100% - 50px);">
+			<div aria-labelledby="banner-titleword" class="top-wrapper wcms__support-banner" style="height: 100%;">
+				<div class="banner-shadow">
+				   <div style="text-align: center;color: #fff;position: absolute;top: 32%;left: 0;right: 0;">
+					  <div class="welcome" style="font-size: 17px;">We Value Your Feedback</div>
+					  <div style="font-size: 42px;">Leave your thoughts here</div>
+				   </div>
+				</div>
+			</div>
+		</div>
+    </div>
+</div>

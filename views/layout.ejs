@@ -111,7 +111,7 @@ window.onload = fetchThemename;
 						<li><a class="dropdown-item" href="#">Guides</a></li>
 						<li><a class="dropdown-item" href="#">Documentation</a></li>
 						<li><a class="dropdown-item" href="/api/v1/manage/support">Support</a></li>
-						<li><a class="dropdown-item" href="#">Feedback</a></li>
+						<li><a class="dropdown-item" href="/api/v1/manage/feedback">Feedback</a></li>
 					</ul>
 				</div>
 				<div id="hero-icon" class="dropdown hover-dropdown">
@@ -229,6 +229,16 @@ window.onload = fetchThemename;
 	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>	
 	<script>
 		document.addEventListener("DOMContentLoaded", function () {
+
+			// Need to correct this logic to avoid looping infinitely:
+
+			// fetch("/api/v1/manage/auth/check-login-status")
+			// .then(res => res.json())
+			// .then(data => {
+			// 	if(!data?.success){
+			// 		window.location.href = '/api/v1/manage/auth'
+			// 	}
+			// })
 			
 			function setActiveLink() {
 				var links = document.querySelectorAll(".menu-title-list li a");

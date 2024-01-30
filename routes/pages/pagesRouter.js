@@ -9,9 +9,10 @@ const { verifyLogin } = require("../../middlewares/verifyLogin");
 router.get("/dash",verifyLogin, pageController.dashboard );
 router.get("/add-project",verifyLogin, pageController.renderAddProject);
 router.post("/add-project",verifyLogin, uploader.single("websiteLogo"), pageController.addProject);
+router.post("/submit-review",verifyLogin, pageController.submitReview);
 
 // POST TYPE ROUTES
-router.get("/get-post-types-and-links", verifyLogin, pageController.getPostTypesAndLinks)
+router.get("/get-post-types-and-links", verifyLogin, pageController.getPostTypesAndLinks);
 router.post("/add-new-post-type", verifyLogin, pageController.addNewPostType);
 router.get("/render-add-post-type", verifyLogin, pageController.renderAddPostType);
 router.get("/render-all-post-types", verifyLogin, pageController.renderAllPostTypes);
@@ -19,8 +20,8 @@ router.get("/show-posts-by-post-type/:posttypeid", verifyLogin, pageController.s
 router.post("/search-posts-by-name/:posttypeid", verifyLogin, pageController.searchPosts);
 router.post("/filter-posts/:posttypeid", verifyLogin, pageController.filterPosts);
 router.post("/remove-post-type", verifyLogin, pageController.deletePostType);
-router.post("/link-post-type-to-model", verifyLogin, pageController.linkPostType)
-router.post("/unlink-post-type", verifyLogin, pageController.unlinkPostType)
+router.post("/link-post-type-to-model", verifyLogin, pageController.linkPostType);
+router.post("/unlink-post-type", verifyLogin, pageController.unlinkPostType);
 router.post("/pin-post-type", verifyLogin, pageController.pinPostType);
 
 
@@ -39,11 +40,11 @@ router.post("/remove-post", verifyLogin, pageController.deletePost);
 router.post("/add-post-category", verifyLogin, pageController.addPostCategory);
 router.post("/unlink-category", verifyLogin, pageController.unlinkCategory);
 router.post("/create-post-category", verifyLogin, pageController.createPostCategory);
-router.post("/update-post-permalink", verifyLogin, pageController.updatePostPermaLink)
-router.post("/change-post-visibility", verifyLogin, pageController.changePostVisibility)
-router.post("/change-post-status", verifyLogin, pageController.changePostStatus)
-router.post("/view-post-repeater-item", verifyLogin, pageController.viewPostRepeaterItem) 
-router.get("/render-post-repeater-item", verifyLogin, pageController.renderPostRepeaterItem)
+router.post("/update-post-permalink", verifyLogin, pageController.updatePostPermaLink);
+router.post("/change-post-visibility", verifyLogin, pageController.changePostVisibility);
+router.post("/change-post-status", verifyLogin, pageController.changePostStatus);
+router.post("/view-post-repeater-item", verifyLogin, pageController.viewPostRepeaterItem);
+router.get("/render-post-repeater-item", verifyLogin, pageController.renderPostRepeaterItem);
 router.post("/post-bulk-actions", verifyLogin, pageController.postBulkAction);
 router.post("/update-post-repeater-item", verifyLogin, uploader.any(), pageController.updatePostRepeaterItem);
 

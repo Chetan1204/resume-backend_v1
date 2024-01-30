@@ -41,6 +41,16 @@ exports.addProject = async (req, res) => {
 	}
 }
 
+exports.submitReview = async (req, res) => {
+	try {
+		const {email, fullName, message} = req.body;
+		res.status(200).json({success:true});
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({ success: true, message: "Server error", error: error });
+	}
+}
+
 
 exports.getPostTypesAndLinks = async (req, res) => {
 	try {
@@ -131,14 +141,14 @@ exports.pinPostType = async (req, res) => {
 
 exports.pinCustomField = async (req, res) => {
 	try {
-		console.log("pinning custom fields...")
+		console.log("pinning custom fields...");
 ;		const { modelName, modelId, pin } = req.body;
 		const model = await dataModel.findOne({ _id: modelId, modelName });
 		if (model) {
 			model.pin = pin;
 			await model.save();
 			console.log("custom field pinned");
-			res.status(200).json({ success: true, message: "post-type pinned." })
+			res.status(200).json({ success: true, message: "post-type pinned." });
 		}
 	} catch (error) {
 		console.log(error);

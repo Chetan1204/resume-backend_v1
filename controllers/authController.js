@@ -17,7 +17,6 @@ exports.renderLoginPage = async (req, res) => {
 
 exports.handleAdminRegister = async (req, res) => {
 	try {
-		
 		const {email, username, password, confirmPassword} = req.body;
 		const match = await adminModel.findOne({$or:[{email:email}, {username:username}]});
 		if(match) return res.status(400).json({success:false, message:"email and/or username already exists"});
@@ -30,7 +29,8 @@ exports.handleAdminRegister = async (req, res) => {
 			username,
 			password:hash,
 			roles:["admin"],
-			status:false
+			status:false,
+			themeName:"Default"
 		});
 		await newAdmin.save();
 		res.status(200).json({success:true, message:"user registered successfully"})
@@ -59,6 +59,19 @@ exports.handleAdminLogin = async (req, res) => {
 			req.flash("login-message", {success:false, message:"Oops! Email and/or password are incorrect."})
 			res.redirect("/api/v1/manage/auth");
 		}
+	} catch (error) {
+		req.flash("login-message", {success:false, message:error.message})
+		res.status(200).json({success:false, error:error.message})
+	}
+}
+
+exports.checkLoginStatus = async (req, res) => {
+	try {
+		const {access_token} = req.session;
+		if(!access_token) return res.status(400).json({success:false, message:"token invalid"});
+		const decoded = jwt.verify(access_token, process.env.ACCESS_TOKEN_SECRET);
+		if(!decoded) return res.status(400).json({success:false, message:"token invalid"});
+		res.status(200).json({success:true});
 	} catch (error) {
 		req.flash("login-message", {success:false, message:error.message})
 		res.redirect("/api/v1/manage/auth");
