@@ -1,0 +1,115 @@
+<div id="documentation-parent" style="width: 100%;height: 100%;padding: 15px;overflow-y: auto;">
+	<div style="width: 100%; height: 100%;display: flex;align-items: center;">
+		<div style="width: 80%; height: 100%;display: flex;flex-direction: column;justify-content: flex-start;align-items: center;">
+			<h1 style="font-weight: 400;font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;font-size: 48px;width: 80%;margin-top: 25px;">The U-CMS Handbook</h3>
+			<div class="markdown" style="width: 80%;background-color: #fff;padding: 25px;">
+				<h2 id="about-handbook" class="tracked-link">
+					<a href="#about-handbook"><i class="fa-solid fa-link"></i></a>
+					About this handbook
+				</h2>
+				<p>Over 20 years after its introduction to the programming community, JavaScript is now one of the most widespread cross-platform languages ever created. Starting as a small scripting language for adding trivial interactivity to webpages, JavaScript has grown to be a language of choice for both frontend and backend applications of every size. While the size, scope, and complexity of programs written in JavaScript has grown exponentially, the ability of the JavaScript language to express the relationships between different units of code has not. Combined with JavaScript’s rather peculiar runtime semantics, this mismatch between language and program complexity has made JavaScript development a difficult task to manage at scale.</p>
+				<p>The most common kinds of errors that programmers write can be described as type errors: a certain kind of value was used where a different kind of value was expected. This could be due to simple typos, a failure to understand the API surface of a library, incorrect assumptions about runtime behavior, or other errors. The goal of TypeScript is to be a static typechecker for JavaScript programs - in other words, a tool that runs before your code runs (static) and ensures that the types of the program are correct (typechecked).</p>
+				<p>If you are coming to TypeScript without a JavaScript background, with the intention of TypeScript being your first language, we recommend you first start reading the documentation on either the <a href="https://developer.microsoft.com/javascript/">Microsoft Learn JavaScript tutorial</a> or read <a href="https://developer.mozilla.org/docs/Web/JavaScript/Guide">JavaScript at the Mozilla Web Docs</a>.
+					If you have experience in other languages, you should be able to pick up JavaScript syntax quite quickly by reading the handbook.</p>
+				<h2 id="handbook-structure" class="tracked-link">
+					<a href="#handbook-structure"><i class="fa-solid fa-link"></i></a>
+					How is this Handbook Structured
+				</h2>
+				<p>The handbook is split into two sections:</p>
+				<ul>
+					<li>
+						<p><strong>The Handbook</strong></p>
+						<p>The TypeScript Handbook is intended to be a comprehensive document that explains TypeScript to everyday programmers. You can read the handbook by going from top to bottom in the left-hand navigation.</p>
+						<p>You should expect each chapter or page to provide you with a strong understanding of the given concepts. The TypeScript Handbook is not a complete language specification, but it is intended to be a comprehensive guide to all of the language’s features and behaviors.</p>
+						<p>A reader who completes the walkthrough should be able to:</p>
+						<ul style="list-style-type: circle;">
+							<li>Read and understand commonly-used TypeScript syntax and patterns</li>
+							<li>Explain the effects of important compiler options</li>
+							<li>Correctly predict type system behavior in most cases</li>
+						</ul>
+						<p>In the interests of clarity and brevity, the main content of the Handbook will not explore every edge case or minutiae of the features being covered. You can find more details on particular concepts in the reference articles.</p>
+					</li>
+					<li>
+						<p><strong>Reference Files</strong></p>
+						<p>The reference section below the handbook in the navigation is built to provide a richer understanding of how a particular part of TypeScript works. You can read it top-to-bottom, but each section aims to provide a deeper explanation of a single concept - meaning there is no aim for continuity.</p>
+					</li>
+				</ul>
+				<h3 id="non-goals" class="tracked-link" style="font-size: 20px;">
+					<a href="#non-goals"><i class="fa-solid fa-link"></i></a>
+					Non-Goals
+				</h3>
+				<p>The Handbook is also intended to be a concise document that can be comfortably read in a few hours. Certain topics won’t be covered in order to keep things short.</p>
+				<p>Specifically, the Handbook does not fully introduce core JavaScript basics like functions, classes, and closures. Where appropriate, we’ll include links to background reading that you can use to read up on those concepts.</p>
+				<p>The Handbook also isn’t intended to be a replacement for a language specification. In some cases, edge cases or formal descriptions of behavior will be skipped in favor of high-level, easier-to-understand explanations. Instead, there are separate reference pages that more precisely and formally describe many aspects of TypeScript’s behavior. The reference pages are not intended for readers unfamiliar with TypeScript, so they may use advanced terminology or reference topics you haven’t read about yet.</p>
+				<p>Finally, the Handbook won’t cover how TypeScript interacts with other tools, except where necessary. Topics like how to configure TypeScript with webpack, rollup, parcel, react, babel, closure, lerna, rush, bazel, preact, vue, angular, svelte, jquery, yarn, or npm are out of scope - you can find these resources elsewhere on the web.</p>
+				<h2 id="get-started" class="tracked-link">
+					<a href="#get-started"><i class="fa-solid fa-link"></i></a>
+					Get Started
+				</h2>
+				<p>Before getting started with <a href="/docs/handbook/2/basic-types.html">The Basics</a>, we recommend reading one of the following introductory pages. These introductions are intended to highlight key similarities and differences between TypeScript and your favored programming language, and clear up common misconceptions specific to those languages.</p>
+			</div>
+		</div>
+		<div style="width: 20%; height: 100%;padding-top: 100px;position: fixed;top: 50px;right: 80px;">
+			<h5 style="font-size: 16px;font-weight: 500; margin-bottom: 25px;">On this page</h5>
+			<ul id="tracker-list" style="list-style: none; padding: 0px 0px 0px 10px;">
+				
+			</ul>
+			<h5 style="font-size: 16px;font-weight: 500; margin: 25px 0px;">Was this page helpful?</h5>
+			<div style="display: flex;align-items: center;gap: 10px;">
+				<p style="margin: 0px;padding: 5px;"><i class="fa-regular fa-thumbs-up" style="margin-right: 6px;"></i>Yes</p>
+				<p style="margin: 0px;padding: 5px;"><i class="fa-regular fa-thumbs-down" style="margin-right: 6px;"></i>No</p>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	window.addEventListener('DOMContentLoaded', ()=>{
+		setTracker();
+		document.querySelector("#tracker-list").addEventListener('click', (event)=>{
+			if(event.target.classList.contains('tracker-link')){
+				event.preventDefault();
+				const targetId = event.target.getAttribute('href').substring(1);
+				const target = document.getElementById(targetId);
+				if(target){
+					target.scrollIntoView({
+						behavior:'smooth'
+					})
+				}
+				var navLinks = document.querySelectorAll(".tracker-link");
+				navLinks.forEach(link => {
+					link.closest('li').classList.remove('active')
+				});
+				event.target.closest('li').classList.add('active')
+			}
+		});
+
+		document.getElementById('documentation-parent').addEventListener('scroll', function() {
+			var scrollTargets = document.querySelectorAll(".tracked-link");
+			var navLinks = document.querySelectorAll(".tracker-link");
+			scrollTargets.forEach((target, index)=>{
+				var targetrect = target.getBoundingClientRect();
+				if(targetrect.top >=0 && targetrect.bottom <= window.innerHeight / 2){
+					navLinks.forEach(link=>{
+						link.closest('li').classList.remove("active");
+						if(target.getAttribute('id') === link.getAttribute('href').substring(1)){
+							link.closest('li').classList.add("active");
+						}
+					})
+				}
+			})
+		})
+	})
+
+	function setTracker() {
+		const listElement = document.querySelector("#tracker-list");
+		const links = document.querySelectorAll(".tracked-link");
+		links.forEach(link => {
+			var listItemElement = document.createElement('li');
+			listItemElement.classList.add('tracker-list-item');
+			listItemElement.innerHTML = `<p style="margin:10px 0px;font-size:13px;"><a class='tracker-link' style="color:inherit;text-decoration:none" href="${link.querySelector('a').getAttribute('href')}">${link.textContent}</a></p>`
+			listElement.appendChild(listItemElement)
+		})
+	}
+
+
+</script>

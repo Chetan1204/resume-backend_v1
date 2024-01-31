@@ -19,5 +19,8 @@ router.get("/support", (req, res)=>{
 router.get("/feedback", (req, res)=>{
 	res.render("feedback")
 })
+router.get("/documentation", (req, res)=>{
+	res.render("documentation")
+})
 
 module.exports = router
