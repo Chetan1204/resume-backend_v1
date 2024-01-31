@@ -747,6 +747,22 @@ exports.pageBulkAction = async (req, res) => {
     }
 };
 
+exports.updatePageStatus = async (req, res) => {
+	try {
+		const {ejsPageName, status, visibility} = req.body;
+		const pageMatch = await pageModel.findOneAndUpdate({ name: ejsPageName },{
+			$set:{
+				status,
+				visibility,
+			}
+		},{new:true});
+		res.status(200).json({success:true})
+	} catch (error) {
+		console.log(error);
+        res.status(500).json({ message: "Error occurred while updating page status." });
+	}
+}
+
 
 exports.postBulkAction = async (req, res) => {
     try {
@@ -1657,8 +1673,6 @@ exports.savePageData = async (req, res) => {
 					}
 				})
 			})
-			pageMatch.status = 'published';
-			pageMatch.visibility = 'visible';
 			pageMatch.revisions += 1;
 			await pageMatch.save();
 			res.status(200).json({ success: true });

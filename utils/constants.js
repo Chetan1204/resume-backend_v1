@@ -1,8 +1,9 @@
 exports.defaultPage = (sanitizedPageName) => `
 
+
 <div style="width:80%;border-right: 1px solid rgba(0,0,0,0.25);overflow-y:scroll;height:100%">
 	<div class="page-name" style="display:flex; align-items:center;justify-content:space-between;padding:8px 24px;">
-		<h1 id="ejspageName">${sanitizedPageName}</h1>
+		<h1 id="ejspageName">OurCulture</h1>
 	</div>
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<style>
@@ -114,34 +115,26 @@ exports.defaultPage = (sanitizedPageName) => `
 										<tbody class="sortable" data-sectionname="<%= pageData.sections[i].sectionName %>" data-arrayname="<%= pageData.sections[i].sectionContent[j].elementAttrName %>">
 											<% pageData.sections[i].sectionContent[j].elementItems.forEach((arrayitem, index)=> { %>
 												<tr style="border-bottom: 1px solid rgba(0,0,0,0.25);background-color:#fff;">
-													<td
-														style="padding: 5px 10px;font-size: 13px;font-weight: 600;">
+													<td style="padding: 5px 10px;font-size: 13px;font-weight: 600;">
 														<i class="fa-solid fa-grip-vertical"></i></td>
-													<td
-														style="padding: 5px 10px;font-size: 13px;font-weight: 600;">
+													<td style="padding: 5px 10px;font-size: 13px;font-weight: 600;">
 														<%= index+1 %>
 													</td>
-													<td
-														style="padding: 5px 10px;font-size: 13px;font-weight: 600;">
+													<td style="padding: 5px 10px;font-size: 13px;font-weight: 600;">
 														<%= arrayitem?.id %>
 													</td>
-													<td
-														style="padding: 5px 10px;font-size: 13px;font-weight: 600;">
+													<td style="padding: 5px 10px;font-size: 13px;font-weight: 600;">
 														<% if(arrayitem.type==="String" ) { %>
 															<%= arrayitem.value %>
 														<% } else if(arrayitem.type==="Textarea" ) { %>
-															<button
-																onclick="openEditorViewer('<%= pageData.sections[i].sectionName %>','<%= pageData.sections[i].sectionContent[j].elementAttrName %>','<%= arrayitem.id %>','<%= arrayitem.type %>','<%= JSON.stringify(arrayitem.value) %>')"
-																class="button-secondary">
+															<button onclick="openEditorViewer('<%= pageData.sections[i].sectionName %>','<%= pageData.sections[i].sectionContent[j].elementAttrName %>','<%= arrayitem.id %>','<%= arrayitem.type %>','<%= JSON.stringify(arrayitem.value) %>')" class="button-secondary">
 																<strong style="color: #2a5298;">Text Content</strong>(Click to View)
 															</button>
 														<% } else if(arrayitem.type==="JSON" ) { %>
-															<button type="button"
-																onclick="openJSONViewer('<%= pageData.sections[i].sectionContent[j].elementAttrName %>', '<%= arrayitem.id %>', '<%= arrayitem.type %>', '<%= JSON.stringify(arrayitem.value) %>', '<%= index %>' )"
-																class="button-secondary"><strong
-																	style="color: #2a5298;">JSON
-																	Data</strong> (Click to
-																View)</button>
+															<button type="button" onclick="openJSONViewer('<%= pageData.sections[i].sectionContent[j].elementAttrName %>', '<%= arrayitem.id %>', '<%= arrayitem.type %>', '<%= JSON.stringify(arrayitem.value) %>', '<%= index %>' )"
+																class="button-secondary">
+																<strong style="color: #2a5298;">JSON Data</strong>(Click to View)
+															</button>
 														<% } else if(arrayitem.type==="Image" ) { %>
 															<img src="/images/<%= arrayitem.value %>" width="50" alt="">
 														<% } %>
@@ -207,23 +200,87 @@ exports.defaultPage = (sanitizedPageName) => `
 <div id="sidebar" style="width:20%;height: 100%;padding: 10px;display: flex;flex-direction: column;align-items: center;justify-content: start;gap: 15px;" class="sidebar custom-field">
 	<div style="background-color: #fff;border-radius: 8px; padding: 10px; width: 100%;border: 1px solid rgba(0,0,0,0.25);display: flex;flex-direction: column;gap: 5px;">
 		<h5 style="font-weight: 600; font-size: 14px; text-transform: uppercase;margin-bottom: 15px; border-bottom: 1px solid rgba(0,0,0,0.25);padding-bottom: 5px;">Publish</h5>
-		<div style="display: flex;align-items: center;gap: 10px;">
-			<i style="text-align: center;width: 15px;display: inline-block;color: #484848;font-size: 14px;" class="fa-solid fa-map-pin"></i>
-			<span style="display: inline-block;color: #484848;font-weight:500;font-size: 13px;">Status</span>
-			<span style="display: inline-block;color: #65B741;font-weight:600;font-size: 13px;text-transform: uppercase;">Published</span>
-		</div>
-		<div style="display: flex;align-items: center;gap: 10px;">
-			<i style="text-align: center;width: 15px;display: inline-block;color: #484848;font-size: 14px;" class="fa-solid fa-eye"></i>
-			<span style="display: inline-block;color: #484848;font-weight:500;font-size: 13px;">Visibility</span>
-			<span style="display: inline-block;color: #484848;font-weight:500;font-size: 13px;">Visible</span>
-		</div>
-		<div style="display: flex;align-items: center;gap: 10px;">
-			<i style="text-align: center;width: 15px;display: inline-block;color: #484848;font-size: 14px;" class="fa-solid fa-code-compare"></i>
-			<span style="display: inline-block;color: #484848;font-weight:500;font-size: 13px;">Revisions</span>
-			<span style="display: inline-block;color: #484848;font-weight:500;font-size: 13px;">3</span>
-		</div>
-		<button type="submit" form="page-data-form" class="mt-3 button-main button-main-md" onclick="submitFields()"
-		>Update Page</button>
+		<table cellspacing="0" cellpadding="0">
+			<tr>
+				<td style="width: 30%;">
+					<p style="margin: 0;">
+						<i style="text-align: center;width: 15px;display: inline-block;color: #484848;font-size: 14px;" class="fa-regular fa-paper-plane"></i>
+						<span style="display: inline-block;color: #484848;font-weight:500;font-size: 13px;margin-left: 5px;">Status</span>
+					</p>
+				</td>
+				<td style="width: 70%;">
+					<span data-bs-toggle="collapse" href="#pageStatusCollapse" role="button" aria-expanded="false" aria-controls="pageStatusCollapse" style="display: inline-block;color: <%= pageData?.status === 'published' ? '#65B741':'inherit' %> ;font-weight:600;font-size: 13px;text-transform: capitalize;width: 100%;padding: 5px;"><%= pageData?.status || '--' %></span>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<div class="collapse" id="pageStatusCollapse">
+						<div style="display: flex;align-items: start;justify-content: start;flex-direction: column;padding: 10px;width: 300px;background-color: #f5f7f7;border-top: 1px solid rgba(0,0,0,0.25);">
+							<h5 style="font-size: 14px;">Publish this post:</h5>
+							<p style="margin: 0;font-size: 11px;font-weight: 400;margin-bottom: 10px;">Manage the status of this post, a only posts that are published will be accessible publicly.</p>
+							<div style="display: flex;align-items: center;padding: 5px;gap: 5px;">
+								<input type="radio" value="published" <%= pageData?.status =="published" && "checked" %>  onchange="handlePageStatus(this)" name="pageStatus" id="publishPage">
+								<label for="publishPage" style="font-size: 12px;font-weight: 500;">Publish</label>
+							</div>
+							<div style="display: flex;align-items: center;padding: 5px;gap: 5px;margin-bottom: 10px;">
+								<input type="radio" value="draft" <%= pageData?.status =="draft" && "checked" %> onchange="handlePageStatus(this)" name="pageStatus" id="withdrawPage">
+								<label for="withdrawPage" style="font-size: 12px;font-weight: 500;">Draft</label>
+							</div>
+						</div>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td style="width: 30%;">
+					<p style="margin: 0;">
+						<i style="text-align: center;width: 15px;display: inline-block;color: #484848;font-size: 14px;" class="fa-solid fa-eye"></i>
+						<span style="display: inline-block;color: #484848;font-weight:500;font-size: 13px;margin-left: 5px;">Visibility</span>
+					</p>
+				</td>
+				<td style="width: 70%;">
+					<span data-bs-toggle="collapse" href="#pageVisibilityCollapse" role="button" aria-expanded="false" aria-controls="pageVisibilityCollapse" style="display: inline-block;color: #484848;font-weight:500;font-size: 13px;padding: 5px;width: 100%;text-transform: capitalize;"><%= pageData?.visibility || '--' %></span>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<div class="collapse" id="pageVisibilityCollapse">
+						<div style="display: flex;align-items: start;justify-content: start;flex-direction: column;padding: 10px;width: 300px;background-color: #f5f7f7;border-top: 1px solid rgba(0,0,0,0.25);">
+							<h5 style="font-size: 14px;">Page Visibility:</h5>
+							<p style="margin: 0;font-size: 11px;font-weight: 400;margin-bottom: 10px;">Manage the visibility of this page, a only posts that are visible will be accessible publicly.</p>
+							<div style="display: flex;align-items: center;padding: 5px;gap: 5px;">
+								<input onchange="handlePageVisibility(this)" <%= pageData?.visibility =="visible" && "checked" %> value="visible" type="radio" name="pageVisibility" id="makePageVisible">
+								<label for="makePageVisible" style="font-size: 12px;font-weight: 500;">Visible (Public)</label>
+							</div>
+							<div style="display: flex;align-items: center;padding: 5px;gap: 5px;">
+								<input onchange="handlePageVisibility(this)" <%= pageData?.visibility =="hidden" && "checked" %> value="hidden" type="radio" name="pageVisibility" id="makePageHidden">
+								<label for="makePageHidden" style="font-size: 12px;font-weight: 500;">Hidden</label>
+							</div>
+						</div>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td style="width: 30%;">
+					<p style="margin: 0;">
+						<i style="text-align: center;width: 15px;display: inline-block;color: #484848;font-size: 14px;" class="fa-solid fa-code-compare"></i>
+						<span style="display: inline-block;color: #484848;font-weight:500;font-size: 13px;margin-left: 5px;">Revisions</span>
+					</p>
+				</td>
+				<td style="width: 70%;">
+					<span data-bs-toggle="collapse" href="#pageRevisionsCollapse" role="button" aria-expanded="false" aria-controls="pageRevisionsCollapse"  style="display: inline-block;color: #484848;font-weight:500;font-size: 13px;padding: 5px;width: 100%;"><%= pageData?.revisions || '--' %></span>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<div class="collapse" id="pageRevisionsCollapse">
+						<div class="card card-body">
+						  Some placeholder content for the collapse component. This panel is hidden by default but revealed when the user activates the relevant trigger.
+						</div>
+					</div>
+				</td>
+			</tr>
+		</table>
+		<button type="submit" form="page-data-form" class="mt-3 button-main button-main-md" onclick="submitFields()">Update Page</button>
 	</div>
 	<div style="background-color: #fff;border-radius: 8px; padding: 10px; width: 100%;border: 1px solid rgba(0,0,0,0.25);display: flex;flex-direction: column;gap: 5px;">
 		<h5 style="font-weight: 600; font-size: 14px; text-transform: uppercase;border-bottom: 1px solid rgba(0,0,0,0.25);padding-bottom: 5px;">Sections</h5>
@@ -968,7 +1025,36 @@ exports.defaultPage = (sanitizedPageName) => `
 		})
 		.then(()=>{ window.location.reload() }).catch(err => console.log(err))
 	}
+
+	function handlePageStatus(element) {
+		console.log(element.value);
+		const ejsPageName = document.getElementById('ejspageName').textContent;
+		fetch("/api/v1/manage/update-page-status", {
+			method:"POST",
+			headers:{
+				"Content-Type":"application/json"
+			},
+			body:JSON.stringify({ejsPageName, status:element.value})
+		})
+		.then(res => res.json())
+		.then(data => {})
+	}
+
+	function handlePageVisibility(element) {
+		console.log(element.value);
+		const ejsPageName = document.getElementById('ejspageName').textContent;
+		fetch("/api/v1/manage/update-page-status", {
+			method:"POST",
+			headers:{
+				"Content-Type":"application/json"
+			},
+			body:JSON.stringify({ejsPageName, visibility:element.value})
+		})
+		.then(res => res.json())
+		.then(data => {})
+	}
 </script>
+
 `
 
 exports.newPageSection = (sectionTitle) => `<div  style="border-bottom: 1px solid rgba(0,0,0,0.25);width: 100%;padding: 15px;">

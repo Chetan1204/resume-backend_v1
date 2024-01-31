@@ -20,6 +20,7 @@
 	<link href="https://fonts.googleapis.com/css2?family=Lato:wght@100;300;400;700;900&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.css">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+	<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/mode/javascript/javascript.min.js"></script>
 </head>
@@ -108,7 +109,7 @@ window.onload = fetchThemename;
 					<i class="fa-solid fa-shield-halved dropdown-toggle"  data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>
 					<ul class="dropdown-menu">
 						<li><a class="dropdown-item" href="/api/v1/manage/about">About</a></li>
-						<li><a class="dropdown-item" href="#">Guides</a></li>
+						<li><a class="dropdown-item" href="/api/v1/manage/guide">Guides</a></li>
 						<li><a class="dropdown-item" href="/api/v1/manage/documentation">Documentation</a></li>
 						<li><a class="dropdown-item" href="/api/v1/manage/support">Support</a></li>
 						<li><a class="dropdown-item" href="/api/v1/manage/feedback">Feedback</a></li>
@@ -162,6 +163,12 @@ window.onload = fetchThemename;
 						Dashboard <i style="color: #f0f0f1;margin-left: 10px; " class="fa-solid fa-bolt"></i>
 					</div>
 				</li> -->
+				<li class="mb-1">
+					<a id="all-pages-link" href="/api/v1/manage/dashboard" style="padding: 8px 0px 8px 12px;font-size: 13px;line-height: 1.25rem;font-weight: 400;width: 100%;display: inline-block;">
+						<i class='bx bx-tachometer' style="font-size: 16px;margin-right: 10px;line-height: 1.25rem;"></i>
+						Dashboard
+					</a>
+				</li>
 				<li class="mb-1">
 					<div class="menu-title-item align-items-center collapsed "
 						style="width: 100%; padding:5px 12px ;  font-size: 11px;line-height: 22px;font-weight: 600;text-transform: uppercase;letter-spacing: 0.5px;"

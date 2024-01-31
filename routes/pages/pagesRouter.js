@@ -71,6 +71,8 @@ router.post("/delete-page-array-item", verifyLogin, pageController.deletePageArr
 router.post("/search-pages-by-name", verifyLogin, pageController.searchPagesByName);
 router.post("/filter-pages", verifyLogin, pageController.filterPages);
 router.post("/page-bulk-actions", verifyLogin, pageController.pageBulkAction);
+router.post("/update-page-status", verifyLogin, pageController.updatePageStatus);
+
 
 
 // MODEL RELATED ROUTES

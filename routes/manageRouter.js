@@ -22,5 +22,12 @@ router.get("/feedback", (req, res)=>{
 router.get("/documentation", (req, res)=>{
 	res.render("documentation")
 })
+router.get("/dashboard", (req, res)=>{
+	res.render("dashboard")
+})
+router.get("/guide", (req, res)=>{
+	res.render("guide")
+})
+
 
 module.exports = router
