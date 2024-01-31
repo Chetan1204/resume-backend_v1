@@ -74,7 +74,7 @@ router.post("/page-bulk-actions", verifyLogin, pageController.pageBulkAction);
 
 
 // MODEL RELATED ROUTES
-router.get("/all-model-names-and-links", verifyLogin, pageController.getAllModelNamesAndLinks)
+router.get("/all-model-names-and-links", verifyLogin, pageController.getAllModelNamesAndLinks);
 router.get("/add-new-model", verifyLogin, pageController.renderaddNewModel);
 router.post("/add-new-model", verifyLogin, pageController.addNewModel);
 router.post("/delete-model", verifyLogin, pageController.deleteModel);
@@ -91,9 +91,9 @@ router.post("/add-model-description", verifyLogin, pageController.addModelDescri
 
 
 // SETTING RELATED ROUTES
-router.get("/change-theme",verifyLogin, pageController.renderchangeTheme)
-router.post("/change-color-theme",verifyLogin,pageController.changeColorTheme)
-router.get("/fetch-theme-name",verifyLogin, pageController.fetchTheme)
+router.get("/change-theme",verifyLogin, pageController.renderchangeTheme);
+router.post("/change-color-theme",verifyLogin,pageController.changeColorTheme);
+router.get("/fetch-theme-name",verifyLogin, pageController.fetchTheme);
 router.get("/get-user-data", verifyLogin, pageController.getUserData);
 
 

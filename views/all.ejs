@@ -2,9 +2,9 @@
 	<div>
 		<div style="display: flex; align-items: center;gap: 15px;">
 			<h3 style="font-size: 18px;font-weight: 500;">Pages </h3>
-			<span
+			<button
 				class="button-secondary-blue" style="background-color: #fff;"
-				id="openModalBtn">Add New Page</span>
+				id="openModalBtn">Add New Page</button>
 		</div>
 		<div style="display: flex;align-items: center;justify-content: space-between;width: 100%;">
 				<p style="font-size: 13px;margin: 0;"> <a class="nrm-txt" style="font-weight: 400;text-decoration: none;color: #484848;" href="/api/v1/manage/all-pages/">All <span style="color: #969696;" >(<%= allPages?.length %>)</span> |</a> <a class="nrm-txt" style="font-weight: 400;text-decoration: none;color: #484848;" href="/api/v1/manage/show-published-pages">Published <span style="color: #969696;" >(<%= published?.length %>)</span> |</a> <a class="nrm-txt" style="font-weight: 400;text-decoration: none;color: #484848;" href="/api/v1/manage/show-hidden-pages">Hidden <span style="color: #969696;" >(<%= hidden?.length %>)</span></a></p>
@@ -54,8 +54,8 @@
 			</div>
 			<div class="msg-container">
 				<% message?.forEach(msgItem =>{ %>
-					<div class="msg">
-						<p style="text-transform:capitalize"><i class="fa-regular fa-bell"></i><%= msgItem?.message || 'Howdy! Update your settings, personalise your backend and pick your themes here.' %></p>
+					<div class="msg" style="background-color: <%= msgItem?.success ? '#fff':'#FFB0B03f' %>;">
+						<p style="text-transform:capitalize"><i class="<%= msgItem?.success ? 'fa-regular fa-bell' : 'fa-solid fa-circle-exclamation' %>" style="color:<%= msgItem?.success ? '#D04848':'#D04848'  %>"></i><%= msgItem?.message || 'Howdy! Manage your pages here.' %></p>
 						<button class="close-msg-btn" onclick="closeMessage(this)">&times;</button>
 					</div>
 				<% }) %>
@@ -157,13 +157,18 @@
 		<div class="modal-content">
 			<span class="close">&times;</span>
 			<div style="padding: 20px 0;">
+				<h3>Add a new Page</h3>
+				<div style="border: 1px solid rgba(0,0,0,0.25); padding: 5px 10px;display: flex;align-items: center;background-color: aliceblue;margin: 10px 0px;">
+					<img src="/static/icons8-website-error-30.png" width="20" alt="info">
+					<p style="margin: 0px;margin-left: 10px;font-size: 13px;">Make sure that page names are unique.</p>
+				</div>
 				<form action="/create-page" method="post">
 					<div>
 						<div>
 							<label class="pb-2" for="page-heading">Page Name</label>
 							<input class="form-control" style="width: 100%;display: block;padding:5px;" type="text" name="pageHeading" autofocus>
 						</div>
-						<div>
+						<div style="margin: 10px 0px;">
 							<label class="pb-2" for="author">Author</label>
 							<input class="form-control" style="width: 100%;display: block;padding:5px;" type="text" name="author">
 						</div>
@@ -181,23 +186,23 @@
 <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
 <script>
 
-	const notyf = new Notyf({
-		types: [
-			{
-				type: 'info',
-				background: '#900C3F',
-				icon: false,
-				dismissible:true
-			}
-		]
-	});
-	const message = "<%= message %>";
-	if(message){
-		notyf.open({
-			type:"info",
-			message:message
-		})
-	}
+	// const notyf = new Notyf({
+	// 	types: [
+	// 		{
+	// 			type: 'info',
+	// 			background: '#900C3F',
+	// 			icon: false,
+	// 			dismissible:true
+	// 		}
+	// 	]
+	// });
+	// const message = "<%= message %>";
+	// if(message){
+	// 	notyf.open({
+	// 		type:"info",
+	// 		message:message
+	// 	})
+	// }
 	
 
 	const modal = document.getElementById('myModal');

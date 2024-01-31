@@ -141,9 +141,9 @@ window.onload = fetchThemename;
 							<img class="avatar-profile" src="/static/avatar_placeholder.jpg" width="90px" alt="avatar">
 						</figure>
 						<div style="display: flex;align-items: flex-start;flex-direction: column;padding: 10px;">
-							<p id="username-blk" style="font-size: 13px;cursor: pointer;margin: 0px;font-weight: 600;">User Name <span style="display: block;"><a style="font-size: 11px; color: #a5a5a5;" href="#">visit website</a></span></p>
-							<p style="font-size: 13px;cursor: pointer;margin: 0px;margin-top: 15px;"><a style="color: #c2c1c1;" href="/api/v1/manage/change-theme">Settings</a></p>
-							<p style="font-size: 13px;cursor: pointer;margin: 5px 0px 0px 0px;"><a style="color: #c2c1c1;" onclick="handleLogout()">Sign Out</a></p>
+							<p id="username-blk" style="font-size: 13px;cursor: pointer;margin: 0px;font-weight: 600;">User Name <span style="display: block;"><a style="font-size: 11px; color: #e5e5e5;" href="#">visit website</a></span></p>
+							<p style="font-size: 13px;cursor: pointer;margin: 0px;margin-top: 15px;"><a style="color: #e5e5e5;" href="/api/v1/manage/change-theme">Settings</a></p>
+							<p style="font-size: 13px;cursor: pointer;margin: 5px 0px 0px 0px;"><a style="color: #e5e5e5;" onclick="handleLogout()">Sign Out</a></p>
 						</div>
 					</li>
 					
@@ -211,9 +211,12 @@ window.onload = fetchThemename;
 									style="padding: 8px 0px 8px 12px;font-size: 13px;line-height: 1.25rem;font-weight: 400;width: 100%;display: inline-block;"><i
 										class="fa-solid fa-table-list"
 										style="margin-right: 10px;"></i>All Post Types</a></li>
-							<li id="add-new-post-type-li"><a id="all-pages-link" href="/api/v1/manage/render-add-post-type"
-									style="padding: 8px 0px 8px 12px;font-size: 13px;line-height: 1.25rem;font-weight: 400;width: 100%;display: inline-block;"><i
-										class="fa-solid fa-plus" style="margin-right: 10px;"></i>Add Post Type</a></li>
+							<li id="add-new-post-type-li">
+								<a id="all-pages-link" href="/api/v1/manage/render-add-post-type"
+									style="padding: 8px 0px 8px 12px;font-size: 13px;line-height: 1.25rem;font-weight: 400;width: 100%;display: inline-block;">
+									<i class="fa-solid fa-plus" style="margin-right: 10px;"></i>Add Post Type
+								</a>
+							</li>
 						</ul>
 					</div>
 				</li>
@@ -242,9 +245,10 @@ window.onload = fetchThemename;
 			
 			function setActiveLink() {
 				var links = document.querySelectorAll(".menu-title-list li a");
-				var currentURL = window.location.pathname;
+				var currentURL = window.location.href;
 
 				links.forEach(function (link) {
+					console.log(link, currentURL)
 					var linkURL = link.getAttribute("href");
 					liElement = link.closest("li");
 					if (currentURL.includes(linkURL)) {
@@ -299,7 +303,7 @@ window.onload = fetchThemename;
 					const urlElement = document.querySelector("#website-url-hldr");
 					urlElement.setAttribute("href", data?.userData?.websiteUrl?.indexOf("https://") !== -1 ? data?.userData?.websiteUrl : 'https://'+data?.userData?.websiteUrl)
 					const usernameElement = document.querySelector("#username-blk");
-					usernameElement.innerHTML = `${data?.userData?.username} <span style="display: block"><a style="font-size: 11px; color: #a5a5a5;" href="${data?.userData?.websiteUrl}">${data?.userData?.websiteName}</a></span>`;
+					usernameElement.innerHTML = `${data?.userData?.username} <span style="display: block"><a style="font-size: 11px; color: #e5e5e5;" href="${data?.userData?.websiteUrl}">${data?.userData?.websiteName}</a></span>`;
 
 					const usernameDropDown = document.querySelector("#dropdown-username-btn");
 					usernameDropDown.innerHTML = `Howdy, ${data?.userData?.username} <img src="/static/avatar_placeholder.jpg" width="17px" alt="avatar">`;

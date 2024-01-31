@@ -65,7 +65,7 @@ app.post('/create-page', async (req, res) => {
 	const sanitizedPageName = pageHeading.replace(/\s/g, '-');
 	const existingPage = await pageModel.findOne({ name: sanitizedPageName });
 	if (existingPage) {
-		req.flash("toast", "Page with the same name already exists")
+		req.flash("message", {success:false, message:"Page with the same name already exists"})
 		res.redirect("/api/v1/manage/all-pages");
 	} else {
 		const newPage = new pageModel({

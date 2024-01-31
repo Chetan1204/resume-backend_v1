@@ -253,16 +253,10 @@ td input:disabled, td textarea:disabled {
   }
 
 .empty-post-bg{
-	background-color: #f5f5f5;
-	background-image: url("data:image/svg+xml,%3Csvg width='52' height='26' viewBox='0 0 52 26' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23dbdbdb' fill-opacity='0.4'%3E%3Cpath d='M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+	background-color: #fff;
+	border: 1px solid rgba(0, 0, 0, 0.25);
 }
-.empty-post-bg button{
-	transition: all 300ms ease;
-	background-color: #474747;
-}
-.empty-post-bg button:hover{
-	background-color: #86b7fe;
-}
+
 
 label{
 	text-transform: uppercase;
@@ -341,7 +335,6 @@ tbody tr:nth-child(even) {
 
 .button-main{
 	/* background: linear-gradient(to top, #1e3c72 0%, #1e3c72 1%, #2a5298 100%); */
-	background-color: #2271B1;
     color: #fff;
     cursor: pointer;
     border-radius: 6px;
@@ -879,6 +872,10 @@ tbody tr:nth-child(even) {
 	background-color: #2271B1;
 	color: #fff; 
   }
+  .main-sidebar.Default .menu-title-list .active:before{
+	background-color: #72AEE6;
+  }
+
   .msg-container .Default::before{
 	background-color: #2271B1;
   }
@@ -926,7 +923,9 @@ tbody tr:nth-child(even) {
 	background-color: #999999;
 	color: #fff;
   }
-  
+  .main-sidebar.Light .menu-title-list .active:before{
+	background-color: #fff;
+  }
   .main-sidebar.Light,
   .header-strip.Light{
 	background-color: #E5E5E5;
@@ -971,11 +970,11 @@ tbody tr:nth-child(even) {
 	background-color: #33F078;
   }
   .button-main.Modern{
-	background-color: #33F078;
+	background-color: #3858E9;
   }
   .button-secondary-blue.Modern{
-	border:1px solid #33F078;
-	color: #33F078;
+	border:1px solid #3858E9;
+	color: #3858E9;
   }
   .main-sidebar.Modern .menu-title-list .active {  
 	background-color: #3858E9 ;
@@ -991,6 +990,9 @@ tbody tr:nth-child(even) {
   .main-sidebar.Modern,
   .header-strip.Modern{
 	background-color: #1E1E1E;
+  }
+  .main-sidebar.Modern .menu-title-list .active:before{
+	background-color: #fff;
   }
   .msg-container .Modern::before{
 	background-color: #33F078;
@@ -1039,6 +1041,9 @@ tbody tr:nth-child(even) {
   .main-sidebar.Blue #all-pages-link{
 	color: #fff;
   }
+  .main-sidebar.Blue .menu-title-list .active:before{
+	background-color: #fff;
+  }
   .main-sidebar.Blue,
   .header-strip.Blue{
 	background-color: #52ACCC;
@@ -1086,6 +1091,9 @@ tbody tr:nth-child(even) {
 		background-color: #C7A589 ;
 		color: #fff ; 
 	  }
+	.main-sidebar.Coffee .menu-title-list .active:before{
+		background-color: #fff;
+	}
 	.button-secondary-blue.Coffee{
 		border:1px solid #9EA476;
 		color: #9EA476;
@@ -1136,6 +1144,9 @@ tbody tr:nth-child(even) {
 		background-color: #A3B745 ;
 		color: #fff ; 
 	  }
+	.main-sidebar.Ectoplasm .menu-title-list .active:before{
+		background-color: #fff;
+	}
 	  .button-secondary-blue.Ectoplasm{
 		border:1px solid #D46F15;
 		color: #D46F15;
@@ -1184,8 +1195,11 @@ tbody tr:nth-child(even) {
 		background-color: #E14D43;
 	}
 	.main-sidebar.Midnight .menu-title-list .active {  
-		background-color: #69A8BB ;
-		color: #fff ; 
+		background-color: #E14D43 ;
+		color: #fff; 
+	}
+	.main-sidebar.Midnight .menu-title-list .active:before{
+		background-color: #fff;
 	}
 	.button-secondary-blue.Midnight{
 		border:1px solid #E14D43;
@@ -1237,6 +1251,9 @@ tbody tr:nth-child(even) {
 		background-color: #9EBAA0 ;
 		color: #fff ; 
 	  }
+	  .main-sidebar.Ocean .menu-title-list .active:before{
+		background-color: #fff;
+	  }
 	  .button-secondary-blue.Ocean{
 		border:1px solid #AA9D88;
 		color: #AA9D88;
@@ -1244,7 +1261,7 @@ tbody tr:nth-child(even) {
 	  .button-main.Ocean{
 		background-color: #9EBAA0;
 	  }
-	  .msg-container .Midnight::before{
+	  .msg-container .Ocean::before{
 		background-color: #9EBAA0;
 	  }
 	  
@@ -1288,6 +1305,9 @@ tbody tr:nth-child(even) {
 		background-color: #DD823B ;
 		color: #fff ; 
 	}
+	.main-sidebar.Sunrise .menu-title-list .active:before{
+		background-color: #fff;
+	}
 	.button-secondary-blue.Sunrise{
 		border:1px solid #CCAF0B;
 		color: #CCAF0B;
@@ -1295,7 +1315,7 @@ tbody tr:nth-child(even) {
 	.button-main.Sunrise{
 		background-color: #DD823B;
 	}
-	.msg-container .Midnight::before{
+	.msg-container .Sunrise::before{
 		background-color: #DD823B;
 	}
 	.header-strip .dropdown .Sunrise{

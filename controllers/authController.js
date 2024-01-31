@@ -370,9 +370,9 @@ exports.updateUserProfile = async (req, res) => {
 			}
 		},{new: true});
 		if(user) {
-			req.flash("toast", {type:"success", message:"user information updated successfully"});
+			req.flash("message", {success:true, message:"User information updated successfully"});
 		} else {
-			req.flash("toast", {type:"failure", message:"some error occurred"});
+			req.flash("message", {success:false, message:"Some error occurred"});
 		}
 		return res.redirect("/api/v1/manage/change-theme")
 	} catch (error) {

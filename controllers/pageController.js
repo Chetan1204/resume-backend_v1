@@ -33,7 +33,7 @@ exports.addProject = async (req, res) => {
 				'websiteLogo':req.file?.filename || "",
 			}
 		},{new:true});
-		req.flash("toast", {message:"Website details updated", type:"success"});
+		req.flash("message", {success:true, message:"Website details updated"});
 		res.redirect("/api/v1/manage/all-pages");
 	} catch (error) {
 		console.log(error);
@@ -161,6 +161,11 @@ exports.createPost = async (req, res) => {
 		console.log("creating post...");		
 		const { postTypeId, postName } = req.body;
 		const postType = await postTypeModel.findOne({ _id: postTypeId });
+		const postMatch = await postModel.findOne({postName});
+		if(postMatch){
+			req.flash('message',{success:false, message:'post with same name already exists for this post-type'})
+			return res.status(400).json({success:false, message:'post with same name already exists for this post-type'})
+		}
 		const newPost = new postModel({
 			postType: postType?._id,
 			postName,
@@ -170,6 +175,7 @@ exports.createPost = async (req, res) => {
 		await postType.save();
 		await newPost.save();
 		console.log("post created");
+		req.flash("message",{ success: true, message: "Post created successfully" })
 		res.status(200).json({ success: true, message: "post created" });
 	} catch (error) {
 		console.log(error);
@@ -237,7 +243,7 @@ exports.allPages = async (req, res) => {
 		console.log("rendering all pages...");
 		res.render("all", { 
 			allPages:finalPages || allPages, 
-			message: req.flash("toast"),
+			message: req.flash("message"),
 			published,
 			hidden,
 			authors,
@@ -267,7 +273,7 @@ exports.showPublishedPages = async (req, res) => {
 		let numberOfPages = Math.ceil(published?.length / ITEMS_PER_PAGE);  
 		res.render("all", { 
 			allPages:published, 
-			message: req.flash("toast"),
+			message: req.flash("message"),
 			published,
 			hidden,
 			authors,
@@ -296,7 +302,7 @@ exports.showHiddenPages = async (req, res) => {
 		let numberOfPages = Math.ceil(hidden?.length / ITEMS_PER_PAGE);  
 		res.render("all", { 
 			allPages:hidden, 
-			message: req.flash("toast"),
+			message: req.flash("message"),
 			published,
 			hidden,
 			authors,
@@ -409,7 +415,8 @@ exports.allPosts = async (req, res) => {
 			paginationtype: paginationtype || 'default',
 			searchquery: searchquery || '',
 			filterdate: filterdate || '',
-			filtercategory: filtercategory || ''
+			filtercategory: filtercategory || '',
+			message:req.flash('message')
 		});
 	} catch (error) {
 		console.log("error rendering posts",error);
@@ -430,7 +437,6 @@ exports.renderAddPostType = async (req, res) => {
 
 exports.deletePost = async (req, res) => {
 	try {
-		console.log('deleting post...');
 		const { postName, postId } = req.body;
 		const match = await postModel.findOneAndDelete({ _id: postId });
 		if (match) {
@@ -438,7 +444,7 @@ exports.deletePost = async (req, res) => {
 			allPosts = await postModel.find({ postType: postType?._id }).countDocuments();
 			postType.postCount = allPosts;
 			await postType.save();
-			console.log("post deleted successfully");
+			req.flash('message',{ success: true, message: "post deleted" })
 			res.status(200).json({ success: true, message: "post deleted" })
 		}
 	} catch (error) {
@@ -543,7 +549,8 @@ exports.showPosts = async (req, res) => {
 			searchquery: searchquery || '',
 			filterdate: filterdate,
 			filtercategory: filtercategory,
-			numberOfPages
+			numberOfPages,
+			message:req.flash('message')
 		})
 	} catch (error) {
 		console.log(error);
@@ -578,7 +585,8 @@ exports.searchPosts = async (req, res) => {
 			searchquery:searchName,
 			filterdate:'',
 			filtercategory:'',
-			numberOfPages
+			numberOfPages,
+			message:req.flash('message')
 		})
 	} catch (error) {
 		console.log(error);
@@ -644,7 +652,8 @@ exports.filterPosts = async (req, res) => {
 			searchquery:'',
 			filterdate:filterDate,
 			filtercategory:filterCategory,
-			numberOfPages
+			numberOfPages,
+			message:req.flash('message')
         });
     } catch (error) {
         console.log(error);
@@ -702,7 +711,7 @@ exports.filterPages = async (req, res) => {
 
         res.render("all", {
             allPages: pages,
-            message: req.flash("toast"),
+            message: req.flash("message"),
             published,
             hidden,
             authors,
@@ -908,7 +917,7 @@ exports.searchPagesByName = async (req, res) => {
 		const dates = getLastTwelveMonths();
 		res.render("all", { 
 			allPages:filteredPages.slice(0,ITEMS_PER_PAGE), 
-			message: req.flash("toast"),
+			message: req.flash("message"),
 			published,
 			hidden,
 			authors,
@@ -1372,7 +1381,6 @@ exports.viewPostRepeaterItem = async (req, res) => {
 
 exports.renderPostRepeaterItem = async (req, res) => {
 	try {
-		console.log("#####RENDERING#######", req.query)
 		const {modelName, postName, postTypeId, repeaterId, repeaterItemIndex} = req.query;
 		const repeaterModel = await dataModel.findOne({modelName});
 		const repeaterFields = repeaterModel.dataObject?.repeaters.filter(item => item?.id === repeaterId)[0]?.fields;
@@ -1684,6 +1692,8 @@ exports.removePageSection = async (req, res) => {
 			pageMatch.sections = pageMatch.sections.filter(section => section.sectionName !== sectionName);
 			await pageMatch.save();
 			res.status(200).json({ success: true, message: "Page section removed" });
+		} else {
+			res.status(400).json({success:false, message:'data not found'});
 		}
 	} catch (error) {
 		console.error('Error saving fields:', error);
@@ -1722,7 +1732,7 @@ exports.addSection = async (req, res) => {
 		if (!match) return res.status(400).json({ success: false, message: "Unable to get page data" });
 		for (let item of match.sections) {
 			if (item.sectionName === sectionName) {
-				return res.status(400).json({ success: false, message: "Section with same name already exists" })
+				return res.status(400).json({ success: false, message: "Section with same name already exists" });
 			}
 		}
 		match.sections.push({
@@ -1848,7 +1858,7 @@ exports.renderchangeTheme = async(req,res)=>{
 		
 		res.render("colorThemeSetting", {
 			themeName:user?.themeName,
-			message:req.flash("toast"),
+			message:req.flash("message"),
 			username:user?.username,
 			email:user?.email,
 			profileImage: user?.profileImage
@@ -1862,7 +1872,6 @@ exports.renderchangeTheme = async(req,res)=>{
 exports.changeColorTheme = async (req, res) => {
     try {
         const { themeName } = req.body;
-		console.log("========>",req.jwt)
         const updatedUser = await adminModel.findOneAndUpdate(
             { email: req.jwt?.decoded?.email },
             { $set: { themeName: themeName } },
@@ -1871,7 +1880,6 @@ exports.changeColorTheme = async (req, res) => {
 
         if (updatedUser) {
             console.log("ThemeName updated successfully:", updatedUser);
-            // Send a success response or do further actions if needed
             return res.status(200).redirect("/api/v1/manage/change-theme");
         } else {
             console.log("User not found with the given email.");
@@ -1889,10 +1897,7 @@ exports.fetchTheme = async (req, res) => {
         const user = await adminModel.findOne({ email: email });
 
         if (user) {
-            // Retrieve the theme name
             const themeName = user.themeName;
-
-            // Send the themeName in the response
             res.json({ themeName: themeName });
         } else {
             res.status(404).json({ message: "User not found with the given email." });
