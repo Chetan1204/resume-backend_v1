@@ -6,10 +6,11 @@ const uploader = require("../../middlewares/fileUploader");
 const { verifyLogin } = require("../../middlewares/verifyLogin");
 
 // GENERIC
-router.get("/dash",verifyLogin, pageController.dashboard );
+
 router.get("/add-project",verifyLogin, pageController.renderAddProject);
 router.post("/add-project",verifyLogin, uploader.single("websiteLogo"), pageController.addProject);
 router.post("/submit-review",verifyLogin, pageController.submitReview);
+
 
 // POST TYPE ROUTES
 router.get("/get-post-types-and-links", verifyLogin, pageController.getPostTypesAndLinks);
@@ -72,7 +73,6 @@ router.post("/search-pages-by-name", verifyLogin, pageController.searchPagesByNa
 router.post("/filter-pages", verifyLogin, pageController.filterPages);
 router.post("/page-bulk-actions", verifyLogin, pageController.pageBulkAction);
 router.post("/update-page-status", verifyLogin, pageController.updatePageStatus);
-
 
 
 // MODEL RELATED ROUTES

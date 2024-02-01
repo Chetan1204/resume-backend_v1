@@ -55,7 +55,7 @@
 			<div class="msg-container">
 				<% message?.forEach(msgItem =>{ %>
 					<div class="msg" style="background-color: <%= msgItem?.success ? '#fff':'#FFB0B03f' %>;">
-						<p style="text-transform:capitalize"><i class="<%= msgItem?.success ? 'fa-regular fa-bell' : 'fa-solid fa-circle-exclamation' %>" style="color:<%= msgItem?.success ? '#D04848':'#D04848'  %>"></i><%= msgItem?.message || 'Howdy! Manage your pages here.' %></p>
+						<p style="text-transform:capitalize"><i class="<%= msgItem?.success ? 'fa-regular fa-bell' : 'fa-solid fa-circle-exclamation' %>" style="color:<%= msgItem?.success ? '#484848':'#D04848'  %>"></i><%= msgItem?.message || 'Howdy! Manage your pages here.' %></p>
 						<button class="close-msg-btn" onclick="closeMessage(this)">&times;</button>
 					</div>
 				<% }) %>

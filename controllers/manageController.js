@@ -51,12 +51,25 @@ exports.renderAddBattery = async (req, res) => {
 
 // LOGICS :
 
-exports.getAllBrands = async (req, res) => {
+exports.getAllCarBrands = async (req, res) => {
 	try {
-		console.log("getting all brands...");
-		const allBrands = await postModel.find({modelName:"Brand Model"});
+		const allBrands = await postModel.find({postType:"65bb94563047f00d56d5d666"});
 		if(allBrands){
-			res.status(200).json({success:true, message:"all brands fetched", data: allBrands.map(item => ({postName:item?.postName, brandName:item?.postData?.brandname, brandLogo:item?.postData?.brandlogo}))})
+			res.status(200).json({success:true, message:"all brands fetched", data: allBrands.map(item => ({postName:item?.postName, brandName:item?.postData?.brandName, brandLogo:item?.postData?.brandLogo}))})
+		} else {
+			res.status(400).json({success:false, message:"failed to get brands"})
+		}
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({success:false, error:error, message:"Server error."})
+	}
+}
+
+exports.getAllBatteryBrands = async (req, res) => {
+	try {
+		const allBrands = await postModel.find({postType:"65bb943f3047f00d56d5d638"});
+		if(allBrands){
+			res.status(200).json({success:true, message:"all brands fetched", data: allBrands.map(item => ({postName:item?.postName, brandName:item?.postData?.brandName, brandLogo:item?.postData?.brandImage}))})
 		} else {
 			res.status(400).json({success:false, message:"failed to get brands"})
 		}

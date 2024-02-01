@@ -3,7 +3,7 @@ exports.defaultPage = (sanitizedPageName) => `
 
 <div style="width:80%;border-right: 1px solid rgba(0,0,0,0.25);overflow-y:scroll;height:100%">
 	<div class="page-name" style="display:flex; align-items:center;justify-content:space-between;padding:8px 24px;">
-		<h1 id="ejspageName">OurCulture</h1>
+		<h1 id="ejspageName">${sanitizedPageName}</h1>
 	</div>
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<style>
@@ -284,7 +284,7 @@ exports.defaultPage = (sanitizedPageName) => `
 	</div>
 	<div style="background-color: #fff;border-radius: 8px; padding: 10px; width: 100%;border: 1px solid rgba(0,0,0,0.25);display: flex;flex-direction: column;gap: 5px;">
 		<h5 style="font-weight: 600; font-size: 14px; text-transform: uppercase;border-bottom: 1px solid rgba(0,0,0,0.25);padding-bottom: 5px;">Sections</h5>
-		<ul style="color: #484848;font-weight:600;font-size: 14px;">
+		<ul style="color: #484848;font-weight:600;font-size: 14px;height:150px;overflow-y:auto;">
 			<% pageData.sections.forEach(section => { %>
 				<li><%= section?.sectionName %></li>
 			<% }) %>	

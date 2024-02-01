@@ -74,7 +74,7 @@ exports.checkLoginStatus = async (req, res) => {
 		res.status(200).json({success:true});
 	} catch (error) {
 		req.flash("login-message", {success:false, message:error.message})
-		res.redirect("/api/v1/manage/auth");
+		res.status(500).json({success:false, message:'server error'})
 	}
 }
 

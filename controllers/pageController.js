@@ -9,10 +9,6 @@ const adminModel = require('../models/adminModel');
 const ITEMS_PER_PAGE = 6;
 
 
-exports.dashboard = async (req, res) => {
-	res.render('dashboard');
-}
-
 exports.renderAddProject = async (req, res) => {
 	const {decoded} = req.jwt;
 	const userData = await adminModel.findOne({email:decoded?.email}).select("email username websiteName websiteUrl roles");
@@ -20,6 +16,7 @@ exports.renderAddProject = async (req, res) => {
 		userData
 	})
 }
+
 
 exports.addProject = async (req, res) => {
 	try {
@@ -41,6 +38,7 @@ exports.addProject = async (req, res) => {
 	}
 }
 
+
 exports.submitReview = async (req, res) => {
 	try {
 		const {email, fullName, message} = req.body;
@@ -61,6 +59,7 @@ exports.getPostTypesAndLinks = async (req, res) => {
 		res.status(500).json({ success: true, message: "Server error", error: error });
 	}
 }
+
 
 exports.renderAllPostTypes = async (req, res) => {
 	try {
@@ -290,6 +289,7 @@ exports.showPublishedPages = async (req, res) => {
 		res.status(500).send('Internal Server Error');
 	}
 }
+
 exports.showHiddenPages = async (req, res) => {
 	try {
 		console.log("rendering all pages");
@@ -487,14 +487,17 @@ exports.showPosts = async (req, res) => {
 		let finalPosts = posts.slice(0, ITEMS_PER_PAGE);
 
 		if(paginationtype && paginationtype === 'default'){
+			console.log("default pagination condition")
 			finalPosts = posts.slice(thisPage*ITEMS_PER_PAGE, thisPage*ITEMS_PER_PAGE+ITEMS_PER_PAGE);
 			numberOfPages = Math.ceil(posts?.length / ITEMS_PER_PAGE);
 		} else if(paginationtype && paginationtype === 'search'){
+			console.log("search type pagination");
 			const searchRegexp = new RegExp(searchquery, 'i');
 			const allPosts = await postModel.find({postType: req.params.posttypeid, postName:searchRegexp});
 			finalPosts = allPosts.slice(thisPage*ITEMS_PER_PAGE, thisPage*ITEMS_PER_PAGE+ITEMS_PER_PAGE);
 			numberOfPages = Math.ceil(allPosts?.length / ITEMS_PER_PAGE);
 		} else if(paginationtype && paginationtype === 'filtered'){
+			console.log('filtered pagination condition')
 			let posts;
 			if (filterdate == "All Dates") {
 				if (filtercategory == "All Categories") {
@@ -1645,7 +1648,7 @@ exports.deleteRepeater = async (req, res) => {
 
 exports.savePageData = async (req, res) => {
 	try {
-		console.log("saving page data...");
+		console.log("saving page data...",__dirname);
 		let data = {};
 		const postData = req.body;
 		const pageMatch = await pageModel.findOne({ name: postData.ejsPageName });
@@ -1653,9 +1656,11 @@ exports.savePageData = async (req, res) => {
 			pageMatch.pageDefaultTitle = postData.pageDefaultTitle;
 			pageMatch.pageDefaultContent = postData.pageDefaultContent;
 			const postDataSections = JSON.parse(postData.sections);
+			console.log('########## page data ############\n\n', postDataSections, '\n\n');
+			require('fs').writeFileSync(require('path').join(__dirname,'../public/test.json'), JSON.stringify(postData));
 			postDataSections.forEach(postDataSectionItem => {
 				pageMatch.sections.map(pageSectionItem => {
-					if (pageSectionItem.sectionName === postDataSectionItem.sectionName) {
+					if (pageSectionItem.sectionName === postDataSectionItem.sectionName) {	
 						pageSectionItem.sectionContent = pageSectionItem.sectionContent.map(pageSectionContentItem => {
 							const temp = postDataSectionItem.sectionContent.filter(postSectionContentItem => postSectionContentItem.elementAttrName === pageSectionContentItem.elementAttrName)[0];
 							if (temp) {
@@ -1743,9 +1748,13 @@ exports.addSection = async (req, res) => {
 		console.log("adding section to page...");
 		const { ejsPageName, sectionName } = req.body;
 		const match = await pageModel.findOne({ name: ejsPageName });
-		if (!match) return res.status(400).json({ success: false, message: "Unable to get page data" });
+		if (!match) {
+			req.flash("message", { success: false, message: "Unable to get page data" });
+			return res.status(400).json({ success: false, message: "Unable to get page data" });
+		}
 		for (let item of match.sections) {
 			if (item.sectionName === sectionName) {
+				req.flash("message", {success: false, message: "Section with same name already exists"});
 				return res.status(400).json({ success: false, message: "Section with same name already exists" });
 			}
 		}
@@ -1753,11 +1762,12 @@ exports.addSection = async (req, res) => {
 			sectionName: sectionName
 		});
 		await match.save();
-		console.log("section added to page");
+		req.flash("message", {success:true, message:"Section added"})
 		res.status(200).json({ success: true });
 	} catch (error) {
+		req.flash("message", {success:false, message: error?.message})
 		console.error('Error saving fields:', error);
-		res.status(500).json({ message: 'Internal server error' });
+		res.status(500).json({ success:false, message: 'Internal server error' });
 	}
 }
 
@@ -1832,7 +1842,6 @@ exports.addLink = async (req, res) => {
 
 exports.addElement = async (req, res) => {
 	try {
-		console.log("adding element...");
 		let nameCheckSuccess = true;
 		const { ejsPageName, sectionName, elementData } = req.body;
 		const sanitizedPageName = ejsPageName.replace(/\s/g, '-');
@@ -1869,7 +1878,6 @@ exports.addElement = async (req, res) => {
 exports.renderchangeTheme = async(req,res)=>{
 	try {
 		const user = await adminModel.findOne({email: req.jwt?.decoded?.email});
-		
 		res.render("colorThemeSetting", {
 			themeName:user?.themeName,
 			message:req.flash("message"),
@@ -1904,6 +1912,7 @@ exports.changeColorTheme = async (req, res) => {
         return res.status(500).json({ message: "Error occurred while processing the request." });
     }
 };
+
 exports.fetchTheme = async (req, res) => {
     try {
         const { decoded } = req.jwt;

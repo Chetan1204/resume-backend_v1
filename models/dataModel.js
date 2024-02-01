@@ -12,6 +12,8 @@ const DataSchema = new mongoose.Schema({
 		type:mongoose.Schema.Types.Mixed,
 		required:true
 	}
+},{
+	timestamps:true
 })
 
 const dataModel = new mongoose.model("data", DataSchema);

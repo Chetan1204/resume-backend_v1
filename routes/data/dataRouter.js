@@ -17,7 +17,8 @@ router.get("/get-batteries-by-capacity");
 router.get("/get-batteries-by-price");
 router.get("/get-batteries-by-car");
 router.get("/get-recommendations-for-battery");
-router.get("/get-all-brands", manageController.getAllBrands)
+router.get("/get-all-car-brands", manageController.getAllCarBrands)
+router.get("/get-all-battery-brands", manageController.getAllBatteryBrands)
 
 
 // router.post("/add-battery", uploader.array("batteryImages",5), manageController.addBattery);

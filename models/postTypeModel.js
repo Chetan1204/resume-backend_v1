@@ -25,6 +25,8 @@ const PostTypeSchema = new mongoose.Schema({
 	pin:{
 		type:Boolean
 	}
+},{
+	timestamps:true
 });
 
 const postTypeModel = mongoose.model("PostType", PostTypeSchema);

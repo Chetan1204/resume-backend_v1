@@ -26,45 +26,61 @@
 </head>
 
 <script>
-let currentThemeName;
+	function checkLoginStatus() {
+		console.log("checking login status...");
+		fetch("/api/v1/manage/auth/check-login-status")
+		.then(res => res.json())
+		.then(data => {
+			console.log(window.location.href, '==========', data);
+			if(window.location.pathname == '/api/v1/manage/auth/') return;
+			if(!data?.success){
+				window.location.href = '/api/v1/manage/auth/'
+			}
+		})
 
-function fetchThemename() {
-    fetch('/api/v1/manage/fetch-theme-name')
-        .then(response => response.json())
-        .then(data => {
-            currentThemeName = data.themeName;
-            console.log("Fetched Theme Name:", currentThemeName);
-            document.body.classList.add(currentThemeName);
-            updateThemeClass();
-        })
-        .catch(error => {
-            console.error('Error fetching themeName:', error);
-        });
-}
+	}
+	checkLoginStatus();
 
-function updateThemeClass() {
-    const mainSidebarElement = document.getElementById('main-sidebar');
-	const mainHeaderStrip = document.getElementById('header-strip')
-    if (mainSidebarElement) {
-        mainSidebarElement.classList.add(currentThemeName);
-        mainHeaderStrip.classList.add(currentThemeName);
-    }
-	const secondaryButtons = document.querySelectorAll(".button-secondary-blue");
-	secondaryButtons.forEach(button => button.classList.add(currentThemeName))
-	const mainButtons = document.querySelectorAll(".button-main");
-	mainButtons.forEach(button => button.classList.add(currentThemeName));
-	const menuTitleListItems = document.querySelectorAll(".menu-title-list li");
-	menuTitleListItems.forEach(item => item.classList.add(currentThemeName));
-	const messageboxes = document.querySelectorAll(".msg");
-	messageboxes.forEach(msg => msg.classList.add(currentThemeName));
-	const dropdowns = document.querySelectorAll(".header-strip .dropdown ul");
-	dropdowns.forEach(item => item.classList.add(currentThemeName));
-	document.querySelector("#hero-icon")?.classList.add(currentThemeName);
-	document.querySelector('.wcms__about-content')?.classList.add(currentThemeName);
-	document.querySelector(".wcms__support-top-bar")?.classList.add(currentThemeName);
-	document.querySelector(".wcms__support-banner")?.classList.add(currentThemeName);
-}
-window.onload = fetchThemename;
+	let currentThemeName;
+
+	function fetchThemename() {
+		fetch('/api/v1/manage/fetch-theme-name')
+			.then(response => response.json())
+			.then(data => {
+				currentThemeName = data.themeName;
+				console.log("Fetched Theme Name:", currentThemeName);
+				document.body.classList.add(currentThemeName);
+				updateThemeClass();
+			})
+			.catch(error => {
+				console.error('Error fetching themeName:', error);
+			});
+	}
+
+	function updateThemeClass() {
+		const mainSidebarElement = document.getElementById('main-sidebar');
+		const mainHeaderStrip = document.getElementById('header-strip')
+		if (mainSidebarElement) {
+			mainSidebarElement.classList.add(currentThemeName);
+			mainHeaderStrip.classList.add(currentThemeName);
+		}
+		const secondaryButtons = document.querySelectorAll(".button-secondary-blue");
+		secondaryButtons.forEach(button => button.classList.add(currentThemeName))
+		const mainButtons = document.querySelectorAll(".button-main");
+		mainButtons.forEach(button => button.classList.add(currentThemeName));
+		const menuTitleListItems = document.querySelectorAll(".menu-title-list li");
+		menuTitleListItems.forEach(item => item.classList.add(currentThemeName));
+		const messageboxes = document.querySelectorAll(".msg");
+		messageboxes.forEach(msg => msg.classList.add(currentThemeName));
+		const dropdowns = document.querySelectorAll(".header-strip .dropdown ul");
+		dropdowns.forEach(item => item.classList.add(currentThemeName));
+		document.querySelector("#hero-icon")?.classList.add(currentThemeName);
+		document.querySelector('.wcms__about-content')?.classList.add(currentThemeName);
+		document.querySelector(".wcms__support-top-bar")?.classList.add(currentThemeName);
+		document.querySelector(".wcms__support-banner")?.classList.add(currentThemeName);
+	}
+
+	window.onload = fetchThemename;
 </script>
 
 <body class="doc-body" style="height: 100% !important;">
@@ -164,8 +180,7 @@ window.onload = fetchThemename;
 					</div>
 				</li> -->
 				<li class="mb-1">
-					<a id="all-pages-link" href="/api/v1/manage/dashboard" style="padding: 8px 0px 8px 12px;font-size: 13px;line-height: 1.25rem;font-weight: 400;width: 100%;display: inline-block;">
-						<i class='bx bx-tachometer' style="font-size: 16px;margin-right: 10px;line-height: 1.25rem;"></i>
+					<a id="all-pages-link" href="/api/v1/manage/dashboard" style="padding: 8px 0px 8px 12px;font-size: 13px;line-height: 1.25rem;font-weight: 400;width: 100%;display: inline-block;text-transform: uppercase;">
 						Dashboard
 					</a>
 				</li>
@@ -255,7 +270,6 @@ window.onload = fetchThemename;
 				var currentURL = window.location.href;
 
 				links.forEach(function (link) {
-					console.log(link, currentURL)
 					var linkURL = link.getAttribute("href");
 					liElement = link.closest("li");
 					if (currentURL.includes(linkURL)) {
@@ -298,17 +312,9 @@ window.onload = fetchThemename;
 				setActiveLink();
 			})
 
-			fetch("/api/v1/manage/get-user-data").then(res => res.json()).then(data => {
+			fetch("/api/v1/manage/get-user-data").then(res => res.json()).then(data => {	
 				console.log("GETTNG USER DATA::",data);
-				if(data?.userData?.websiteName){
-					const element = document.querySelector("#website-name-hldr");
-					element.innerHTML = `<i class="fa-solid fa-house-chimney"></i> <span style="display:inline-block;width:120px;text-overflow:ellipsis;overflow:hidden; white-space: nowrap;">${data?.userData?.websiteName}</span> <i class="fa-solid fa-pen hover-appear" style="margin-left:5px;font-size:13px;" onclick="openAddWebsiteModal()"></i>`
-					// element.addEventListener('click', ()=>{ 
-					// 	let newTab = window.open(data?.userData?.websiteUrl?.indexOf("https://") !== -1 ? data?.userData?.websiteUrl : 'https://'+data?.userData?.websiteUrl, '_blank');
-					// 	newTab.focus();
-					// })
-					const urlElement = document.querySelector("#website-url-hldr");
-					urlElement.setAttribute("href", data?.userData?.websiteUrl?.indexOf("https://") !== -1 ? data?.userData?.websiteUrl : 'https://'+data?.userData?.websiteUrl)
+				if(data?.userData){
 					const usernameElement = document.querySelector("#username-blk");
 					usernameElement.innerHTML = `${data?.userData?.username} <span style="display: block"><a style="font-size: 11px; color: #e5e5e5;" href="${data?.userData?.websiteUrl}">${data?.userData?.websiteName}</a></span>`;
 
@@ -321,6 +327,13 @@ window.onload = fetchThemename;
 							item.setAttribute('src', `/images/${data?.userData?.profileImage}`)
 						}
 					})
+				}
+				if(data?.userData?.websiteName){
+					const element = document.querySelector("#website-name-hldr");
+					element.innerHTML = `<i class="fa-solid fa-house-chimney"></i> <span style="display:inline-block;width:120px;text-overflow:ellipsis;overflow:hidden; white-space: nowrap;">${data?.userData?.websiteName}</span> <i class="fa-solid fa-pen hover-appear" style="margin-left:5px;font-size:13px;" onclick="openAddWebsiteModal()"></i>`
+					const urlElement = document.querySelector("#website-url-hldr");
+					urlElement.setAttribute("href", data?.userData?.websiteUrl?.indexOf("https://") !== -1 ? data?.userData?.websiteUrl : data?.userData?.websiteUrl?.indexOf("http://") !== -1 ? data?.userData?.websiteUrl : 'https://'+data?.userData?.websiteUrl)
+					
 				} else {
 					const element = document.querySelector("#website-name-hldr");
 					element.innerHTML = `<i class="fa-solid fa-plus"></i> Add Website`

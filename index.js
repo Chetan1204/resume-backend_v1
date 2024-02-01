@@ -137,7 +137,7 @@ app.get('/page/:pageName', async (req, res) => {
 			res.send('Page not found!');
 		} else {
 			// Render the corresponding EJS file
-			res.render(`pages/${pageName}`, { pageData });
+			res.render(`pages/${pageName}`, { pageData, message:req.flash("message") });
 		}
 	} catch (err) {
 		// Handle errors, log, or send an appropriate response

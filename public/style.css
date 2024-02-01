@@ -958,6 +958,12 @@ tbody tr:nth-child(even) {
 	color: #2271b1;
   }
 
+  tbody tr:nth-child(odd){
+	background-color: #f6f7f7;
+}
+tbody tr:nth-child(even){
+	background-color: #fff;
+}
   /**
   	LIGHT THEME
   **/
