@@ -3,13 +3,29 @@ const router = express.Router();
 const pageController = require('../../controllers/pageController'); 
 const manageController = require("../../controllers/manageController");
 const uploader = require("../../middlewares/fileUploader");
+const { verifyUserLogin, verifyAdmin, verifyLogin } = require("../../middlewares/verifyLogin");
 
 
 // fetching data routes
 
 router.get("/get-all-batteries", manageController.getAllBatteries);
 router.get("/get-battery/:batteryslug", manageController.getBattery);
-router.get("/get-batteries-by-brand");
+router.get("/get-batteries-by-brand/:brandname",manageController.getBatteryByBrand);
+router.post("/add-to-cart", verifyUserLogin, manageController.addBatteryToCart);
+router.post("/remove-cart-item", verifyUserLogin, manageController.deleteCartItem);
+router.get("/show-cart", verifyUserLogin, manageController.showUserCart);
+router.post("/update-delivery-information", verifyUserLogin, manageController.updateDeliveryInformation);
+router.post("/delivery-express", verifyUserLogin, manageController.updateExpressDeliveryStatus)
+router.post("/apply-coupon", manageController.applyCoupon);
+router.post("/add-to-wishlist", verifyUserLogin, manageController.addToWishlist);
+router.get("/get-wishlist", verifyUserLogin, manageController.getWishlistData);
+
+router.post("/initiate-order", verifyUserLogin, manageController.initiateOrder);
+router.get("/get-current-order", verifyUserLogin, manageController.getCurrentOrder);
+router.post("/place-order", verifyUserLogin, manageController.placeOrder);
+router.post("/get-completed-order", verifyUserLogin, manageController.getCompletedOrder);
+
+
 router.get("/get-batteries-by-subbrand");
 router.get("/get-batteries-by-category");
 router.get("/get-brands-by-category"); // if the battery is of car type then send the car brands else send the brand of battery itself.
@@ -19,6 +35,26 @@ router.get("/get-batteries-by-car");
 router.get("/get-recommendations-for-battery");
 router.get("/get-all-car-brands", manageController.getAllCarBrands)
 router.get("/get-all-battery-brands", manageController.getAllBatteryBrands)
+router.get("/get-all-battery-categories", manageController.getAllBatteryCategories)
+router.get("/get-page-content", manageController.getPageContentByName)
+
+// router.post("/add-coupon", verifyAdmin, verifyLogin, manageController.addCartCoupon)
+
+
+// HRASHIKESH CODE CHANGES MERGE :: START
+router.post("/add-coupon", verifyAdmin, verifyLogin, manageController.addCartCoupon)
+router.post("/ask-battery-quotation", manageController.askBatteryQuotation);
+router.post("/add-review", manageController.addProductReview);
+router.post("/request-callback", manageController.requestCallback);
+router.post("/get-cars", manageController.fetchByCarBrand)
+router.get("/vehicle-type/two-wheelers", manageController.fetchTwoWheelerVehicleBrands)
+router.get("/vehicle-type/passenger-vehicles", manageController.getPassengerVehicleBrands)
+router.post("/find-battery", manageController.findBattery)
+router.post("/find-batteries-by-equipment", manageController.findBatteriesByEquipment)
+router.post("/filter-inverter-batteies",manageController.filterInverterBattery);
+
+
+// HRASHIKESH CODE CHANGES MERGE :: END
 
 
 // router.post("/add-battery", uploader.array("batteryImages",5), manageController.addBattery);
@@ -31,7 +67,6 @@ router.get("/get-all-battery-brands", manageController.getAllBatteryBrands)
 // router.post("/update-battries-by-category", manageController.updateBatteriesByCategory);
 // router.post("/update-battries-by-brand-and-category", manageController.updateBatteriesByBrandAndCategory);
 // router.post("/ask-battery-quotation", manageController.askBatteryQuotation);
-// router.post("/add-battery-to-cart", manageController.addBatteryToCart);
 // router.post("/purchase-battery", manageController.purchaseBattery);
 // router.post("/make-inquiry", manageController.makeInquiry);
 // router.post("/make-chat-inquiry", manageController.makeChatInquiry);

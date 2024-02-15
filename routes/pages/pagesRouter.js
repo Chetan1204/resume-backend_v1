@@ -18,6 +18,7 @@ router.post("/add-new-post-type", verifyLogin, pageController.addNewPostType);
 router.get("/render-add-post-type", verifyLogin, pageController.renderAddPostType);
 router.get("/render-all-post-types", verifyLogin, pageController.renderAllPostTypes);
 router.get("/show-posts-by-post-type/:posttypeid", verifyLogin, pageController.showPosts);
+router.get("/get-posts-by-post-type/:posttypeid", verifyLogin, pageController.getPosts);
 router.post("/search-posts-by-name/:posttypeid", verifyLogin, pageController.searchPosts);
 router.post("/filter-posts/:posttypeid", verifyLogin, pageController.filterPosts);
 router.post("/remove-post-type", verifyLogin, pageController.deletePostType);
@@ -98,6 +99,21 @@ router.post("/change-color-theme",verifyLogin,pageController.changeColorTheme);
 router.get("/fetch-theme-name",verifyLogin, pageController.fetchTheme);
 router.get("/get-user-data", verifyLogin, pageController.getUserData);
 
+// HRASHIKESH CODE CHANGES MERGE :: START
 
+// CUSTOM PAGES ROUTE
+router.get("/render-quotations", verifyLogin, pageController.renderQuotationPage);
+router.get("/render-reviews", verifyLogin, pageController.renderReviewPage);
+router.get('/product/:productId/reviews',verifyLogin, pageController.renderReviewInnerPage );
+router.get("/render-callback-requests", verifyLogin, pageController.renderCallbackRequests);
+
+//COUPON RELATED ROUTES
+router.get("/render-add-coupon-page", verifyLogin, pageController.renderAddCouponPage);
+router.get("/all-coupons", verifyLogin, pageController.renderAllCoupons);
+router.get("/delete-coupon/:couponId", verifyLogin, pageController.deleteCoupon);
+router.get("/edit-coupon/:couponId", verifyLogin, pageController.editCoupon);
+
+
+// HRASHIKESH CODE CHANGES MERGE :: END
 
 module.exports = router;

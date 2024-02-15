@@ -36,3 +36,8 @@ exports.getFormattedDate = (dateString) => {
 	const ampm = date?.getHours() > 12 ? 'pm' : 'am'
 	return `${month} ${day} ${year}, ${hours}:${minutes}${ampm}`
 }
+
+exports.generateOTP = () => {
+	const randomNumber = Math.floor(Math.random() * 90000) + 10000;
+  	return randomNumber;
+}

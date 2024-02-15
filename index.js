@@ -17,13 +17,20 @@ const cors = require("cors");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const morgan = require("morgan");
+const helmet = require('helmet');
+const { apiErrorHandler } = require('./middlewares/apiErrorHandler');
 
 /**
  * Connecting to database
  */
 Connectdb();
 
-
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+	res.header("Access-Control-Allow-Credentials", 'true')
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
 
 app.use(expressLayouts);
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -31,21 +38,31 @@ app.set('view engine', 'ejs');
 app.use(express.json());
 app.use(morgan(process.env.MODE === "development" ? 'dev' : 'combined'));
 app.use(express.static(path.join(__dirname, 'public')));
+
+const corsOptions = {
+	origin: ['http://192.168.16.36:5173','http://192.168.16.139:5173'],
+	methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+	allowedHeaders: 'Content-Type,Authorization',
+	credentials: true, // Enable credentials (cookies, HTTP authentication)
+};
+
+app.use(cors(corsOptions))
+
 app.use(session({
 	secret:process.env.SESSION_SECRET,
 	resave:false,
 	saveUninitialized:false,
 	cookie:{
 		maxAge:60*60000, // 1 hour
+		sameSite:'lax', 
+		secure:false
 	},
 	store:MongoStore.create({
 		mongoUrl:process.env.MONGODB_URL
 	})
 }))
+
 app.use(flash());
-app.use(cors({
-	origin:["http://192.168.16.36:5173"]
-}))
 
 
 // routes
@@ -53,12 +70,14 @@ app.get("/", (req, res)=>{
 	console.log("rendering all pages...");
 	res.redirect("/api/v1/manage/all-pages")
 })
+
 app.use('/api/v1/manage', manageRouter)
 
 app.get('/newpage', (req, res) => {
 	console.log("rendering new page...");
 	res.render('newpage');
 });
+
 app.post('/create-page', async (req, res) => {
 	console.log("creating a new page...");
 	const { pageHeading, author } = req.body;
@@ -165,6 +184,10 @@ app.delete('/delete-page/:pageName', async (req, res) => {
 		res.sendStatus(500);
 	}
 });
+
+
+// Error Handler 
+// app.use(apiErrorHandler);
 
 
 mongoose.connection.once("open", () => {

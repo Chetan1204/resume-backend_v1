@@ -1,9 +1,8 @@
 exports.defaultPage = (sanitizedPageName) => `
 
-
 <div style="width:80%;border-right: 1px solid rgba(0,0,0,0.25);overflow-y:scroll;height:100%">
 	<div class="page-name" style="display:flex; align-items:center;justify-content:space-between;padding:8px 24px;">
-		<h1 id="ejspageName">${sanitizedPageName}</h1>
+		<h1 id="ejspageName">Landing</h1>
 	</div>
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<style>
@@ -455,6 +454,7 @@ exports.defaultPage = (sanitizedPageName) => `
 					instanceReady: function (evt) {
 						// Store the textarea name along with the CKEditor instance
 						evt.editor.textareaName = textarea.getAttribute("name");
+						evt.editor.sectionName = section.querySelector("input[name='section-name']").value;
 					}
 					}
 				});
@@ -486,6 +486,7 @@ exports.defaultPage = (sanitizedPageName) => `
 	})
 
 	function deleteArrayItem(sectionName, arrayName, itemId) {
+		console.log("deleting array item");
 		const ejsPageName = document.getElementById("ejspageName").textContent;
 		fetch("/api/v1/manage/delete-page-array-item", {
 			method:"POST",
@@ -499,17 +500,17 @@ exports.defaultPage = (sanitizedPageName) => `
 	}
 
 	function openEditorViewer(sectionName, arrayName, itemId, itemType, itemValue, index) {
-		
+		console.log("opening json viewer");
 		sectionNamePointer = sectionName;
 		document.getElementById("jsonviewModal").style.display = "block";
 		const editor = CKEDITOR.instances['jsonContent'];
 		editor.setData(\`\$\{itemValue?.replaceAll('"','')\}\`);
-		// document.getElementById("jsonContent").value = itemValue;
 		document.getElementById("itemId").value = itemId;
 		document.getElementById("arrayName").value = arrayName;
 	}
 
 	function updateItemTextContent() {
+		console.log("updating array item text content")
 		const itemId = document.getElementById("itemId").value;
 		const arrayName = document.getElementById("arrayName").value;
 		const editor = CKEDITOR.instances['jsonContent'];
@@ -531,6 +532,7 @@ exports.defaultPage = (sanitizedPageName) => `
 	}
 
 	function addItem(){
+		console.log("adding section array item");
 		const ejsPageName = document.getElementById("ejspageName").textContent;
 		const sectionName = document.getElementById("sectionName").value;
 		const formData = new FormData();
@@ -565,7 +567,6 @@ exports.defaultPage = (sanitizedPageName) => `
 	}
 
 	function chooseItemType() {
-			
 			const select = document.getElementById("itemType");
 			const clear = document.getElementById("new-item-container");
 			if (clear) {
@@ -604,6 +605,7 @@ exports.defaultPage = (sanitizedPageName) => `
 							instanceReady: function (evt) {
 								// Store the textarea name along with the CKEditor instance
 								evt.editor.textareaName = "itemValue";
+								evt.editor.sectionName = sectionNamePointer;
 							}
 						}
 					});
@@ -616,12 +618,6 @@ exports.defaultPage = (sanitizedPageName) => `
 					newElement.id = 'new-item-container'
 					newElement.innerHTML = htmlText;
 					elem.parentNode.insertBefore(newElement, elem);
-					// var jsonInput = CodeMirror.fromTextArea(document.getElementById("array-item-textarea"), {
-					// 	lineNumbers: true,
-					// 	mode: "application/json",
-					// 	gutters: ["CodeMirror-lint-markers"],
-					// 	lint: true,
-					// });
 					document.getElementById("arrayItemNamePointer").value = arrayItemNamePointer;
 				} else if (select.value === "Image") {
 					const htmlText = \`
@@ -888,9 +884,9 @@ exports.defaultPage = (sanitizedPageName) => `
 							elementName:"textarea",
 							elementLabelName:elementName,
 							elementAttrName:elementAttrName,
-							elementAttrId:elementAttrName+"-editor-gen",
+							elementAttrId:sectionName.toLowerCase()?.split(" ").join("")+new Date().getTime()+elementAttrName+"-editor-gen",
 							elementAttrType:"text",
-							elementAttrFor:elementAttrName+"-editor-gen",
+							elementAttrFor:sectionName.toLowerCase()?.split(" ").join("")+new Date().getTime()+elementAttrName+"-editor-gen",
 							elementValue:"",
 							elementAttrIsEditor:true
 						}
@@ -980,18 +976,24 @@ exports.defaultPage = (sanitizedPageName) => `
 					elementValue:inputItem.value,
 				})
 			})
-			const allTextAreas = section.querySelectorAll('textarea');
-			for (var instanceName in CKEDITOR.instances) {
-				if (CKEDITOR.instances.hasOwnProperty(instanceName)) {
-					var editor = CKEDITOR.instances[instanceName];
-					var editorContent = editor.getData();
-					sectionContent.push({
-						elementName:"textarea",
-						elementAttrName:editor.textareaName,
-						elementValue:editorContent,
-					})
-				}
-			}
+			console.log("here")
+			console.log(CKEDITOR.instances);
+			// const filteredEditors = Array.from(CKEDITOR.instances).filter(
+			// 	([, editor]) => editor.sectionName === sectionNameInput.value
+			// );
+			// console.log("INSIDE SECTION", sectionNameInput.value, "Textareas are:", filteredEditors);
+			// for (var editor in filteredEditors) {
+			// 	// var editor = CKEDITOR.instances[instanceName];
+			// 	var editorContent = editor.getData();
+			// 	// console.log(editor.sectionName, sectionNameInput.value);
+			// 	// console.log("pushing textarea data:", editor.textareaName, editor.getData(), editor.sectionName)
+			// 	sectionContent.push({
+			// 		elementName:"textarea",
+			// 		elementAttrName:editor.textareaName,
+			// 		elementValue:editorContent,
+			// 	})
+			// }
+
 			const allFiles = section.querySelectorAll('input[type="file"]');
 			allFiles.forEach(fileInput => {
 				if (fileInput.files.length > 0) {
@@ -1018,12 +1020,14 @@ exports.defaultPage = (sanitizedPageName) => `
 				sectionContent
 			})
 		})
+		console.log("##############", data);
 		formData.append("sections", JSON.stringify(data.sections))
-		fetch("/api/v1/manage/save-page-data", {
-			method:"POST",
-			body:formData
-		})
-		.then(()=>{ window.location.reload() }).catch(err => console.log(err))
+		// fetch("/api/v1/manage/save-page-data", {
+		// 	method:"POST",
+		// 	body:formData
+		// })
+		// .then(()=>{ window.location.reload() }).catch(err => console.log(err))
+		console.log(data);
 	}
 
 	function handlePageStatus(element) {
@@ -1054,7 +1058,6 @@ exports.defaultPage = (sanitizedPageName) => `
 		.then(data => {})
 	}
 </script>
-
 `
 
 exports.newPageSection = (sectionTitle) => `<div  style="border-bottom: 1px solid rgba(0,0,0,0.25);width: 100%;padding: 15px;">

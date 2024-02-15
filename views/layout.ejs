@@ -26,20 +26,20 @@
 </head>
 
 <script>
-	function checkLoginStatus() {
-		console.log("checking login status...");
-		fetch("/api/v1/manage/auth/check-login-status")
-		.then(res => res.json())
-		.then(data => {
-			console.log(window.location.href, '==========', data);
-			if(window.location.pathname == '/api/v1/manage/auth/') return;
-			if(!data?.success){
-				window.location.href = '/api/v1/manage/auth/'
-			}
-		})
+	// function checkLoginStatus() {
+	// 	console.log("checking login status...");
+	// 	fetch("/api/v1/manage/auth/check-login-status")
+	// 	.then(res => res.json())
+	// 	.then(data => {
+	// 		console.log(window.location.href, '==========', data);
+	// 		if(window.location.pathname == '/api/v1/manage/auth/') return;
+	// 		if(!data?.success){
+	// 			window.location.href = '/api/v1/manage/auth/'
+	// 		}
+	// 	})
 
-	}
-	checkLoginStatus();
+	// }
+	// checkLoginStatus();
 
 	let currentThemeName;
 
@@ -203,6 +203,59 @@
 						</ul>
 					</div>
 				</li>
+
+
+				<!-- HRASHIKESH CODE CHANGES MERGE :: START -->
+				<li class="mb-1">
+					<div class="menu-title-item align-items-center collapsed "
+						style="width: 100%; padding:5px 12px ;  font-size: 11px;line-height: 22px;font-weight: 600;text-transform: uppercase;letter-spacing: 0.5px;"
+						data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="true">
+						Custom Views
+					</div>
+					<div class="collapse show" id="home-collapse">
+						<ul  class="menu-title-list btn-toggle-nav list-unstyled fw-normal  small">
+							<li><a id="all-pages-link" href="/api/v1/manage/render-quotations"
+									style="padding: 8px 0px 8px 12px;font-size: 13px;line-height: 1.25rem;font-weight: 400;width: 100%;display: inline-block;"><i
+										class="fa-solid fa-table-list"
+										style="margin-right: 10px;"></i>Quotations</a></li>
+										
+										<li><a id="all-pages-link" href="/api/v1/manage/render-reviews"
+											style="padding: 8px 0px 8px 12px;font-size: 13px;line-height: 1.25rem;font-weight: 400;width: 100%;display: inline-block;"><i
+												class="fa-solid fa-table-list"
+												style="margin-right: 10px;"></i>Reviews</a></li>
+
+												<li><a id="all-pages-link" href="/api/v1/manage/render-callback-requests"
+													style="padding: 8px 0px 8px 12px;font-size: 13px;line-height: 1.25rem;font-weight: 400;width: 100%;display: inline-block;"><i
+														class="fa-solid fa-table-list"
+														style="margin-right: 10px;"></i>Callback Requests</a></li>
+				
+						</ul>
+					</div>
+				</li>
+
+				<li class="mb-1">
+					<div class="menu-title-item align-items-center collapsed "
+						style="width: 100%; padding:5px 12px ;  font-size: 11px;line-height: 22px;font-weight: 600;text-transform: uppercase;letter-spacing: 0.5px;"
+						data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="true">
+						Coupons
+					</div>
+					<div class="collapse show" id="home-collapse">
+						<ul  class="menu-title-list btn-toggle-nav list-unstyled fw-normal  small">
+							<li><a id="all-pages-link" href="/api/v1/manage/render-add-coupon-page"
+									style="padding: 8px 0px 8px 12px;font-size: 13px;line-height: 1.25rem;font-weight: 400;width: 100%;display: inline-block;"><i
+										class="fa-solid fa-table-list"
+										style="margin-right: 10px;"></i>Add Coupons</a></li>
+										
+										<li><a id="all-pages-link" href="/api/v1/manage/all-coupons"
+											style="padding: 8px 0px 8px 12px;font-size: 13px;line-height: 1.25rem;font-weight: 400;width: 100%;display: inline-block;"><i
+												class="fa-solid fa-table-list"
+												style="margin-right: 10px;"></i>All Coupons</a></li>
+						</ul>
+					</div>
+				</li>
+
+				<!-- HRASHIKESH CODE CHANGES MERGE :: END -->
+
 				<!-- <div class="Divider__StyledDivider-sc-1vy16c4-0 eeEjFz"></div> -->
 				<li class="mb-1">
 					<div class="menu-title-item align-items-center collapsed "
@@ -246,15 +299,39 @@
 		</div>
 
 		<!--Main layout-->
-		<div style="display: flex;align-items: start;justify-content: start;height: 100%;width: calc(100% - 200px); overflow: hidden;">
+		<div id="main-content" style="display: flex;align-items: start;justify-content: start;height: 100%;width: calc(100% - 200px); overflow: hidden;">
 			<%- body %>
 		</div>
 
 	</main>
 	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>	
 	<script>
-		document.addEventListener("DOMContentLoaded", function () {
+		window.addEventListener('beforeunload', function() {
+			// Save the scroll position to localStorage
+			var scrollableContent = document.getElementById('scrollable-content');
+			if (scrollableContent) {
+				localStorage.setItem('mainLayoutScrollPosition', scrollableContent.scrollTop);
+			}
+		});
 
+
+
+		document.addEventListener("DOMContentLoaded", function () {
+			 // Get the scroll position from localStorage
+			 var savedScrollPosition = localStorage.getItem('mainLayoutScrollPosition');
+
+			// Scroll to the saved position
+			if (savedScrollPosition !== null) {
+				var scrollableContent = document.getElementById('scrollable-content');
+				if (scrollableContent) {
+					scrollableContent.scrollTop = parseInt(savedScrollPosition, 10);
+				}
+			}
+			
+			// if (scrollPosition !== null) {
+			// 	window.scrollTo(0, parseInt(scrollPosition));
+			// 	localStorage.removeItem('scrollPosition'); // Optional: Clear the stored scroll position
+			// }
 			// Need to correct this logic to avoid looping infinitely:
 
 			// fetch("/api/v1/manage/auth/check-login-status")
@@ -268,7 +345,6 @@
 			function setActiveLink() {
 				var links = document.querySelectorAll(".menu-title-list li a");
 				var currentURL = window.location.href;
-
 				links.forEach(function (link) {
 					var linkURL = link.getAttribute("href");
 					liElement = link.closest("li");

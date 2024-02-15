@@ -1,0 +1,115 @@
+<div style="width: 100%;height: 100%;padding: 15px;">
+	<div>
+		<div style="display: flex; align-items: center;gap: 15px;">
+			<h3 style="font-size: 18px;font-weight: 500;">Quotations </h3>
+		</div>
+
+        <table cellspacing="0" cellpadding="0" width="100%" style="border: 1px solid rgba(0,0,0,0.25);">
+            <thead style="border-bottom: 2px solid #d8d8d8;background-color: #fff;">
+                <tr>
+                    <th>
+                        <div style="display: flex; align-items: center; justify-content: start;padding: 10px;">
+                            <h3 style="font-size: 13px;margin: 0px;">Product ID</h3>
+                        </div>
+                    </th>
+                    <th>
+                        <div style="display: flex; align-items: center; justify-content: start;padding: 10px;">
+                            <h3 style="font-size: 13px;margin: 0px;">Quantity</h3>
+                        </div>
+                    </th>
+                    <th>
+                        <div style="display: flex; align-items: center; justify-content: start;padding: 10px;">
+                            <h3 style="font-size: 13px;margin: 0px;">Name</h3>
+                        </div>
+                    </th>
+                    <th>
+                        <div style="display: flex; align-items: center; justify-content: start;padding: 10px;">
+                            <h3 style="font-size: 13px;margin: 0px;">Mobile Number</h3>
+                        </div>
+                    </th>
+                    <th>
+                        <div style="display: flex; align-items: center; justify-content: start;">
+                            <h3 style="font-size: 13px;margin: 0px;">Email</h3>
+                        </div>
+                    </th>
+                    <th>
+                        <div style="display: flex; align-items: center; justify-content: start;">
+                            <h3 style="font-size: 13px;margin: 0px;">Company Name</h3>
+                        </div>
+                    </th>
+                    <th>
+                        <div style="display: flex; align-items: center; justify-content: start;">
+                            <h3 style="font-size: 13px;margin: 0px;">City</h3>
+                        </div>
+                    </th>
+                    <th>
+                        <div style="display: flex; align-items: center; justify-content: start;">
+                            <h3 style="font-size: 13px;margin: 0px;">Query</h3>
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <% quotations.forEach(quotation => { %>
+                    <tr>
+                        <td style="padding: 5px 10px;font-size: 13px;">
+                            <span style="color: #2271B7;font-weight: 500;">	
+                                <%= quotation.product.id %>
+                            </span>
+                        </td>
+                        <td style="padding: 5px 10px;font-size: 13px;">
+                            <span style="color: #2271B7;font-weight: 500;">	
+                                <%= quotation.product.quantity %>
+                            </span>
+                        </td>
+                        <td style="padding: 5px 10px;font-size: 13px;">
+                            <span style="color: #2271B7;font-weight: 500;">	
+                                <%= quotation.name %>
+                            </span>
+                        </td>
+                        <td style="padding: 5px 10px;font-size: 13px;">
+                            <span style="color: #2271B7;font-weight: 500;">	
+                                <%= quotation.mobileNum %>
+                            </span>
+                        </td>
+                        <td style="padding: 5px 10px 5px 0px;font-size: 13px;">
+                            <span style="color: #2271B7;font-weight: 500;">	
+                                <%= quotation.email %>
+                            </span>
+                        </td>
+                        <td style="padding: 5px 10px 5px 0px;font-size: 13px;">
+                            <span style="color: #2271B7;font-weight: 500;">	
+                                <%= quotation.companyName %>
+                            </span>
+                        </td>
+                        <td style="padding: 5px 10px 5px 0px;font-size: 13px;">
+                            <span style="color: #2271B7;font-weight: 500;">	
+                                <%= quotation.city %>
+                            </span>
+                        </td>
+                        <td style="padding: 5px 10px;font-size: 13px; cursor: pointer;">
+                            <span style="font-weight: 500;
+                            background: white;
+                            height: 100%;
+                            display: inline-block;
+                            padding: 20px;
+                            border-radius: 15px;
+                            color: black;
+                            border: 1px solid rgba(0,0,0,0.2);
+                            width: 350px;" >    
+                                <%= quotation.query %>
+                                
+                            </span>
+                        </td>
+
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+
+   
+</div>
+
+
+
+

@@ -1,0 +1,110 @@
+<div style="width: 100%;height: 100%;padding: 15px;">
+    <div>
+        <h3 style="font-size: 18px;font-weight: 500;">Reviews for Product ID: <%= productId %></h3>
+        <table cellspacing="0" cellpadding="0" width="100%" style="border: 1px solid rgba(0,0,0,0.25);">
+            <thead style="border-bottom: 2px solid #d8d8d8;background-color: #fff;">
+                <tr>
+                    <th>
+                        <div style="display: flex; align-items: center; justify-content: start;padding: 10px;">
+                            <h3 style="font-size: 13px;margin: 0px;">S.No</h3>
+                        </div>
+                    </th>
+                    <th>
+                        <div style="display: flex; align-items: center; justify-content: start;padding: 10px;">
+                            <h3 style="font-size: 13px;margin: 0px;">Rating</h3>
+                        </div>
+                    </th>
+                    <th>
+                        <div style="display: flex; align-items: center; justify-content: start;padding: 10px;">
+                            <h3 style="font-size: 13px;margin: 0px;">Reviewer Name</h3>
+                        </div>
+                    </th>
+                    <th>
+                        <div style="display: flex; align-items: center; justify-content: start;padding: 10px;">
+                            <h3 style="font-size: 13px;margin: 0px;">Review Content</h3>
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <% reviews.forEach((review, index) => { %>
+                    <tr>
+                        <td style="padding: 5px 10px;font-size: 13px;">
+                            <span style="color: #2271B7;font-weight: 500;">    
+                                <%= index + 1 %>
+                            </span>
+                        </td>
+                        <td style="padding: 5px 10px;font-size: 13px;">
+                            <span style="color: #2271B7; font-weight: 500;">
+                                <% for (let i = 0; i < review.reviewScore; i++) { %>
+                                    &#9733; <!-- Full star Unicode character -->
+                                <% } %>
+                            </span>
+                        </td>
+                        <td style="padding: 5px 10px;font-size: 13px;">
+                            <span style="color: #2271B7;font-weight: 500;">    
+                                <%= review.reviewerName %>
+                            </span>
+                        </td>
+                        <td style="padding: 5px 10px;font-size: 13px; cursor: pointer;" class="query-text" data-modal-id="queryModal<%= review._id %>">
+                            <span style="color: #2271B7;font-weight: 500;">    
+                                <%= review.reviewContent.substr(0, 30) + (review.reviewContent.length > 10 ? '...' : '') %>
+                            </span>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<% reviews.forEach(review => { %>
+    <div class="modal fade" id="queryModal<%= review._id %>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="width: 100%;">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Review Content</h5>
+                </div>
+                <div class="modal-body">
+                    <%= review.reviewContent %>
+                </div>
+            </div>
+        </div>
+    </div>
+<% }) %>
+
+
+<% reviews.forEach(review => { %>
+    <div class="modal fade" id="queryModal<%= review._id %>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="width: 100%;">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Review Content</h5>
+                </div>
+                <div class="modal-body">
+                    <%= review.reviewContent %>
+                </div>
+                <!-- <div class="modal-footer">
+                    <button type="button" class="close-modal btn btn-secondary" data-modal-id="queryModal<%= review._id %> data-dismiss="modal">Close</button>
+                </div>             -->
+            </div>
+        </div>
+    </div>
+<% }) %>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Include all compiled Bootstrap JavaScript plugins -->
+
+<script>
+    // JavaScript code to handle click event and open modal
+    $(document).ready(function() {
+        $('.query-text').click(function() {
+            var modalId = $(this).data('modal-id');
+            $('#' + modalId).modal('show');
+        });
+
+        $('.close-modal').click(function() {
+            var modalId = $(this).data('modal-id');
+            $('#' + modalId).modal('hide');
+        });
+    });
+</script>

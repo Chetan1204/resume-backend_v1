@@ -2,25 +2,42 @@ const {brandModel, categoryModel, modelModel} =  require("../models/brandModel")
 const postModel = require("../models/postModel");
 const {sendMail} = require("../config/mailerConfig");
 const dataModel = require("../models/dataModel");
+const pageModel = require("../models/pageModel");
+const { userModel, orderModel } = require("../models/userModel");
+const { couponModel } = require("../models/couponModel");
+const {v4: uuidv4} = require("uuid")
+const Quotation = require("../models/quotationModel")
+const {reviewModel} = require("../models/reviewModel")
+const requestCallBackModel = require("../models/callbackModel");
+const postTypeModel = require("../models/postTypeModel");
+const { InternalServerError, BadRequestError, UnauthorizedError, NotFoundError } = require("../config/apiErrors");
+
 
 //Fetching Logics:
-exports.getAllBatteries = async (req, res) => {
+exports.getAllBatteries = async (req, res, next) => {
 	try {
 		console.log("getting all batteries...");
 		const allBatteries = await postModel.find({customField:{ $elemMatch: { $eq : "Battery Model" } }});
-		if(allBatteries){
-			const sanitized = allBatteries.map( item => ({postName:item?.postName, batteryName:item?.postData?.name, batteryImages:item?.postData?.batteryimages}));
+		if(allBatteries && allBatteries.length > 0){
+			const sanitized = allBatteries.map( item => ({postName:item?.postName, batteryName:item?.postData?.name, batteryImages:item?.postData?.batteryimages, warranty:item?.postData?.warranty, price:item?.postData?.specialprice, discount:item?.postData?.discount, isnew:item?.postData?.isnew}));
 			res.status(200).json({success:true, data:sanitized});
+		} else {
+			throw new Error("NotFoundError")
 		}
 	} catch (error) {
 		console.log(error);
-		res.status(500).json({success:false, error:error});
+		if (error.message === "NotFoundError") {
+			next(new NotFoundError("Batteries not found", error))
+		} else {
+			next(new InternalServerError('Internal Server Error', error))
+		}
 	}
 }
 
 exports.getBattery = async (req, res) => {
 	try {
 		console.log("getting a battery...");
+		console.log(req.params.batteryslug);
 		const battery = await postModel.findOne({postName:req.params.batteryslug});
 		if(battery){
 			return res.status(200).json({success:true, data:battery});
@@ -31,11 +48,24 @@ exports.getBattery = async (req, res) => {
 		console.log(error);
 		res.status(500).json({success:false, error:error});
 	}
-
 }
 
-
-
+exports.getBatteryByBrand = async (req, res) => {
+	try {
+		console.log("getting a battery...");
+		console.log(req.params.brandname);
+		const battery = await postModel.find({ 'postData.brand': req.params.brandname });
+		console.log(battery.length)
+		if(battery){
+			return res.status(200).json({success:true, data:battery});
+		} else {
+			return res.status(400).json({success:false, message:"Failed to get battery data. Please check the slug."});
+		}
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({success:false, error:error});
+	}
+}
 
 // RENDERS :
 
@@ -53,17 +83,51 @@ exports.renderAddBattery = async (req, res) => {
 
 exports.getAllCarBrands = async (req, res) => {
 	try {
-		const allBrands = await postModel.find({postType:"65bb94563047f00d56d5d666"});
-		if(allBrands){
-			res.status(200).json({success:true, message:"all brands fetched", data: allBrands.map(item => ({postName:item?.postName, brandName:item?.postData?.brandName, brandLogo:item?.postData?.brandLogo}))})
-		} else {
-			res.status(400).json({success:false, message:"failed to get brands"})
-		}
+		const brandsPostType = await postTypeModel.findOne({postTypeName:"Brands"});
+		const categoryPostType = await postTypeModel.findOne({postTypeName:"Battery Categories"});
+		const linkedCategoryMatch = await postModel.findOne({postType:categoryPostType._id, postName:"Car Batteries"})
+		const allBrands = await postModel.find({postType:brandsPostType?._id, "postData.linkedCategories":{
+			$elemMatch:{
+				"value":`Car Batteries__${linkedCategoryMatch._id}`
+			}
+		}})
+		res.status(200).send(allBrands)
+
 	} catch (error) {
 		console.log(error);
 		res.status(500).json({success:false, error:error, message:"Server error."})
 	}
 }
+
+exports.getPassengerVehicleBrands = async (req, res) => {
+	try {
+			const brandsPostType = await postTypeModel.findOne({postTypeName:"Brands"});
+			const categoryPostType = await postTypeModel.findOne({postTypeName:"Battery Categories"});
+			const linkedCategoryMatch = await postModel.findOne({postType:categoryPostType._id, postName:"Car Batteries"})
+			const allBrands = await postModel.find({postType:brandsPostType?._id, "postData.linkedCategories":{
+				$elemMatch:{
+					"value":`Car Batteries__${linkedCategoryMatch._id}`
+				}
+			}})
+			res.status(200).json({success:true, products:allBrands})
+	
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({success:false, message:'server error'})
+	}
+}
+
+// exports.getBatteryByBrand = async (req, res) => {
+// 	try {
+// 		const brandData = await postModel.findOne({
+//             "postData.linkedCategories.value": "Car Batteries"
+//         });
+// 		res.status(200).json({message:brandData})
+// 	} catch (error) {
+// 		console.log(error);
+// 		res.status(500).json({success:false, error:error, message:"Server error."})
+// 	}
+// }
 
 exports.getAllBatteryBrands = async (req, res) => {
 	try {
@@ -79,9 +143,31 @@ exports.getAllBatteryBrands = async (req, res) => {
 	}
 }
 
+exports.getAllBatteryCategories = async (req, res) => {
+	try {
+		const categoryPostType = await postTypeModel.findOne({postTypeName:"Battery Categories"});
+		const categories = await postModel.find({postType:categoryPostType._id});
+		res.status(200).json({success:true, categories});
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({success:false, error:error, message:'server error'})
+	}
+}
+
 exports.deleteBattery = async (req, res) => {
 	try {
 		console.log("deleting a battery...");
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({success:false, error:error, message:"Server error."})
+	}
+}
+
+exports.getPageContentByName = async (req, res) => {
+	try {
+		const {pagename} = req.query;
+		const pageData = await pageModel.findOne({name:decodeURIComponent(pagename)});
+		res.status(200).json({success:true, pageData})
 	} catch (error) {
 		console.log(error);
 		res.status(500).json({success:false, error:error, message:"Server error."})
@@ -98,13 +184,13 @@ exports.updateBatteriesByBrand = async (req, res) => {
 				item.postData = {...item.postData, ...data};
 				await item.save();
 			});
-			res.status(200).json({success:true, message:"bulk updation of batteries by brand completed."})
+			res.status(200).json({success:true, message:"bulk updation of batteries by brand completed."});
 		} else {
 			res.status(400).json({success:true, message:"unable to get battery data"});
 		}
 	} catch (error) {
-		console.log(error)	
-		res.status(500).json({success:false, error:error, message:"Server error."})
+		console.log(error);
+		res.status(500).json({success:false, error:error, message:"Server error."});
 	}
 }
 
@@ -128,6 +214,7 @@ exports.updateBatteriesByCategory = async (req, res) => {
 	}
 }
 
+
 exports.updateBatteriesByBrandAndCategory = async (req, res) => {
 	try {
 		console.log("updating batteries by brand and category...");
@@ -150,25 +237,365 @@ exports.updateBatteriesByBrandAndCategory = async (req, res) => {
 
 exports.askBatteryQuotation = async (req, res) => {
 	try {
-		console.log("asking for battery quotation...");
+		console.log("Asking for battery quotation...");
+		const { productId, quantity, name, mobileNum, email, companyName, city, query } = req.body;
+
+		const newQuotation = new Quotation({
+			product: {
+				id: productId,
+				quantity: quantity
+			},
+			name: name,
+			mobileNum: mobileNum,
+			email: email,
+			companyName: companyName,
+			city: city,
+			query: query
+		});
+
+		// Save the quotation to the database
+		await newQuotation.save();
+
+		res.status(200).json({ message: "Quotation saved successfully" });
 	} catch (error) {
-		console.log(error)	
+		console.error(error);
+		res.status(500).json({ error: "Internal server error" });
 	}
 }
 
 exports.addBatteryToCart = async (req, res) => {
 	try {
-		console.log("adding battery to cart...");
+		console.log('adding battery to cart', req.body);
+		const {batteryId, quantity, exchangeOldBattery} = req.body;
+
+		const battery = await postModel.findOne({_id:batteryId});
+		if(!battery) throw {status:400, message:"product not found"}
+
+		const batteryPrice = exchangeOldBattery ? battery.postData?.pricewitholdbattery : battery.postData?.pricewithoutoldbattery;
+
+		const user = await userModel.findOne({email:req.jwt.decoded?.email});
+		if(!user) throw {status:400, message:"user not found. please login again."}
+		
+		const existingProduct = user.cart.find(item => item?.productId?.toString() === batteryId);
+		console.log("existingProduct",existingProduct,batteryPrice);
+
+		if(existingProduct){
+			const user = await userModel.findOneAndUpdate({email:req.jwt.decoded?.email, "cart.productId":batteryId},{
+				$inc: {
+					"cart.$.productQuantity":quantity
+				},
+				
+			});
+			if(user?.currentOrder){
+				await userModel.findOneAndUpdate({email:req.jwt.decoded?.email, "currentOrder.orderItems.productId":batteryId},{
+					$inc:{
+						"currentOrder.orderItems.$.productQuantity":quantity
+					}
+				})
+			}
+		} else {
+			await userModel.findOneAndUpdate({email:req.jwt.decoded?.email},{
+				$addToSet:{
+					cart:{
+						$each:[{
+							productName:battery.postName,
+							productPrice:batteryPrice,
+							productQuantity:quantity || 1,
+							productId:battery?._id,
+						}]
+					}
+				},
+			});
+			await userModel.findOneAndUpdate({email:req.jwt.decoded?.email},{
+				$set:{
+					currentOrder:null
+				}
+			})
+		}
+		res.status(200).json({success:true, message:"product saved to cart", cart: user.cart})
 	} catch (error) {
-		console.log(error)	
+		console.log(error);	
+		if(error?.status === 400){
+			return res.status(error.status).message({success:false, message:error.message});
+		} 
+		res.status(500).json({success:false, message:"server error"})
 	}
 }
+
+exports.deleteCartItem = async (req, res) => {
+	try {
+		console.log('trying to delete cart item...')
+		const {cartItem} = req.body;
+		if(!cartItem) return res.status(400).json({success:false, message:"invalid item"})
+		const user = await userModel.findOneAndUpdate({email:req.jwt.decoded?.email, "cart.productId":cartItem?.productId},{
+			$pull:{
+				cart:{productId:cartItem?.productId}
+			}
+		}, {new:true});
+		res.status(200).json({success:true, message:"item removed"});
+	} catch (error) {
+		console.log(error)
+	}
+}
+
+exports.showUserCart = async (req, res) => {
+	try {
+		const user = await userModel.findOne({email:req.jwt.decoded?.email});
+		const detailedCart = [];
+		let chosenDeliveryAddress = null;
+		let coupon = null;
+		if(user.currentOrder){
+			for(let cartItem of user.currentOrder.orderItems){
+				const product = await postModel.findOne({_id:cartItem?.productId});
+				detailedCart.push({
+					productId:cartItem?.productId,
+					productName:cartItem.productName,
+					productPrice:cartItem.productPrice,
+					productQuantity:cartItem.productQuantity,
+					productImage:product.postData?.batteryimages
+				})
+			}
+			coupon = user.currentOrder?.coupon ?  user.currentOrder?.coupon : null;
+			chosenDeliveryAddress = user.currentOrder.billingAddress;
+		} else {
+			for(let cartItem of user.cart){
+				const product = await postModel.findOne({_id:cartItem?.productId});
+				detailedCart.push({
+					productId:cartItem?.productId,
+					productName:cartItem.productName,
+					productPrice:cartItem.productPrice,
+					productQuantity:cartItem.productQuantity,
+					productImage:product.postData?.batteryimages
+				})
+			}
+		}
+		res.status(200).json({success:true, cart:detailedCart, deliveryAddresses:user?.deliveryAddresses, chosenDeliveryAddress, coupon});
+	} catch (error) {
+		console.log(error);	
+		res.status(500).json({success:false, message:"server error"});
+	}
+}
+
+exports.applyCoupon = async (req, res) => {
+	try {
+		const {couponCode} = req.body;
+		const coupon = await couponModel.findOne({couponCode:couponCode.toUpperCase()});
+		if(!coupon) throw {status:400, message:"invalid coupon code."};
+		res.status(200).json({success:true, coupon});
+	} catch (error) {
+		console.log(error);
+		if(error?.status === 400){
+			return res.status(error.status).json({success:true, message:error.message})
+		}
+		res.status(500).json({success:false, message:"server error"})
+	}
+}
+
+exports.addCartCoupon = async (req, res) => {
+	try {
+		const { couponId,couponCode, couponDiscount, couponDescription} = req.body;
+		const newCoupon = new couponModel({
+			couponId, couponCode, couponDiscount, couponDescription
+		});
+		await newCoupon.save();
+		res.status(200).redirect("/api/v1/manage/render-add-coupon-page")
+	} catch (error) {
+		console.log(error);	
+		res.status(500).json({success:false, message:"server error"})
+	}
+}
+
+exports.updateDeliveryInformation = async (req, res) => {
+	try {
+		const {addressName, addressType, addressLineOne, addressLineTwo, state, city, pinCode, country} = req.body;
+		const user = await userModel.findOne({email:req.jwt.decoded?.email});
+		if(!user) throw {status:400, message:"user not found, please login again"}
+		let arr = user.deliveryAddresses;
+		if(addressType === "Home" && arr.filter(item => item?.addressType === "Home").length > 0){
+			arr = arr.map(item =>{
+				if (item.addressType === "Home"){
+					return {
+						...item, addressName, addressType, addressLineOne, addressLineTwo, state, city, pinCode, country
+					}
+				} else return item
+			})
+		} else if(addressType === "Office" && arr.filter(item => item?.addressType === "Office").length > 0){
+			arr = arr.map(item =>{
+				if (item.addressType === "Office"){
+					return {
+						...item, addressName, addressType, addressLineOne, addressLineTwo, state, city, pinCode, country
+					}
+				} else return item
+			})
+		}  else {
+			arr.push({addressName, addressType, addressLineOne, addressLineTwo, state, city, pinCode, country})
+		}
+		await userModel.findOneAndUpdate({email:req.jwt.decoded?.email}, {
+			deliveryAddresses:arr
+		});
+		res.status(200).json({success:true})
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({success:false, message:"server error"});
+	}
+}
+
+exports.initiateOrder = async (req, res) => {
+	try {
+		const {chosenAddress, cart, coupon} = req.body;
+		const subtotal = cart?.map(item => (item?.productPrice * item.productQuantity)).reduce((acc, currVal) => acc + currVal, 0);
+		const orderTotal = coupon ? subtotal - subtotal*(parseFloat(coupon?.couponDiscount)/100) : subtotal;
+		const totalQuantity = cart.map(item => item.productQuantity).reduce((acc, currVal)=> acc+currVal, 0);
+		const match = await userModel.findOne({email:req.jwt.decoded?.email});
+		const user = await userModel.findOneAndUpdate({email:req.jwt.decoded?.email},{
+			currentOrder:{
+				orderId:uuidv4(),
+				status:"Pending",
+				buyerInformation:{
+					firstName:match.firstName,
+					lastName:match.lastName,
+					email:match.email,
+					phone:match.phone
+				},
+				subTotal:subtotal,
+				orderTotal:orderTotal,
+				discount:coupon?.couponDiscount,
+				coupon,
+				quantity:totalQuantity,
+				orderItems:cart,
+				shippingAddress:chosenAddress,
+				billingAddress:chosenAddress,
+				paymentMethod:undefined,
+				preferedDateAndTime:undefined,
+				gstBill:undefined
+			}
+		},{ new: true });
+		res.status(200).json({success:true, message:"order initiated"})
+	} catch (error) {
+		console.log(error);	
+		res.status(500).json({success:false, message:"server error"})
+	}
+}
+
+exports.updateExpressDeliveryStatus = async (req, res) => {
+	try {
+		const {express} = req.body;
+		await userModel.findOneAndUpdate({email:req.jwt.decoded?.email},{
+			"currentOrder.expressDelivery":express
+		});
+		res.status(200).json({success:true, message:"Express delivery enabled for this order"});
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({success:false, message:"server error"})
+	}
+}
+
+exports.getCurrentOrder = async (req, res) => {
+	try {
+		const user = await userModel.findOne({email:req.jwt.decoded?.email});
+		if(!user) return res.status(400).json({success:false, message:"user not found, please login again"});
+		return res.status(200).json({success:true, order:user.currentOrder});
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({success:false, message:"server error"});
+	}
+}
+
+exports.filterInverterBattery = async (req, res) => {
+	try {
+		console.log(req.body);
+		const {category, capacity, brand} = req.body;
+		const categoryPostTypeMatch = await postTypeModel.findOne({postTypeName:"Battery Categories"});
+		const categoryMatch = await postModel.findOne({postName:category, postType:categoryPostTypeMatch?._id});
+		let products;
+		if(brand && brand === 'All Brands'){
+			products = await postModel.find({'postData.capacity':capacity});
+		} else if(brand) {
+			products = await postModel.find({'postData.capacity':capacity, 'postData.brand':brand});
+		}
+		return res.status(200).json({success:true, products});
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({ success: false, error: error });
+	}
+}
+
+
+exports.placeOrder = async (req, res) => {
+	try {
+		const {orderId, confirmationDetails} = req.body;
+		const match = await userModel.findOne({email:req.jwt.decoded?.email});
+		if(!match.currentOrder.orderId === orderId) return res.status(400).json({success:false, message:"cannot find order"});
+		let currentOrder = {...match.currentOrder.toObject({ virtuals: false, versionKey: false }), ...confirmationDetails};
+
+		await userModel.findOneAndUpdate({email:req.jwt.decoded?.email},{
+			currentOrder,
+		});
+		
+		const orderIndex = match.placedOrders.findIndex((element) => element.orderId === orderId);
+		if(orderIndex !== -1){
+			await userModel.findOneAndUpdate({email:req.jwt.decoded.email, "placedOrders.orderId":orderId},{
+				$set:{
+					"placedOrders.$":currentOrder
+				}
+			}, {upsert: true})
+		} else {
+			await userModel.findOneAndUpdate({email:req.jwt.decoded.email},{
+				$push:{
+					placedOrders:currentOrder
+				}
+			})
+		}
+
+		const {_id, ...unindexedOrder} = currentOrder;
+
+		const orderMatch = await orderModel.findOne({orderId});
+		if(!orderMatch){
+			newOrder = new orderModel({...unindexedOrder});
+			await newOrder.save();
+		}
+		
+		if(currentOrder.paymentMethod === "Cash on Delivery"){
+			await orderModel.findOneAndUpdate({orderId:orderId},{
+				$set:{
+					"status":"Cash__Pending"
+				}
+			});
+			await userModel.findOneAndUpdate({email:req.jwt.decoded?.email, "placedOrders.orderId":orderId}, {
+				$set:{
+					"placedOrders.$.status":"Cash__Pending",
+					"currentOrder":null,
+					"cart":[]
+				}
+			})
+		}
+
+		res.status(200).json({success:true, message:"order placed", order: currentOrder});
+
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({success:false, message:"server error"})
+	}
+}
+
+exports.getCompletedOrder = async (req, res) => {
+	try {
+		const {orderId} = req.body;
+		const order = await orderModel.findOne({orderId});
+		if(!order) return res.status(400).json({success: false, message:"cannot find order"});
+		res.status(200).json({success:true, message:"order retireved", order});
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({success:false, message:'server error'})
+	}
+}
+
 
 exports.purchaseBattery = async (req, res) => {
 	try {
 		console.log("trying to pusrchase battery...");
 	} catch (error) {
-		console.log(error)	
+		console.log(error);
 	}
 }
 
@@ -190,17 +617,146 @@ exports.makeChatInquiry = async (req, res) => {
 
 exports.requestCallback = async (req, res) => {
 	try {
-		
+		console.log("Asking for callbacks...");
+		const { name, contactNum,city,enquiry} = req.body;
+
+		const newCallbackRequest = new requestCallBackModel({
+			name:name,
+			contactNum: contactNum,
+			city: city,
+			enquiry: enquiry
+		});
+		await newCallbackRequest.save();
+		res.status(200).json({ message: "Call back request saved successfully" });
+
 	} catch (error) {
 		console.log(error)	
+		res.status(500).json({message:"error adding callback request"})
+	}
+}
+
+exports.fetchByCarBrand = async (req, res) => {
+	try {
+		const {brandName} = req.body;
+		console.log(brandName);
+		const postType = await postTypeModel.findOne({postTypeName:"Car models"});
+		const brandPostType = await postTypeModel.findOne({postTypeName:"Car Brands"});
+		const brandData = await postModel.findOne({postType:brandPostType?._id, postName:brandName}).select("postData");
+		const posts = await postModel.find({postType:postType?._id, "postData.CarBrand":brandName});
+		console.log(posts);
+		res.status(200).json({success:true, posts, brandData:{brandName:brandData?.postData?.brandName, brandLogo:brandData?.postData?.brandLogo}})
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({message:"error adding callback request"})
+	}
+}
+
+exports.fetchTwoWheelerVehicleBrands = async (req, res) => {
+	try {
+		const brandsPostType = await postTypeModel.findOne({postTypeName:"Brands"});
+		const categoryPostType = await postTypeModel.findOne({postTypeName:"Battery Categories"});
+		const linkedCategoryMatch = await postModel.findOne({postType:categoryPostType._id, postName:"Two Wheeler Batteries"});
+
+		const products = await postModel.find({postType:brandsPostType._id, "postData.linkedCategories":{
+			$elemMatch:{
+				"value":`Two Wheeler Batteries__${linkedCategoryMatch._id}`
+			}
+		}});
+
+		let sanitizedProducts = [];
+		for (let productItem of products){
+			let filteredEquipments = [];
+			if(productItem?.postData?.linkedEquipments?.length > 0){
+				for(let equipmentItem of productItem?.postData?.linkedEquipments){
+					const match = await postModel.findOne({_id:equipmentItem?.value?.split("__")[1]});
+					if(match?.postData?.category?.find(item => item?.value === `Two Wheeler Batteries__${linkedCategoryMatch._id}`)){
+						filteredEquipments.push(equipmentItem);
+					}
+				}
+				productItem.postData.linkedEquipments = filteredEquipments;
+			} 
+			sanitizedProducts.push(productItem);
+		}
+
+		res.status(200).json({success:true, products:sanitizedProducts});
+
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({message:"error adding callback request"})
+	}
+}
+
+exports.findBattery = async (req, res, next) => {
+	try {
+		const {carMake, carModel, batteryBrand, state, city} = req.body;
+		const posts = await postModel.find({
+			"category.categoryName":carModel
+		});
+		res.status(200).json({success:true, products:posts})
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({success:false, message:"failed to find battery"})
+	}
+}
+
+exports.findBatteriesByEquipment = async (req, res, next) => {
+	try {
+		console.log("Finding battery by equipment",req.body)
+		const {id, type, value, brand} = req.body;
+		const equipmentId = value?.split("__")[1];
+		const equipment = await postModel.findOne({_id:equipmentId});
+		const products = [];
+		for (let batteryItem of equipment?.postData?.compatibleBatteries){
+			let match = null;
+			if(brand === "All Brands" || !brand){
+				match = await postModel.findOne({_id:batteryItem?.value?.split('__')[1]})
+			} else if(brand) {
+				match = await postModel.findOne({_id:batteryItem?.value?.split('__')[1], 'postData.brand':brand})
+			}
+			if(match) products.push(match);
+		}
+		res.status(200).json({success:true, products})
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({success:false, message:'server error'})
 	}
 }
 
 exports.addToWishlist = async (req, res) => {
 	try {
+		const {batteryId} = req.body;
 		
+		const battery = await postModel.findOne({_id:batteryId});
+		const batteryData = {
+			productName:battery?.postName,
+			productPrice:battery?.postData?.specialprice,
+			productQuantity:1,
+			productImage:battery?.postData?.batteryimages,
+			productId:battery?._id
+		}
+		await userModel.findOneAndUpdate({email:req.jwt.decoded?.email},{
+			$addToSet:{
+				wishList:{
+					$each:[batteryData]
+				}
+			},
+		});
+
+		res.status(200).json({success:true, message:"product added to wishlist"});
+
 	} catch (error) {
 		console.log(error)	
+	}
+}
+
+exports.getWishlistData = async (req, res) => {
+	try {
+		console.log(req.jwt);	
+		const user = await userModel.findOne({email:req.jwt.decoded?.email});
+		if(!user) return res.status(400).json({success:false, message:"user not found login again"});
+		res.status(200).json({success:true, wishList:user?.wishList});
+	} catch (error) {
+		console.log(error);
 	}
 }
 
@@ -229,6 +785,27 @@ exports.updateServiceCharge = async (req, res) => {
 }
 
 exports.addProductReview = async (req, res) => {
+	try {
+		console.log("Asking for reviews...");
+		const { productId, reviewerName,reviewScore,reviewContent} = req.body;
+
+		const newReview = new reviewModel({
+			productId:productId,
+			reviewScore: reviewScore,
+			reviewerName: reviewerName,
+			reviewContent: reviewContent
+		});
+		
+		await newReview.save();
+		res.status(200).json({ message: "Review saved successfully" });
+
+	} catch (error) {
+		console.log(error)	
+		res.status(500).json({message:"error adding review"})
+	}
+}
+
+exports.updateDeliveryStatus = async (req, res) => {
 	try {
 		
 	} catch (error) {

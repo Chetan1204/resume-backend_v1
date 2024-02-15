@@ -2,8 +2,10 @@ const { razorpayInstance, stripe } = require("../config/paymentGatewayConfig");
 const dataModel = require("../models/dataModel");
 const postModel = require("../models/postModel");
 const {v4: uuidV4} = require("uuid");
-const {orderModel} = require("../models/paymentModel");
+const { orderModel, userModel } = require("../models/userModel");
 const FRONTEND_URL = process.env.FRONTEND_URL;
+const crypto = require("crypto")
+
 /**
  * Create an Order	
  * Creates an order by providing basic details such as amount and currency.
@@ -15,33 +17,30 @@ const FRONTEND_URL = process.env.FRONTEND_URL;
  */
 exports.createOrder = async (req, res) => {
 	try {
-		
-		const {cart, notes} = req.body;
-		const orderPayload = [];
+		const { orderId, notes} = req.body;
 		const currency = "INR";
 		const receipt = uuidV4();
-		for(let i=0; i < cart.length; i++) {
-			const itemData = await postModel.findOne({postName:cart[i].name});
-			orderPayload.push({
-				item_id:itemData?._id,
-				item_name:itemData?.postName,
-				item_price:parseInt(itemData?.postData?.specialprice)
-			})
-		}
-		console.log('orderPayload',orderPayload)
-		const order = await razorpayInstance.orders.create({
-			amount:(orderPayload.reduce((acc, current) => (acc+current.item_price), 0))*100,
+		const match = await orderModel.findOne({orderId});
+		
+		const razorpayOrder = await razorpayInstance.orders.create({
+			amount: match.expressDelivery ?  (match.orderTotal+match.quantity*200)*100 : match.orderTotal*100,
 			currency: currency || "INR",
 			receipt:receipt,
-			notes:notes
 		});
 		
-		const newOrder = new orderModel({
-			id:order.id,
-			receipt:receipt
+		const order = await orderModel.findOneAndUpdate({orderId},{
+			razorpayOrderId:razorpayOrder.id,
+			razorpayOrderReceipt:razorpayOrder.receipt,
 		});
-		await newOrder.save();
-		res.status(200).json({ success: true, message: 'Order created', order: order, key_id:process.env.key_id })
+		await userModel.findOneAndUpdate({email:req.jwt.decoded?.email},{
+			"currentOrder.razorpayOrderId":razorpayOrder.id,
+			"currentOrder.razorpayOrderReceipt":razorpayOrder.receipt,
+		})
+		await userModel.findOneAndUpdate({email:req.jwt.decoded?.email, "placedOrders.orderId":orderId},{
+			"placedOrders.$.razorpayOrderId":razorpayOrder.id,
+			"placedOrders.$.razorpayOrderReceipt":razorpayOrder.receipt,
+		})
+		res.status(200).json({ success: true, message: 'Order created', razorpayOrder: razorpayOrder, order, key_id:process.env.key_id })
 	} catch (error) {
 		console.log(error);
 		res.status(500).json({ success: false, error: error })
@@ -51,7 +50,6 @@ exports.createOrder = async (req, res) => {
 exports.verifyPayment = async (req, res) => {
 	try {
 		
-		// getting the details back from our font-end
         const {
             orderCreationId,
             razorpayPaymentId,
@@ -227,15 +225,35 @@ exports.updateOrder = async (req, res) => {
 
 exports.verifyPayment = async (req, res) => {
 	try {
-		const {receipt} = req.body;
-		const localOrder = await orderModel.findOne({receipt});
-		if(!localOrder) return res.status(400).json({success:false, message:"Bad receipt"});
-		const order = await razorpayInstance.orders.fetch(localOrder.id);
-		if(order){
-			const paymentDetails = await razorpayInstance.orders.fetchPayments(order.id);
-			res.status(200).json({success:true, payment:paymentDetails?.items});
+		const {response, orderId} = req.body; 
+		const secret = process.env.key_secret;
+		const stringToSign = `${response.razorpay_order_id}|${response.razorpay_payment_id}`;
+		const hmac = crypto.createHmac('sha256', secret);
+		const signature = hmac.update(stringToSign).digest('hex');
+
+		if (signature === response.razorpay_signature) {
+			
+			await userModel.findOneAndUpdate({email:req.jwt.decoded?.email, "placedOrders.orderId":orderId},{
+				$set:{
+					"placedOrders.$.status":"Completed",
+					"currentOrder":null,
+					"placedOrders.$.razorpayPaymentId":response.razorpay_payment_id,
+					cart:[],
+				}
+			})
+
+			await orderModel.findOneAndUpdate({orderId},{
+				$set:{
+					"status":"Completed",
+					razorpayPaymentId:response.razorpay_payment_id
+				}
+			})
+
+			res.status(200).json({ success: true, message: 'Payment verified', orderId });
+
 		} else {
-			res.status(400).json({sucess:false, message:"Failed to get order details."})
+			// Invalid payment signature
+			res.status(400).json({ success: false, message: 'Invalid payment signature' });
 		}
 	} catch (error) {
 		console.log(error);

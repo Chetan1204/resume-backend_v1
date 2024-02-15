@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const ReviewSchema = new mongoose.Schema({
-	item:{
+	productId:{
 		type:String,
 		required:true
 	},
@@ -16,6 +16,6 @@ const ReviewSchema = new mongoose.Schema({
 	reviewContent:String
 });
 
-const reviewModel = mongoose.model("Review", ReviewSchema);
+const reviewModel = mongoose.model("Reviews", ReviewSchema);
 
 module.exports = { reviewModel }

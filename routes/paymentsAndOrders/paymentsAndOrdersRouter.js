@@ -4,10 +4,11 @@ const pageController = require('../../controllers/pageController');
 const manageController = require("../../controllers/manageController");
 const uploader = require("../../middlewares/fileUploader");
 const paymentsAndOrdersController = require("../../controllers/paymentsAndOrdersController");
+const { verifyUserLogin } = require("../../middlewares/verifyLogin");
 
 // for razorpay
-router.post("/create-order", paymentsAndOrdersController.createOrder);
-router.post("/verify-payment", paymentsAndOrdersController.verifyPayment);
+router.post("/create-razorpay-order", verifyUserLogin, paymentsAndOrdersController.createOrder);
+router.post("/verify-payment", verifyUserLogin, paymentsAndOrdersController.verifyPayment);
 router.post("/get-payment-details", paymentsAndOrdersController.getPaymentDetails)
 
 // for stripe

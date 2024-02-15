@@ -8,7 +8,7 @@
 			background-color: #fff;
 		}
 	</style>
-	<div style="width: 80%;height: 100%;padding: 20px;overflow-y: scroll;border-right: 1px solid rgba(0,0,0,0.25);">
+	<div id="scrollable-content" style="width: 80%;height: 100%;padding: 20px;overflow-y: scroll;border-right: 1px solid rgba(0,0,0,0.25);">
 		<div>
 			<h3>
 				<%= postName %>
@@ -118,6 +118,8 @@
 																style="padding: 5px 10px;font-size: 13px;font-weight: 600;">
 																<% if(arrayitem.type==="String" ) { %>
 																	<%= arrayitem.value %>
+																<% } else if(arrayitem.type==="PostLink" ) { %>
+																	<%= arrayitem.value.split("__")[0] %>
 																<% } else if(arrayitem.type==="Textarea" ) { %>
 																			<button class="button-secondary">
 																				<strong style="color: #2a5298;">Text Content</strong> (Click to View)
@@ -147,12 +149,13 @@
 											</table>
 											<% } %>
 									</div>
-									<% } else if(item === 'repeaters' && dataObject[item]?.length > 0) { dataObject[item]?.forEach(repeaterItem => {  %>
+									
+									<% } else if(item === 'repeaters' && dataObject.hasOwnProperty(item) && dataObject[item]?.length > 0) { dataObject[item]?.forEach(repeaterItem => {  %>
 										<div style="margin-bottom: 15px;">
 											<label style="display: block;margin:10px 0px" for=""><%= repeaterItem?.repeaterLabel %></label>
 											<button type="button" onclick="openRepeaterModal('<%= repeaterItem?.id %>', '<%= JSON.stringify(repeaterItem) %>')" class="button-secondary">Add Repeater Item</button>
 										</div>
-										<% if(postData[item]?.filter(postrepeaterItem => postrepeaterItem?.repeaterId == repeaterItem?.id )?.length > 0){ 
+										<% if( postData && postData[item]?.filter(postrepeaterItem => postrepeaterItem?.repeaterId == repeaterItem?.id )?.length > 0){ 
 											postData[item]?.filter(postrepeaterItem => postrepeaterItem?.repeaterId == repeaterItem?.id ).forEach( postRepItem => {
 										%>
 											<div style="overflow-x: auto;width: 100%;">
@@ -228,11 +231,22 @@
 					<select onchange="chooseItemType()" name="itemType" id="itemType"
 						style="display: block;width: 100%;padding: 5px 10px; background-color: aliceblue;margin-bottom: 5px;">
 						<option value="">Choose a type</option>
+						<option value="PostLink">PostLink</option>
 						<option value="String">String</option>
 						<option value="Textarea">Textarea</option>
 						<option value="JSON">JSON</option>
 						<option value="Image">Image</option>
 					</select>
+					<select onchange="choosePostType(this)" name="chosenLinkingPostType" id="chosenLinkingPostType"
+						style="display: none;width: 100%;padding: 5px 10px; background-color: aliceblue;margin-bottom: 5px;">
+						<option value="">Choose a post-type</option>
+						<% if(allPostTypes && allPostTypes?.length > 0){ allPostTypes.forEach(item => { %>
+							<option value="<%= item?._id %>" ><%= item?.postTypeName %></option>
+						<% }) } %>
+					</select>
+					<div id="post-linking-container">
+
+					</div>
 					<button id="add-item-last-btn" class="mt-3 button-main button-main-md" onclick="addItem()">Add Item</button>
 				</div>
 			</div>
@@ -274,7 +288,7 @@
 			</div>
 		</div>
 	</div>
-	<div style="width: 20%;display: flex;flex-direction: column;padding: 20px;align-items: start; justify-content: start;gap: 15px;">
+	<div style="width: 20%;display: flex;flex-direction: column;padding: 20px;align-items: start; justify-content: start;gap: 15px; height: 100%; overflow-y: auto;">
 		<div
 			style="background-color: #fff;border-radius: 8px; padding: 10px; width: 100%;border: 1px solid rgba(0,0,0,0.25);display: flex;flex-direction: column;gap: 5px;">
 			<h5
@@ -677,7 +691,10 @@
 			const formData = new FormData();
 			const container = document.querySelector("#modal-input-container");
 			const selector = container.querySelector("#itemType");
-			formData.append(selector.getAttribute("name"), selector.value);
+			const allSelects = container.querySelectorAll('select');
+			allSelects.forEach(select => {
+				formData.append(select.getAttribute("name"), select.value);
+			})
 			const allInputs = container.querySelectorAll("input:not([type='file'])");
 			if (allInputs?.length > 0) {
 				allInputs.forEach(input => {
@@ -756,6 +773,100 @@
 			document.getElementById("arrayItemModal").style.display = "none"
 		}
 
+		function choosePostType(elem) {
+			console.log('choosing post type', elem.value);
+			fetch(`/api/v1/manage/get-posts-by-post-type/${elem.value}`)
+			.then(res => res.json())
+			.then(data => {
+				if(data?.success){
+					const searchElement = document.createElement('div');
+					searchElement.classList.add('post-link-search-container');
+					searchElement.innerHTML = `<div class="searchInput">
+						<label style="width:100%;padding:5px 10px;border-bottom:1px solid rgba(0,0,0,0.3)">Search for posts</label>
+						<input type="text" placeholder="Search posts here...">
+						<div class="resultBox">
+						<!-- here list are inserted from javascript -->
+						</div>
+						<div class="icon"><i class="fas fa-search"></i></div>
+					</div>`;
+					const postsSelect = document.createElement('select');
+					const postsSelectLabel = document.createElement('label');
+					postsSelectLabel.setAttribute('for','linkingPostSelect');
+					postsSelectLabel.textContent = 'Choose a post to link';
+					postsSelectLabel.style.marginBottom = '15px'
+
+					postsSelect.style.width = "100%";
+					postsSelect.style.padding = "5px 10px";
+					postsSelect.style.backgroundColor = "#2271b11a";
+					postsSelect.style.marginBottom = "5px";
+					postsSelect.id = "linkingPostSelect";
+					postsSelect.setAttribute("name", "itemValue");
+					data?.posts.forEach((post) => {
+						const option = document.createElement('option');
+						option.value = post._id; // Set the value based on your post structure
+						option.text = post.postName; // Set the text based on your post structure
+						postsSelect.appendChild(option);
+					});
+					const elem = document.getElementById("post-linking-container");
+					elem.innerHTML = '';
+					elem.appendChild(postsSelectLabel);
+					elem.appendChild(postsSelect);
+					elem.appendChild(searchElement);
+					const searchInput = document.querySelector(".searchInput");
+					const input = searchInput.querySelector("input");
+					const resultBox = searchInput.querySelector(".resultBox");
+					const icon = searchInput.querySelector(".icon");
+					let linkTag = searchInput.querySelector("a");
+					let webLink;
+					// if user press any key and release
+					input.onkeyup = (e)=>{
+						let userData = e.target.value; //user enetered data
+						let emptyArray = [];
+						if(userData){
+							emptyArray = data?.posts.filter((data)=>{
+								//filtering array value and user characters to lowercase and return only those words which are start with user enetered chars
+								return data?.postName?.toLocaleLowerCase().startsWith(userData.toLocaleLowerCase()); 
+							});
+							emptyArray = emptyArray.map((data)=>{
+								// passing return data inside li tag
+								return data = '<li style="color:#2271b1;">'+ data?.postName + '&nbsp;<strong style="color:#000;">('+ data?._id +')</strong>' +'</li>';
+							});
+							searchInput.classList.add("active"); //show autocomplete box
+							
+							showSuggestions(emptyArray, resultBox);
+							let allList = resultBox.querySelectorAll("li");
+							for (let i = 0; i < allList.length; i++) {
+								//adding onclick attribute in all li tag
+								allList[i].setAttribute("onclick", "chooseSearchedPost(this)");
+							}
+						}else{
+							searchInput.classList.remove("active"); //hide autocomplete box
+						}
+					}
+
+				}
+			})
+		}
+
+		function chooseSearchedPost(elem){
+			console.log(elem.textContent);
+			let inputString = elem.textContent;
+			const regex = /\(([^)]+)\)/;
+			const matchResult = inputString.match(regex);
+			const extractedId = matchResult && matchResult[1];
+			document.getElementById('linkingPostSelect').value = extractedId;
+			const searchInput = document.querySelector(".searchInput");
+			searchInput.classList.remove("active");
+			const input = searchInput.querySelector("input");
+			input.value = inputString;
+		}
+
+		function showSuggestions(list, resultBox){
+			let listData;
+			listData = list.join('');
+			resultBox.innerHTML = listData;
+		}
+
 		function chooseItemType() {
 			console.log("Choosing item type...")
 			const select = document.getElementById("itemType");
@@ -780,6 +891,9 @@
 					newElement.id = 'new-item-container'
 					newElement.innerHTML = htmlText;
 					elem.parentNode.insertBefore(newElement, elem);
+					document.getElementById("arrayItemNamePointer").value = arrayItemNamePointer;
+				} else if (select.value === "PostLink") {
+					document.getElementById("chosenLinkingPostType").style.display = "inline"
 					document.getElementById("arrayItemNamePointer").value = arrayItemNamePointer;
 				} else if (select.value === "Textarea") {
 					const htmlText = `

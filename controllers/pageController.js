@@ -6,7 +6,11 @@ const { categoryModel } = require('../models/categoryModel');
 const { v4: uuidv4 } = require('uuid');
 const {getLastTwelveMonths} = require("../utils/utilFunctions");
 const adminModel = require('../models/adminModel');
-const ITEMS_PER_PAGE = 6;
+const ITEMS_PER_PAGE = 60;
+const Quotation = require("../models/quotationModel")
+const {reviewModel} = require("../models/reviewModel")
+const requestCallBackModel = require("../models/callbackModel")
+const {couponModel} = require("../models/couponModel")
 
 
 exports.renderAddProject = async (req, res) => {
@@ -468,6 +472,11 @@ exports.addNewPostType = async (req, res) => {
 		console.log(error);
 		res.status(500).json({ message: 'Internal server error' });
 	}
+}
+
+exports.getPosts = async (req, res) => {
+	const posts = await postModel.find({postType:req.params.posttypeid}).select("postName");
+	res.status(200).json({success:true, posts})
 }
 
 exports.showPosts = async (req, res) => {
@@ -1011,6 +1020,10 @@ exports.addPostArrayItem = async (req, res) => {
 		let treatedItemValue;
 		if (itemType === "String" || itemType === "Textarea") {
 			treatedItemValue = itemValue;
+		} else if (itemType === "PostLink") {
+			const match = await postModel.findOne({_id:itemValue});
+
+			treatedItemValue = `${match.postName}__${itemValue}`
 		} else if (itemType === "JSON") {
 			treatedItemValue = JSON.parse(itemValue);
 		} else if (itemType === "Image") {
@@ -1322,6 +1335,7 @@ exports.showPost = async (req, res) => {
 		const encodedPostId = req.query.postid;
 		const postName = decodeURIComponent(encodedPostName);
 		const postTypeId = decodeURIComponent(encodedPostId);
+		const allPostTypes = await postTypeModel.find({}).select("postTypeName")
 		const postType = await postTypeModel.findOne({ _id: postTypeId });
 		const post = await postModel.findOne({ postName: postName, postType: postTypeId });
 		const allCategories = await categoryModel.find({});
@@ -1349,6 +1363,7 @@ exports.showPost = async (req, res) => {
 			await processAllCustomFields(postType?.customField);
 			res.render('post', {
 				postTypeId,
+				allPostTypes,
 				postId: post?._id,
 				postName: postName,
 				dataObject: dataObject,
@@ -1366,6 +1381,7 @@ exports.showPost = async (req, res) => {
 		} else {
 			res.render('post', {
 				postTypeId,
+				allPostTypes,
 				postId: post?._id,
 				postName: postName,
 				dataObject: {},
@@ -1545,8 +1561,12 @@ exports.addModelData = async (req, res) => {
 	}
 }
 
+
+// need to see the issue with model description for newly created models
+
 exports.addModelDescription = async (req, res) => {
 	try {
+		console.log('adding model description');
 		const {modelId, description} = req.body;
 		const existingModel = await dataModel.findOneAndUpdate({_id:modelId}, {
 			$set:{
@@ -1942,3 +1962,108 @@ exports.getUserData = async (req, res) => {
 		res.status(500).json({success:false, message:"internal server error", error})
 	}
 }
+
+
+// HRASHIKESH CODE CHANGES MERGE :: START
+
+exports.renderQuotationPage = async(req,res)=>{
+	try {
+		console.log("Fetching all quotations...");
+		const quotations = await Quotation.find();
+		res.render('quotations', { quotations: quotations });
+	} catch (error) {
+		console.log(error)
+		res.status(500).json({message:"error rendering the quotations page"})
+	}
+}
+
+exports.renderCallbackRequests = async(req,res)=>{
+	try {
+		console.log("Fetching all call back requests...");
+		const callBackRequests = await requestCallBackModel.find();
+		res.render('callBackRequests', { callBackRequests: callBackRequests });
+	} catch (error) {
+		console.log(error)
+		res.status(500).json({message:"error rendering the callBackRequests page"})
+	}
+}
+
+exports.renderReviewPage = async (req, res) => {
+    try {
+        console.log("Fetching all reviews...");
+        const reviews = await reviewModel.find();
+        const reviewProductIds = Array.from(new Set(reviews.map(review => review.productId)));
+        console.log(reviewProductIds);
+		const productReview = await postModel.find({ _id: { $in: reviewProductIds} });
+		const productReviewArray = Object.values(productReview);
+        console.log(productReviewArray);
+
+        res.render('reviews', { reviews: reviews, uniqueProducts: productReviewArray });
+        res.status(200).status({ message: "all okay" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error rendering the reviews page" });
+    }
+};
+
+
+exports.renderReviewInnerPage =  async (req, res) => {
+    try {
+        const productId = req.params.productId;
+        // Fetch reviews for the specified product
+        const reviews = await reviewModel.find({ productId: productId });
+        // Render the reviews page and pass the reviews data
+        res.render('reviewInnerPage', { productId: productId, reviews: reviews });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+}
+
+exports.renderAddCouponPage =  async (req, res) => {
+    try {
+        res.render('addCoupon');
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+}
+
+exports.renderAllCoupons = async(req,res)=>{
+	try {
+		console.log("Fetching all coupons...");
+		const coupons = await couponModel.find();
+		res.render('allCoupons', { coupons: coupons });
+	} catch (error) {
+		console.log(error)
+		res.status(500).json({message:"error rendering the All coupons page"})
+	}
+}
+exports.deleteCoupon = async (req, res) => {
+    try {
+        const couponId = req.params.couponId;
+        console.log(couponId, "Called");
+
+        // Assuming couponModel.findOneAndDelete() returns a promise
+        const deletedCoupon = await couponModel.findOneAndDelete({ _id: couponId });
+        const coupons = await couponModel.find();
+        // Check if the coupon was found and deleted
+			res.render('allCoupons', { coupons: coupons });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
+}
+exports.editCoupon = async (req, res) => {
+    try {
+        const couponId = req.params.couponId;
+        const couponData = await couponModel.findOne({ _id: couponId });
+		res.render("editCoupon",couponData)
+		console.log(couponData,"<<<<<<<<")
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
+}
+
+// HRASHIKESH CODE CHANGES MERGE :: END

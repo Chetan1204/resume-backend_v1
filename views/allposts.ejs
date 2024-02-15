@@ -1,4 +1,4 @@
-<div style="width: 100%;height: 100%;padding: 15px;">
+<div style="width: 100%;height: 100%;padding: 15px; overflow-y: auto;">
 	<div style="display: flex;align-items: center;justify-content: space-between;width: 100%;">
 		<div id="all-posts-top-heading" style="width: 100%;">
 			<h3 style="font-size: 18px;font-weight: 500;">
@@ -127,7 +127,7 @@
 			</thead>
 			<tbody>
 
-				<% allPosts.forEach(post=> { %>
+				<% allPosts.reverse().forEach(post=> { %>
 					<tr style="border-bottom: 1px solid rgba(0,0,0,0.25);">
 						<td style="padding: 5px 10px;">
 							<div style="font-size: 13px;">
