@@ -18,6 +18,7 @@ router.post("/update-delivery-information", verifyUserLogin, manageController.up
 router.post("/delivery-express", verifyUserLogin, manageController.updateExpressDeliveryStatus)
 router.post("/apply-coupon", manageController.applyCoupon);
 router.post("/add-to-wishlist", verifyUserLogin, manageController.addToWishlist);
+router.post("/remove-from-wishlist", verifyUserLogin, manageController.removeFromWishlist);
 router.get("/get-wishlist", verifyUserLogin, manageController.getWishlistData);
 
 router.post("/initiate-order", verifyUserLogin, manageController.initiateOrder);
@@ -33,24 +34,27 @@ router.get("/get-batteries-by-capacity");
 router.get("/get-batteries-by-price");
 router.get("/get-batteries-by-car");
 router.get("/get-recommendations-for-battery");
-router.get("/get-all-car-brands", manageController.getAllCarBrands)
-router.get("/get-all-battery-brands", manageController.getAllBatteryBrands)
-router.get("/get-all-battery-categories", manageController.getAllBatteryCategories)
-router.get("/get-page-content", manageController.getPageContentByName)
+router.get("/get-all-car-brands", manageController.getAllCarBrands);
+router.get("/get-all-battery-brands", manageController.getAllBatteryBrands);
+router.get("/get-all-battery-categories", manageController.getAllBatteryCategories);
+router.get("/get-page-content", manageController.getPageContentByName);
 
 // router.post("/add-coupon", verifyAdmin, verifyLogin, manageController.addCartCoupon)
 
 
 // HRASHIKESH CODE CHANGES MERGE :: START
-router.post("/add-coupon", verifyAdmin, verifyLogin, manageController.addCartCoupon)
+router.post("/add-coupon", verifyAdmin, verifyLogin, manageController.addCartCoupon);
 router.post("/ask-battery-quotation", manageController.askBatteryQuotation);
 router.post("/add-review", manageController.addProductReview);
 router.post("/request-callback", manageController.requestCallback);
 router.post("/get-cars", manageController.fetchByCarBrand)
-router.get("/vehicle-type/two-wheelers", manageController.fetchTwoWheelerVehicleBrands)
-router.get("/vehicle-type/passenger-vehicles", manageController.getPassengerVehicleBrands)
-router.post("/find-battery", manageController.findBattery)
-router.post("/find-batteries-by-equipment", manageController.findBatteriesByEquipment)
+router.get("/battery-type/two-wheeler-batteries", manageController.fetchTwoWheelerVehicleBrands);
+router.get("/battery-type/car-batteries", manageController.getPassengerVehicleBrands);
+router.get("/battery-type/inverter-batteries", manageController.getInverterBrands);
+router.get("/get-inverter-batteries/:brandname", manageController.getInverterBatteries);
+router.post("/find-inverters", manageController.findInverters)
+router.post("/find-battery", manageController.findBattery);
+router.post("/find-batteries-by-equipment", manageController.findBatteriesByEquipment);
 router.post("/filter-inverter-batteies",manageController.filterInverterBattery);
 
 

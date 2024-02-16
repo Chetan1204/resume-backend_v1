@@ -1481,4 +1481,6 @@ tbody tr:nth-child(even){
 	color: #2271b1;
 	cursor: pointer;
   }
-  
+  .form-check-input[type=radio]{
+	border-radius: 50% !important;
+  }

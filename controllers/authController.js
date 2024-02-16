@@ -677,7 +677,6 @@ exports.handleUserLogin = async (req, res) => {
 			return res.status(403).json({success:false,message:"please verify your email"})
 		}
 		if(await bcrypt.compare(password, match.password)){
-			
 			const access_token = jwt.sign({email}, process.env.USER_ACCESS_TOKEN_SECRET);
 			const user = await userModel.findOneAndUpdate({email},{
 				access_token,

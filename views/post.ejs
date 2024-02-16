@@ -39,6 +39,24 @@
 							type="<%= dataObject[item] == 'String' ? 'text': dataObject[item] == 'Number' ? 'number' :'text' %>"
 							name="<%= item %>" value="<%= postData ? postData[item] : '' %>">
 					</div>
+					<% } else if(dataObject[item]=='Boolean' ) { %>
+						<div class="section-input-container">
+							<label class="form-label mt-3" for="<%= item %>">
+								<%= item %>
+							</label>
+							<div class="form-check">
+								<input class="form-check-input" value="true" <%= postData && postData[item] === 'true' ? 'checked':'' %> type="radio" name="<%= item %>" id="<%= item %>1">
+								<label class="form-check-label" for="<%= item %>1">
+								  True
+								</label>
+							</div>
+							<div class="form-check">
+								<input class="form-check-input" value="false" <%= postData && postData[item] === 'false' ? 'checked':'' %> type="radio" name="<%= item %>" id="<%= item %>2">
+								<label class="form-check-label" for="<%= item %>2">
+								  False
+								</label>
+							</div>
+						</div>
 					<% } else if(dataObject[item]=='Image' ) { %>
 						<div class="section-input-container">
 

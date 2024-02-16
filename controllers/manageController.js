@@ -117,17 +117,62 @@ exports.getPassengerVehicleBrands = async (req, res) => {
 	}
 }
 
-// exports.getBatteryByBrand = async (req, res) => {
-// 	try {
-// 		const brandData = await postModel.findOne({
-//             "postData.linkedCategories.value": "Car Batteries"
-//         });
-// 		res.status(200).json({message:brandData})
-// 	} catch (error) {
-// 		console.log(error);
-// 		res.status(500).json({success:false, error:error, message:"Server error."})
-// 	}
-// }
+
+
+exports.getInverterBrands = async (req, res) => {
+	try {
+		const categoryPostTypeMatch = await postTypeModel.findOne({postTypeName:"Battery Categories"});
+		const inverterCategoryPost = await postModel.findOne({postType:categoryPostTypeMatch?._id, 'postName':'Inverter Batteries'});
+		console.log("inverterCategory Post", `${inverterCategoryPost.postName}__${inverterCategoryPost?._id}`);
+		const inverters = await postModel.find({'postData.batterycategory.value':`${inverterCategoryPost.postName}__${inverterCategoryPost?._id}`});
+		console.log("INVERTERS FOUND ::", inverters);
+		const inverterBrandNames = Array.from(new Set(inverters?.map(item => item?.postData?.brand)));
+		const inverterBrands = [];
+		for(let brandName of inverterBrandNames) {
+			const brandMatch = await postModel.findOne({postName:brandName});
+			brandMatch && inverterBrands.push({...brandMatch, postData:{...brandMatch.postData, brandLogo:brandMatch.postData.brandImage}});
+		}
+		res.status(200).json({success:true, products:inverterBrands})
+	} catch (error) {
+		console.log(error);
+	}
+}
+
+exports.getInverterBatteries = async (req, res) => {
+	try {
+		const {brandname} = req.params;
+		const categoryPostTypeMatch = await postTypeModel.findOne({postTypeName:"Battery Categories"});
+		const inverterCategoryPost = await postModel.findOne({postType:categoryPostTypeMatch?._id, 'postName':'Inverter Batteries'});
+		console.log("inverterCategory Post", `${inverterCategoryPost.postName}__${inverterCategoryPost?._id}`);
+		const inverters = await postModel.find({'postData.batterycategory.value':`${inverterCategoryPost.postName}__${inverterCategoryPost?._id}`, 'postData.brand':brandname});
+		res.status(200).json({success:true, products:inverters})
+	} catch (error) {
+		console.log(error)
+	}
+}
+
+exports.findInverters = async (req, res) => {
+	try {
+		const {category, brand, capacity} = req.body.state;
+		const categoryPostTypeMatch = await postTypeModel.findOne({postTypeName:"Battery Categories"});
+		const inverterCategoryPost = await postModel.findOne({postType:categoryPostTypeMatch?._id, 'postName':'Inverter Batteries'});
+		let inverters = [];
+		if(capacity && brand){
+			if(brand === 'All Brands'){
+				inverters = await postModel.find({'postData.batterycategory.value':`${inverterCategoryPost.postName}__${inverterCategoryPost?._id}`, 'postData.capacity':capacity});
+			} else {
+				inverters = await postModel.find({'postData.batterycategory.value':`${inverterCategoryPost.postName}__${inverterCategoryPost?._id}`, 'postData.capacity':capacity, 'postData.brand':brand});
+			}
+		} else {
+			inverters = await postModel.find({'postData.batterycategory.value':`${inverterCategoryPost.postName}__${inverterCategoryPost?._id}`, 'postData.brand':brand});
+		}
+		res.status(200).json({success:true, products:inverters});
+
+	} catch (error) {
+		console.log(error);
+	}
+}
+
 
 exports.getAllBatteryBrands = async (req, res) => {
 	try {
@@ -734,6 +779,7 @@ exports.addToWishlist = async (req, res) => {
 			productImage:battery?.postData?.batteryimages,
 			productId:battery?._id
 		}
+
 		await userModel.findOneAndUpdate({email:req.jwt.decoded?.email},{
 			$addToSet:{
 				wishList:{
@@ -746,6 +792,22 @@ exports.addToWishlist = async (req, res) => {
 
 	} catch (error) {
 		console.log(error)	
+	}
+}
+
+exports.removeFromWishlist = async (req, res) => {
+	try {
+		const {batteryId} = req.body;
+		const user = await userModel.findOneAndUpdate({email:req.jwt.decoded?.email});
+		const updatedWishlist = user.wishList.filter(item => item?.productId?.toString() !== batteryId);
+
+		await userModel.findOneAndUpdate({email:req.jwt.decoded?.email},{
+			wishList:updatedWishlist
+		});
+
+		res.status(200).json({success:true, message:"product added to wishlist"});
+	} catch (error) {
+		console.log(error)
 	}
 }
 
