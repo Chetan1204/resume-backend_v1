@@ -1,0 +1,154 @@
+<div style="width: 100%;height: 100%;padding: 15px; overflow-y: auto;">
+	<div>
+		<div style="display: flex; align-items: center;gap: 15px;">
+			<h3 style="font-size: 18px;font-weight: 500;"><%= product?.postName %></h3>
+		</div>
+		<div style="display: flex; flex-direction: column;">
+			<label for="state">State</label>
+			<select onchange="handleStateChange(this)" name="state" id="state" style="width: 30%; min-width: 320px;padding: 5px; margin: 10px 0px;border: 1px solid rgba(0,0,0,0.2);">
+					<option value="">Choose a state</option>
+				<% indianStatesAndCities?.forEach(item => { %>
+					<option value="<%= item?.state %>"><%= item?.state %></option>
+				<% }) %>
+			</select>
+			<label for="city">City</label>
+			<select name="city" id="city" style="width: 30%; min-width: 300px;padding: 5px; margin: 10px 0px;border: 1px solid rgba(0,0,0,0.2);">
+
+			</select>
+
+			<button onclick="handleRevealManager()" class="button-secondary-blue">Choose</button>
+
+			<div id="price-manager-form" style="background-color: #fff;border: 1px solid rgba(0,0,0,0.2); border-radius: 4px;flex-direction: column;padding: 10px; margin-top: 15px; width: 30%; min-width: 320px; display: none;height: 0px;transition: all 400ms ease;">
+				<h5 style="font-weight: 600; font-size: 13px; text-transform: uppercase;margin-bottom: 15px; border-bottom: 1px solid rgba(0,0,0,0.25);padding-bottom: 5px;">
+					Pricing and Availability
+				</h5>
+				<form action="/api/v1/manage/product/<%= product?._id %>/update-pricing-details" method="post">
+					<input type="hidden" name="productId" value="<%= product?._id %>" >
+					<input type="hidden" name="location" id="chosen-location" >
+					<div>
+						<label for="">MRP</label>
+						<div class="mb-3" style="display: flex;align-items: center;">
+							<span style="padding: 5px;font-weight: 600;" id="basic-addon1">₹</span>
+							<input id="price-manage-mrp" name="mrp" type="number" style="padding: 5px;outline: none;border: 1px solid rgba(0,0,0,0.2);" placeholder="Price" aria-label="Username" aria-describedby="basic-addon1">
+						</div>
+						<label for="">Change Factor</label>
+						<div class="mb-3" style="display: flex;align-items: center;">
+							<span style="padding: 5px;font-weight: 600;" id="basic-addon1">%</span>
+							<input id="price-manage-change-factor" name="changeFactor" type="number" style="padding: 5px;outline: none;border: 1px solid rgba(0,0,0,0.2);" placeholder="Price" aria-label="Username" aria-describedby="basic-addon1">
+						</div>
+						<div>
+							<label style="display: block;margin-top: 10px;margin-bottom: 10px;">Availability</label>
+							<div class="form-check">
+								<input id="price-manage-available" class="form-check-input" value="true" type="radio" name="isAvailable">
+								<label class="form-check-label" for="">
+								True
+								</label>
+							</div>
+							<div class="form-check">
+								<input id="price-manage-notavailable" class="form-check-input" value="false" type="radio" name="isAvailable" id="">
+								<label class="form-check-label" for="">
+								False
+								</label>
+							</div>
+						</div>
+						<button class="button-secondary-blue" style="margin-top: 20px;">Update</button>
+					</div>
+				</form>
+			</div>
+		</div>
+		<script>
+
+			function handleStateChange(elem) {
+				const citySelector = document.getElementById("city");
+				const state = elem.value;
+				const cities = JSON.parse('<%- JSON.stringify(indianStatesAndCities) %>');
+				let htmlText = ``;
+				cities?.filter(item => item.state === state)[0].cities?.forEach(item => {
+					htmlText += `<option value="${item}" >${item}</option>`
+				})
+				citySelector.innerHTML = htmlText;
+			}
+
+			function handleRevealManager() {
+				const stateElement = document.getElementById('state');
+				const cityElement  = document.getElementById('city');
+				if(!stateElement.value || !cityElement.value){
+					return
+				} 
+
+				const container = document.getElementById('price-manager-form');
+				container.querySelector('#chosen-location').value = cityElement.value;
+				container.style.display = 'flex';
+				container.style.height = 'auto';
+				
+				const pricingDetails = JSON.parse('<%- JSON.stringify(pricingDetails) %>');
+				if(!pricingDetails) return;
+				const data = pricingDetails?.pricingAndAvailability?.filter(item => item.location === cityElement.value)[0];
+				document.getElementById('price-manage-mrp').value = data?.mrp;
+				document.getElementById('price-manage-change-factor').value = data?.changeFactor;
+				data?.isAvailable ? document.getElementById("price-manage-available").setAttribute('checked', true) : 
+				document.getElementById("price-manage-notavailable").setAttribute('checked', true)
+
+				
+
+			}
+		</script>
+		<!-- <table cellspacing="0" cellpadding="0" width="100%" style="border: 1px solid rgba(0,0,0,0.25);">
+            <thead style="border-bottom: 2px solid #d8d8d8;background-color: #fff;">
+                <tr>
+                    <th>
+                        <div style="display: flex; align-items: center; justify-content: start;padding: 10px;">
+                            <h3 style="font-size: 13px;margin: 0px;">State</h3>
+                        </div>
+                    </th>
+                    <th>
+                        <div style="display: flex; align-items: center; justify-content: start;padding: 10px;">
+                            <h3 style="font-size: 13px;margin: 0px;">City</h3>
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+			<tbody>
+				<% indianStatesAndCities?.forEach(item => {  %>
+					<tr>
+                        <td style="padding: 5px 10px;font-size: 13px;">
+                            <span style="color: #2271B7;font-weight: 500;">    
+                                <%= item?.state %>
+                            </span>
+                        </td>
+                        <td style="padding: 5px 10px;font-size: 13px;">
+                            <div style="color: #2271B7;font-weight: 500;display: flex;flex-direction: column;">	
+							<% item?.cities?.forEach(item => { %>
+								<div style="border-bottom: 1px solid rgba(0,0,0,0.25);">
+									<p style="margin: 0px;"><%= item %></p>
+									<div style="display: flex;align-items: center; gap: 50px;">
+										<div>
+											<label for="<%= item %>" style="display: block;margin-bottom: 5px;">Price</label>
+											<input type="text" name="<%= item %>" class="form-control" id="<%= item %>">
+										</div>
+										<div>
+											<label for="<%= item+'-availability' %>" style="display: block;margin-top: 10px;">Availability</label>
+											<div class="form-check">
+												<input class="form-check-input" value="true" type="radio" name="<%= item+'-availability' %>">
+												<label class="form-check-label" for="<%= item %>1">
+												True
+												</label>
+											</div>
+											<div class="form-check">
+												<input class="form-check-input" value="false" type="radio" name="<%= item+'-availability' %>" id="<%= item %>2">
+												<label class="form-check-label" for="<%= item %>2">
+												False
+												</label>
+											</div>
+										</div>
+									</div>
+								</div>
+							<% }) %>
+                            </div>
+                        </td>
+                    </tr>
+				<% }) %>
+			</tbody>
+		</table> -->
+	</div>
+</div>

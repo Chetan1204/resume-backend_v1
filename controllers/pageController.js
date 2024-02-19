@@ -11,6 +11,8 @@ const Quotation = require("../models/quotationModel")
 const {reviewModel} = require("../models/reviewModel")
 const requestCallBackModel = require("../models/callbackModel")
 const {couponModel} = require("../models/couponModel")
+const {indianStatesAndCities} = require("../utils/constants");
+const { pricingManagerModel } = require('../models/priceManagerModel');
 
 
 exports.renderAddProject = async (req, res) => {
@@ -1966,6 +1968,19 @@ exports.getUserData = async (req, res) => {
 
 // HRASHIKESH CODE CHANGES MERGE :: START
 
+exports.renderPriceManagerPage = async (req, res) => {
+	try {
+		const batteryPostType = await postTypeModel.findOne({postTypeName:"Batteries"});
+		const posts = await postModel.find({postType:batteryPostType?._id});
+		res.render("priceManager", {
+			products:posts
+		});
+	} catch (error) {
+		console.lgo(error);
+		res.status(500).json({success:false, messag:'server error'});
+	}
+}
+
 exports.renderQuotationPage = async(req,res)=>{
 	try {
 		console.log("Fetching all quotations...");
@@ -2006,6 +2021,76 @@ exports.renderReviewPage = async (req, res) => {
     }
 };
 
+exports.renderProductPriceManager = async (req, res) => {
+	try {
+		const productId = req.params.productId;
+		const product = await postModel.findOne({_id:productId});
+		const pricingDetails = await pricingManagerModel.findOne({productId:product?._id});
+		res.render('productPriceManager', {
+			indianStatesAndCities,
+			product,
+			pricingDetails,
+		})
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({error: 'internal server error'})
+	}
+}
+
+exports.getProductPricingDetails = async (req, res) => {
+	try {
+		const {productId} = req.params;
+		const pricingDetails = await pricingManagerModel.findOne({productId});
+		res.status(200).json({success:true, pricingDetails:pricingDetails})
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({success:false, message:"server error"});
+	}
+}
+
+exports.updateProductPricingDetails = async (req, res) => {
+	try {
+		const {productId} = req.params;
+		const {location, isAvailable, mrp} = req.body;
+		if(!location) return res.status(400).json({success:false, message:'location not found'});
+		const match = await pricingManagerModel.findOne({productId});
+		if(match){
+			if(match.pricingAndAvailability.filter(item => item.location === location)?.length > 0){
+				await pricingManagerModel.findOneAndUpdate({productId, 'pricingAndAvailability.location':location}, {
+					$set:{
+						'pricingAndAvailability.$.mrp': mrp,
+						'pricingAndAvailability.$.isAvailable': isAvailable,
+					}
+				}, {new:true});
+			} else {
+
+				await pricingManagerModel.findOneAndUpdate({productId}, {
+					$push:{
+						pricingAndAvailability:{
+							location,
+							mrp,
+							isAvailable,
+						}
+					}
+				}, {new:true});
+			}
+		} else {
+			const newPricing = new pricingManagerModel({
+				productId,
+				pricingAndAvailability:{
+					location,
+					mrp,
+					isAvailable,
+				}
+			});
+			await newPricing.save();
+		}
+		res.redirect(`/api/v1/manage/product/${productId}/manage-price`)
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({success:false, message:"server error"});
+	}
+}
 
 exports.renderReviewInnerPage =  async (req, res) => {
     try {

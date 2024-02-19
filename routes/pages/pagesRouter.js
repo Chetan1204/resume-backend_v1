@@ -102,9 +102,15 @@ router.get("/get-user-data", verifyLogin, pageController.getUserData);
 // HRASHIKESH CODE CHANGES MERGE :: START
 
 // CUSTOM PAGES ROUTE
+router.get("/render-price-manager", verifyLogin, pageController.renderPriceManagerPage);
+router.get('/product/:productId/manage-price',verifyLogin, pageController.renderProductPriceManager);
+router.post('/product/:productId/get-pricing-details', verifyLogin, pageController.getProductPricingDetails);
+router.post('/product/:productId/update-pricing-details', verifyLogin, pageController.updateProductPricingDetails);
+
+
 router.get("/render-quotations", verifyLogin, pageController.renderQuotationPage);
 router.get("/render-reviews", verifyLogin, pageController.renderReviewPage);
-router.get('/product/:productId/reviews',verifyLogin, pageController.renderReviewInnerPage );
+router.get('/product/:productId/reviews',verifyLogin, pageController.renderReviewInnerPage);
 router.get("/render-callback-requests", verifyLogin, pageController.renderCallbackRequests);
 
 //COUPON RELATED ROUTES

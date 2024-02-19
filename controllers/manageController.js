@@ -11,6 +11,7 @@ const {reviewModel} = require("../models/reviewModel")
 const requestCallBackModel = require("../models/callbackModel");
 const postTypeModel = require("../models/postTypeModel");
 const { InternalServerError, BadRequestError, UnauthorizedError, NotFoundError } = require("../config/apiErrors");
+const { pricingManagerModel } = require("../models/priceManagerModel");
 
 
 //Fetching Logics:
@@ -132,6 +133,88 @@ exports.getInverterBrands = async (req, res) => {
 			const brandMatch = await postModel.findOne({postName:brandName});
 			brandMatch && inverterBrands.push({...brandMatch, postData:{...brandMatch.postData, brandLogo:brandMatch.postData.brandImage}});
 		}
+		res.status(200).json({success:true, products:inverterBrands});
+	} catch (error) {
+		console.log(error);
+	}
+}
+
+exports.getHeavyEngineBatteryBrands = async (req, res) => {
+	try {
+		const categoryPostTypeMatch = await postTypeModel.findOne({postTypeName:"Battery Categories"});
+		const heavyEngineCategoryPost = await postModel.findOne({postType:categoryPostTypeMatch?._id, 'postName':'Heavy Engine Batteries'});
+		const heavyEngineBatteries = await postModel.find({'postData.batterycategory.value':`${heavyEngineCategoryPost.postName}__${heavyEngineCategoryPost?._id}`});
+		console.log("heavyEngineBatteries FOUND ::", heavyEngineBatteries);
+		const heavyBatteryBrandNames = Array.from(new Set(heavyEngineBatteries?.map(item => item?.postData?.brand)));
+		const heavyBatteryBrands = [];
+		for(let brandName of heavyBatteryBrandNames) {
+			const brandMatch = await postModel.findOne({postName:brandName});
+			brandMatch && heavyBatteryBrands.push({...brandMatch, postData:{...brandMatch.postData, brandLogo:brandMatch.postData.brandImage}});
+		}
+		res.status(200).json({success:true, products:heavyBatteryBrands});
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({success:true, message:'server error'});
+	}
+}
+
+exports.getVRLASMFBatteryBrands = async (req, res) => {
+	try {
+		const categoryPostTypeMatch = await postTypeModel.findOne({postTypeName:"Battery Categories"});
+		const VRLA_SMFCategoryPost = await postModel.findOne({postType:categoryPostTypeMatch?._id, 'postName':'VRLA / SMF Batteries'});
+		const vrlaSmfBatteries = await postModel.find({'postData.batterycategory.value':`${VRLA_SMFCategoryPost.postName}__${VRLA_SMFCategoryPost?._id}`});
+		const vrlaSmfBatteryBrandNames = Array.from(new Set(vrlaSmfBatteries?.map(item => item?.postData?.brand)));
+		const vrlaSmfBrands = [];
+		for(let brandName of vrlaSmfBatteryBrandNames) {
+			const brandMatch = await postModel.findOne({postName:brandName});
+			brandMatch && vrlaSmfBrands.push({...brandMatch, postData:{...brandMatch.postData, brandLogo:brandMatch.postData.brandImage}});
+		}
+		res.status(200).json({success:true, products:vrlaSmfBrands});
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({success:true, message:'server error'});
+	}
+}
+
+exports.getVrlaSmfBatteries = async (req, res) => {
+	try {
+		const categoryPostTypeMatch = await postTypeModel.findOne({postTypeName:"Battery Categories"});
+		const VRLA_SMFCategoryPost = await postModel.findOne({postType:categoryPostTypeMatch?._id, 'postName':'VRLA / SMF Batteries'});
+		const vrlaSmfBatteries = await postModel.find({'postData.batterycategory.value':`${VRLA_SMFCategoryPost.postName}__${VRLA_SMFCategoryPost?._id}`});
+		res.status(200).json({success:true, products:vrlaSmfBatteries});
+	} catch (error) {
+		console.log(error);
+		res.status(200).json({success:false, message:'server error'})
+	}
+}
+
+exports.getHeavyEngineBatteries = async (req, res) => {
+	try {
+		const categoryPostTypeMatch = await postTypeModel.findOne({postTypeName:"Battery Categories"});
+		const heavyEngineCategoryPost = await postModel.findOne({postType:categoryPostTypeMatch?._id, 'postName':'Heavy Engine Batteries'});
+		const heavyEngineBatteries = await postModel.find({'postData.batterycategory.value':`${heavyEngineCategoryPost.postName}__${heavyEngineCategoryPost?._id}`});
+		res.status(200).json({success:true, products:heavyEngineBatteries});
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({success:true, message:'server error'});
+	}
+}
+
+
+
+exports.getInverterPlusHomeUPSBrands = async (req, res) => {
+	try {
+		const categoryPostTypeMatch = await postTypeModel.findOne({postTypeName:"Battery Categories"});
+		const inverterCategoryPost = await postModel.findOne({postType:categoryPostTypeMatch?._id, 'postName':'Inverter & Home UPS Batteries'});
+		console.log(inverterCategoryPost);
+		const inverters = await postModel.find({'postData.batterycategory.value':`${inverterCategoryPost.postName}__${inverterCategoryPost?._id}`});
+		console.log(inverters)
+		const inverterBrandNames = Array.from(new Set(inverters?.map(item => item?.postData?.brand)));
+		const inverterBrands = [];
+		for(let brandName of inverterBrandNames) {
+			const brandMatch = await postModel.findOne({postName:brandName});
+			brandMatch && inverterBrands.push({...brandMatch, postData:{...brandMatch.postData, brandLogo:brandMatch.postData.brandImage}});
+		}
 		res.status(200).json({success:true, products:inverterBrands})
 	} catch (error) {
 		console.log(error);
@@ -149,6 +232,22 @@ exports.getInverterBatteries = async (req, res) => {
 	} catch (error) {
 		console.log(error)
 	}
+}
+
+exports.getInvertersAndHomeUps = async (req, res) => {
+	try {
+		const {brandname} = req.params;
+		console.log(brandname);
+		const categoryPostTypeMatch = await postTypeModel.findOne({postTypeName:"Battery Categories"});
+		const inverterCategoryPost = await postModel.findOne({postType:categoryPostTypeMatch?._id, 'postName':'Inverter & Home UPS Batteries'});
+		console.log(inverterCategoryPost);
+		const inverters = await postModel.find({'postData.batterycategory.value':`${inverterCategoryPost.postName}__${inverterCategoryPost?._id}`, 'postData.brand':brandname});
+		console.log(inverters);
+		res.status(200).json({success:true, products:inverters})
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({success:false, message:'server error'});
+	}	
 }
 
 exports.findInverters = async (req, res) => {
@@ -689,7 +788,7 @@ exports.fetchByCarBrand = async (req, res) => {
 		const brandData = await postModel.findOne({postType:brandPostType?._id, postName:brandName}).select("postData");
 		const posts = await postModel.find({postType:postType?._id, "postData.CarBrand":brandName});
 		console.log(posts);
-		res.status(200).json({success:true, posts, brandData:{brandName:brandData?.postData?.brandName, brandLogo:brandData?.postData?.brandLogo}})
+		res.status(200).json({success:true, posts, brandData:{brandName:brandData?.postData?.brandName, brandLogo:brandData?.postData?.brandLogo}});
 	} catch (error) {
 		console.log(error);
 		res.status(500).json({message:"error adding callback request"})
@@ -747,7 +846,7 @@ exports.findBattery = async (req, res, next) => {
 exports.findBatteriesByEquipment = async (req, res, next) => {
 	try {
 		console.log("Finding battery by equipment",req.body)
-		const {id, type, value, brand} = req.body;
+		const {id, type, value, brand, locationData} = req.body;
 		const equipmentId = value?.split("__")[1];
 		const equipment = await postModel.findOne({_id:equipmentId});
 		const products = [];
@@ -758,12 +857,25 @@ exports.findBatteriesByEquipment = async (req, res, next) => {
 			} else if(brand) {
 				match = await postModel.findOne({_id:batteryItem?.value?.split('__')[1], 'postData.brand':brand})
 			}
-			if(match) products.push(match);
+			if(match) {
+				if(locationData && Object.keys(locationData)?.length > 0){
+					const pricing = await pricingManagerModel.findOne({productId:match?._id});
+					if(!pricing || !pricing.pricingAndAvailability?.filter(item => item.location === locationData?.city)?.length > 0) {
+						products.push(match);
+					} else if(pricing.pricingAndAvailability?.filter(item => item.location === locationData?.city)?.length > 0) {
+						match.postData.mrp = pricing.pricingAndAvailability?.filter(item => item.location === locationData?.city)[0]?.mrp;
+						products.push(match);
+					}
+
+				} else {
+					products.push(match);
+				}
+			}
 		}
 		res.status(200).json({success:true, products})
 	} catch (error) {
 		console.log(error);
-		res.status(500).json({success:false, message:'server error'})
+		res.status(500).json({success:false, message:'server error'});
 	}
 }
 

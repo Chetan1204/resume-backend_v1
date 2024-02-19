@@ -51,7 +51,19 @@ router.post("/get-cars", manageController.fetchByCarBrand)
 router.get("/battery-type/two-wheeler-batteries", manageController.fetchTwoWheelerVehicleBrands);
 router.get("/battery-type/car-batteries", manageController.getPassengerVehicleBrands);
 router.get("/battery-type/inverter-batteries", manageController.getInverterBrands);
+router.get("/battery-type/inverter-plus-home-ups-batteries", manageController.getInverterPlusHomeUPSBrands);
+router.get("/battery-type/heavy-engine-batteries", manageController.getHeavyEngineBatteryBrands);
+router.get("/battery-type/vrla-smf-batteries", manageController.getVRLASMFBatteryBrands);
+
+
 router.get("/get-inverter-batteries/:brandname", manageController.getInverterBatteries);
+router.get("/get-inverter-and-home-ups/:brandname", manageController.getInvertersAndHomeUps);
+router.get("/get-heavy-engine-batteries/:brandname", manageController.getHeavyEngineBatteries);
+router.get("/get-vrla-smf-batteries/:brandname", manageController.getVrlaSmfBatteries);
+
+
+
+
 router.post("/find-inverters", manageController.findInverters)
 router.post("/find-battery", manageController.findBattery);
 router.post("/find-batteries-by-equipment", manageController.findBatteriesByEquipment);
