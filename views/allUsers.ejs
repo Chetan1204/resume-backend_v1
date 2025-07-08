@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>All Users</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f0f0f0;
+    }
+
+    .delete-btn {
+      background-color: red;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div style="padding: 15px;">
+    <h1>All Users</h1>
+    <table id="userTable">
+      <thead>
+        <tr>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- User rows will be injected here -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    async function fetchUsers() {
+      try {
+        const res = await fetch('http://localhost:4000/api/v1/manage/auth/all-users');
+        const data = await res.json();
+
+        if (data.success && Array.isArray(data.users)) {
+          const tbody = document.querySelector('#userTable tbody');
+          tbody.innerHTML = '';
+
+          data.users.forEach(user => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${user.firstName || ''}</td>
+              <td>${user.lastName || ''}</td>
+              <td>${user.email || ''}</td>
+              <td>${user.phone || ''}</td>
+              <td><button class="delete-btn" onclick="deleteUser('${user._id}')">Delete</button></td>
+            `;
+            tbody.appendChild(row);
+          });
+        } else {
+          alert('Failed to load users.');
+        }
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    }
+
+    async function deleteUser(userId) {
+  if (!confirm('Are you sure you want to delete this user?')) return;
+
+  try {
+    const res = await fetch(`http://localhost:4000/api/v1/manage/auth/users/${userId}`, {
+      method: 'DELETE',
+    });
+
+    const result = await res.json();
+
+    if (result.success) {
+      alert('User deleted successfully!');
+      fetchUsers(); // Refresh table or UI
+    } else {
+      alert('Failed to delete user.');
+    }
+  } catch (err) {
+    console.error('Delete error:', err);
+    alert('Error deleting user.');
+  }
+}
+
+    // Fetch users on page load
+    window.onload = fetchUsers;
+  </script>
+
+</body>
+</html>

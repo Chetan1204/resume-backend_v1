@@ -54,12 +54,14 @@ router.get("/battery-type/inverter-batteries", manageController.getInverterBrand
 router.get("/battery-type/inverter-plus-home-ups-batteries", manageController.getInverterPlusHomeUPSBrands);
 router.get("/battery-type/heavy-engine-batteries", manageController.getHeavyEngineBatteryBrands);
 router.get("/battery-type/vrla-smf-batteries", manageController.getVRLASMFBatteryBrands);
+router.get("/battery-type/inverter-plus-battery-combo", manageController.getInverterPlusBatteryComboBrands);
 
 
 router.get("/get-inverter-batteries/:brandname", manageController.getInverterBatteries);
 router.get("/get-inverter-and-home-ups/:brandname", manageController.getInvertersAndHomeUps);
 router.get("/get-heavy-engine-batteries/:brandname", manageController.getHeavyEngineBatteries);
 router.get("/get-vrla-smf-batteries/:brandname", manageController.getVrlaSmfBatteries);
+router.get("/get-inverter-battery-combos/:brandname", manageController.getInverterBatteryCombos);
 
 
 

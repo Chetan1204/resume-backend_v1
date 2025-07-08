@@ -41,3 +41,16 @@ exports.generateOTP = () => {
 	const randomNumber = Math.floor(Math.random() * 90000) + 10000;
   	return randomNumber;
 }
+
+exports.getTrimmedObject = (obj) => {
+	if(!Object.keys(obj)?.length > 0) return null;
+	for(let key of Object.keys(obj)){
+		if(typeof obj[key] === 'string'){
+			obj[key] = obj[key].trim();
+		} 
+		else if ( typeof obj[key] === 'object'){
+			obj[key] = getTrimmedObject(obj[key])
+		}
+	}
+	return obj;
+}
