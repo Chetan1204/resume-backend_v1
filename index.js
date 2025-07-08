@@ -14,6 +14,7 @@ const pageModel = require('./models/pageModel')
 const { defaultPage } = require('./utils/constants')
 const flash = require('connect-flash');
 const cors = require("cors");
+const jobRoutes = require("./routes/jobRoutes");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const morgan = require("morgan");
@@ -24,6 +25,10 @@ const { apiErrorHandler } = require('./middlewares/apiErrorHandler');
  * Connecting to database
  */
 Connectdb();
+
+// Middlewares
+
+
 
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Headers", "X-Requested-With");
@@ -40,13 +45,15 @@ app.use(morgan(process.env.MODE === "development" ? 'dev' : 'combined'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 const corsOptions = {
-	origin: ['http://192.168.16.36:5173','http://192.168.16.139:5173'],
+	origin: ['http://192.168.0.245:5173'],
 	methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
 	allowedHeaders: 'Content-Type,Authorization',
 	credentials: true, // Enable credentials (cookies, HTTP authentication)
 };
 
 app.use(cors(corsOptions))
+app.use(express.json());
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use(session({
 	secret:process.env.SESSION_SECRET,
@@ -66,10 +73,16 @@ app.use(flash());
 
 
 // routes
+
+app.use("/api", jobRoutes);
+
+
 app.get("/", (req, res)=>{
 	console.log("rendering all pages...");
 	res.redirect("/api/v1/manage/all-pages")
 })
+
+
 
 app.use('/api/v1/manage', manageRouter)
 

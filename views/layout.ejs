@@ -15,6 +15,7 @@
 	<title>U-CMS</title>
 	<link rel="icon" type="images/png" href="/favicon.png">
 	<link rel="stylesheet" href="/style.css">
+	<link rel="stylesheet" href="/responsive.css">
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Lato:wght@100;300;400;700;900&display=swap" rel="stylesheet">
@@ -120,7 +121,7 @@
 		<div id="header-strip"
 		class="header-strip"
 			style="display: flex;align-items: center;justify-content: space-between;gap: 10px;padding: 8px;height: 35px;">
-			<div style="display: flex;align-items: center;gap: 10px;">
+			<div style="display: flex;align-items: center;gap: 10px;" class="header-res-cont">
 				<div id="hero-icon" class="dropdown hover-dropdown">
 					<i class="fa-solid fa-shield-halved dropdown-toggle"  data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"></i>
 					<ul class="dropdown-menu">
@@ -132,14 +133,14 @@
 					</ul>
 				</div>
 				<div id="hero-icon" class="dropdown hover-dropdown">
-					<p id="website-name-hldr" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="font-weight: 600;font-size: 13px;margin: 0px;margin: 0px 10px 0px 10px;cursor: pointer;width: 165px;display: flex;align-items: center;gap: 5px;"><i class="fa-solid fa-house-chimney"></i> Website Name</p>
+					<p id="website-name-hldr" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="font-weight: 600;font-size: 13px;margin: 0px;margin: 0px 10px 0px 10px;cursor: pointer;display: flex;align-items: center;gap: 5px;"><i class="fa-solid fa-house-chimney"></i> Website Name</p>
 					<ul class="dropdown-menu">
 						<li><a id="website-url-hldr" class="dropdown-item" href="#">Visit Site</a></li>
 					</ul>
 				</div>
-				<p style="font-weight: 600;font-size: 13px;margin: 0px;margin-right: 10px;"><i style="margin-right: 10px;" class="fa-solid fa-rotate"></i> 17 </p>
+				<p class="to-be-hidden" style="font-weight: 600;font-size: 13px;margin: 0px;margin-right: 10px;"><i style="margin-right: 10px;" class="fa-solid fa-rotate"></i> 17 </p>
 				<div id="hero-icon" class="dropdown hover-dropdown">
-					<p class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="font-weight: 600;font-size: 13px;margin: 0px;cursor: pointer;"><i style="margin-right: 10px;" class="fa-solid fa-plus"></i> New</p>
+					<p class="dropdown-toggle to-be-hidden" data-bs-toggle="dropdown" aria-expanded="false" style="font-weight: 600;font-size: 13px;margin: 0px;cursor: pointer;"><i style="margin-right: 10px;" class="fa-solid fa-plus"></i> New</p>
 					<ul class="dropdown-menu">
 						<li><a class="dropdown-item" href="/api/v1/manage/render-add-post-type">Post Type</a></li>
 						<li><a class="dropdown-item" href="/api/v1/manage/add-new-page">Page</a></li>
@@ -148,10 +149,13 @@
 					</ul>
 				</div>
 			</div>
-			<div class="dropdown ">
+			<div class="dropdown  sidebar-toggle-btn-wr">
 				<button id="dropdown-username-btn" class="dropdown-toggle" style="height: 25px; font-size: 13px;background-color: transparent;border: none;outline: none;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
 				  Howdy, Conative IT Solutions <img class="avatar-profile" src="/static/avatar_placeholder.jpg" width="17px" alt="avatar">
 				</button>
+				  <button type="button" class="toggle" id="sidebar-toggle-btn">
+					<span id="sidebar-toggle-btn-child" ></span>
+				   </button>
 				<ul class="dropdown-menu" style="width: 275px;padding: 0px;">
 					<li style="display: flex;align-items: start;justify-content: flex-start;padding: 10px;gap: 10px;">
 						<figure style="margin: 0px;">
@@ -170,7 +174,10 @@
 	</header>
 	<main style="display: flex;height: calc(100% - 35px);">
 		<!-- Sidebar -->
-		<div id="main-sidebar" class="flex-shrink-0 main-sidebar" style="width: 200px;height: 100%;overflow-y: auto;">
+		<div id="main-sidebar"
+		class="flex-shrink-0 main-sidebar collapsible-sidebar">
+
+
 			<ul class="list-unstyled ps-0">
 				<!-- <li class="mb-1">
 					<div class="menu-title-item align-items-center "
@@ -199,6 +206,12 @@
 							</li>
 							<li>
 								<a id="all-pages-link" href="/api/v1/manage/add-new-page" style="padding: 8px 0px 8px 12px;font-size: 13px;line-height: 1.25rem;font-weight: 400;width: 100%;display: inline-block;"><i class="fa-solid fa-plus" style="margin-right: 10px;"></i> Add New Page</a>
+							</li>
+
+							<li>
+								<a id="all-users" href="/api/v1/manage/all-users"
+									style="padding: 8px 0px 8px 12px;font-size: 13px;line-height: 1.25rem;font-weight: 400;width: 100%;display: inline-block;"><i
+										class="fa-solid fa-copy" style="margin-right: 10px;"></i>Users</a>
 							</li>
 						</ul>
 					</div>
@@ -303,7 +316,7 @@
 		</div>
 
 		<!--Main layout-->
-		<div id="main-content" style="display: flex;align-items: start;justify-content: start;height: 100%;width: calc(100% - 200px); overflow: hidden;">
+		<div id="main-content" style="align-items: start;justify-content: start;height: 100%; overflow: hidden;">
 			<%- body %>
 		</div>
 
@@ -446,6 +459,19 @@
 				$(this).removeClass('show');
 				$(this).find('.dropdown-menu').removeClass('show');
 			});
+
+			const sidebar = document.getElementById('main-sidebar');
+			const content = document.getElementById('main-content')
+    		const toggleButton = document.getElementById('sidebar-toggle-btn');
+    		const toggleButtonChild = document.getElementById('sidebar-toggle-btn-child');
+
+
+    		// Add click event listener to the toggle button
+    		toggleButton.addEventListener('click', function() {
+    		    sidebar.classList.toggle('collapsed');
+				content.classList.toggle('collapsed')
+				toggleButtonChild.classList.toggle('toggle')
+    		});
 		});
 	</script>
 </body>

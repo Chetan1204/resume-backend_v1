@@ -4,7 +4,7 @@ const dataModel = require('../models/dataModel');
 const postTypeModel = require("../models/postTypeModel");
 const { categoryModel } = require('../models/categoryModel');
 const { v4: uuidv4 } = require('uuid');
-const {getLastTwelveMonths} = require("../utils/utilFunctions");
+const {getLastTwelveMonths, getTrimmedObject} = require("../utils/utilFunctions");
 const adminModel = require('../models/adminModel');
 const ITEMS_PER_PAGE = 60;
 const Quotation = require("../models/quotationModel")
@@ -260,6 +260,15 @@ exports.allPages = async (req, res) => {
 			filterdate: filterdate || '',
 			filtercategory: filtercategory || ''
 		})
+	} catch (error) {
+		console.error('Error fetching pages:', error);
+		res.status(500).send('Internal Server Error');
+	}
+}
+
+exports.allUsers = async (req, res) => { 
+	try {
+		res.render( 'allUsers')
 	} catch (error) {
 		console.error('Error fetching pages:', error);
 		res.status(500).send('Internal Server Error');
@@ -820,13 +829,14 @@ exports.addPostData = async (req, res) => {
 	try {
 		console.log("adding post data...");
 		const { postName, modelName, postTypeId, ...postData } = req.body;
+		const trimmedPostData = getTrimmedObject(postData);
 		const existingPost = await postModel.findOne({ postName, postType: postTypeId });
 		if (postTypeId) {
 			const postType = await postTypeModel.findOne({ _id: postTypeId });
 			if (postType) {
 				if (!postType?.customField?.length > 0 || !postType?.customFieldId?.length > 0) {
-					existingPost.defaultPostTitle = postData?.defaultPostTitle;
-					existingPost.defaultPostContent = postData?.defaultPostContent;
+					existingPost.defaultPostTitle = trimmedPostData?.defaultPostTitle?.trim();
+					existingPost.defaultPostContent = trimmedPostData?.defaultPostContent;
 					existingPost.postData = {};
 					existingPost.revisions = existingPost.revisions + 1;
 					await existingPost.save();
@@ -850,13 +860,13 @@ exports.addPostData = async (req, res) => {
 					}
 					if (!existingPost?.postData) {
 						existingPost.postData = {
-							...postData,
+							...trimmedPostData,
 							...fileObject
 						}
 					} else {
 						existingPost.postData = {
 							...existingPost?.postData,
-							...postData,
+							...trimmedPostData,
 							...fileObject
 						}
 					}
@@ -931,11 +941,6 @@ exports.deletePageArrayItem = async (req, res) => {
 
 exports.searchPagesByName = async (req, res) => {
 	try {
-
-		// paginationtype: paginationtype || 'default',
-		// searchquery: searchquery || "",
-		// currentpage: currentpage || 1,
-		// numberOfPages,
 
 		const search = new RegExp(req.body?.searchName, 'i');
 		const filteredPages = await pageModel.find({name: search});

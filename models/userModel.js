@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 const { CouponSchema } = require("./couponModel");
+
 
 const cartItemSchema = new mongoose.Schema({
 	productName:String,
@@ -90,26 +92,10 @@ const UserSchema = new mongoose.Schema({
 	phone:{
 		type:String,
 	},
-	addressLineOne:{
-		type:String,
-	},
-	addressLineTwo:{
-		type:String,
-	},
-	state:{
-		type:String,
-	},
-	city:{
-		type:String,
-	},
-	pinCode:{
-		type:Number,
-	},
-	country:{
-		type:String,
-	},
+	
 	password:{
 		type:String,
+		
 	},
 	access_token:String,
 	verificationOTP:Number,
@@ -127,6 +113,18 @@ const UserSchema = new mongoose.Schema({
 	deliveryAddresses:[deliveryAddressSchema],
 	wishList:[cartItemSchema], // product ids will be stored here to reference later from the database
 });
+
+// Hash password before saving
+UserSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
+});
+
+// Method to compare password
+UserSchema.methods.comparePassword = function (password) {
+  return bcrypt.compare(password, this.password);
+};
 
 
 

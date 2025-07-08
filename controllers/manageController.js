@@ -102,15 +102,16 @@ exports.getAllCarBrands = async (req, res) => {
 
 exports.getPassengerVehicleBrands = async (req, res) => {
 	try {
-			const brandsPostType = await postTypeModel.findOne({postTypeName:"Brands"});
-			const categoryPostType = await postTypeModel.findOne({postTypeName:"Battery Categories"});
-			const linkedCategoryMatch = await postModel.findOne({postType:categoryPostType._id, postName:"Car Batteries"})
-			const allBrands = await postModel.find({postType:brandsPostType?._id, "postData.linkedCategories":{
-				$elemMatch:{
-					"value":`Car Batteries__${linkedCategoryMatch._id}`
-				}
-			}})
-			res.status(200).json({success:true, products:allBrands})
+		console.log("Getting Passenger Vehicle Battery brands...");
+		const brandsPostType = await postTypeModel.findOne({postTypeName:"Brands"});
+		const categoryPostType = await postTypeModel.findOne({postTypeName:"Battery Categories"});
+		const linkedCategoryMatch = await postModel.findOne({postType:categoryPostType._id, postName:"Car Batteries"})
+		const allBrands = await postModel.find({postType:brandsPostType?._id, "postData.linkedCategories":{
+			$elemMatch:{
+				"value":`Car Batteries__${linkedCategoryMatch._id}`
+			}
+		}})
+		res.status(200).json({success:true, products:allBrands})
 	
 	} catch (error) {
 		console.log(error);
@@ -122,6 +123,7 @@ exports.getPassengerVehicleBrands = async (req, res) => {
 
 exports.getInverterBrands = async (req, res) => {
 	try {
+		console.log('Getting inverter batteries...');
 		const categoryPostTypeMatch = await postTypeModel.findOne({postTypeName:"Battery Categories"});
 		const inverterCategoryPost = await postModel.findOne({postType:categoryPostTypeMatch?._id, 'postName':'Inverter Batteries'});
 		console.log("inverterCategory Post", `${inverterCategoryPost.postName}__${inverterCategoryPost?._id}`);
@@ -141,6 +143,7 @@ exports.getInverterBrands = async (req, res) => {
 
 exports.getHeavyEngineBatteryBrands = async (req, res) => {
 	try {
+		console.log("Getting Heavy Engine Battery brands...");
 		const categoryPostTypeMatch = await postTypeModel.findOne({postTypeName:"Battery Categories"});
 		const heavyEngineCategoryPost = await postModel.findOne({postType:categoryPostTypeMatch?._id, 'postName':'Heavy Engine Batteries'});
 		const heavyEngineBatteries = await postModel.find({'postData.batterycategory.value':`${heavyEngineCategoryPost.postName}__${heavyEngineCategoryPost?._id}`});
@@ -160,6 +163,7 @@ exports.getHeavyEngineBatteryBrands = async (req, res) => {
 
 exports.getVRLASMFBatteryBrands = async (req, res) => {
 	try {
+		console.log("Getting VRLA / SMF Battery brands...");
 		const categoryPostTypeMatch = await postTypeModel.findOne({postTypeName:"Battery Categories"});
 		const VRLA_SMFCategoryPost = await postModel.findOne({postType:categoryPostTypeMatch?._id, 'postName':'VRLA / SMF Batteries'});
 		const vrlaSmfBatteries = await postModel.find({'postData.batterycategory.value':`${VRLA_SMFCategoryPost.postName}__${VRLA_SMFCategoryPost?._id}`});
@@ -176,8 +180,28 @@ exports.getVRLASMFBatteryBrands = async (req, res) => {
 	}
 }
 
+exports.getInverterPlusBatteryComboBrands = async (req, res) => {
+	try {
+		console.log("Getting Inverter & Battery Combos...");
+		const categoryPostTypeMatch = await postTypeModel.findOne({postTypeName:"Battery Categories"});
+		const InverterBatteryComboCategoryPost = await postModel.findOne({postType:categoryPostTypeMatch?._id, 'postName':'Inverter+Battery Combo'});
+		const comboBatteries = await postModel.find({'postData.batterycategory.value':`${InverterBatteryComboCategoryPost.postName}__${InverterBatteryComboCategoryPost?._id}`});
+		const comboBrandNames = Array.from(new Set(comboBatteries?.map(item => item?.postData?.brand)));
+		const vrlaSmfBrands = [];
+		for(let brandName of comboBrandNames) {
+			const brandMatch = await postModel.findOne({postName:brandName});
+			brandMatch && vrlaSmfBrands.push({...brandMatch, postData:{...brandMatch.postData, brandLogo:brandMatch.postData.brandImage}});
+		}
+		res.status(200).json({success:true, products:vrlaSmfBrands});
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({success:false, message:'server error'});
+	}
+}
+
 exports.getVrlaSmfBatteries = async (req, res) => {
 	try {
+		console.log('Getting batteries of type : [VRLA / SMF Batteries]');
 		const categoryPostTypeMatch = await postTypeModel.findOne({postTypeName:"Battery Categories"});
 		const VRLA_SMFCategoryPost = await postModel.findOne({postType:categoryPostTypeMatch?._id, 'postName':'VRLA / SMF Batteries'});
 		const vrlaSmfBatteries = await postModel.find({'postData.batterycategory.value':`${VRLA_SMFCategoryPost.postName}__${VRLA_SMFCategoryPost?._id}`});
@@ -188,8 +212,17 @@ exports.getVrlaSmfBatteries = async (req, res) => {
 	}
 }
 
+exports.getInverterBatteryCombos = async (req, res) => {
+	console.log("Getting batteries of type : [Inverter+Battery Combo]");
+	const categoryPostTypeMatch = await postTypeModel.findOne({postTypeName:"Battery Categories"});
+	const InverterBatteryComboCategoryPost = await postModel.findOne({postType:categoryPostTypeMatch?._id, 'postName':'Inverter+Battery Combo'});
+	const comboBatteries = await postModel.find({'postData.batterycategory.value':`${InverterBatteryComboCategoryPost.postName}__${InverterBatteryComboCategoryPost?._id}`});
+	res.status(200).json({success:true, products:comboBatteries});
+}
+
 exports.getHeavyEngineBatteries = async (req, res) => {
 	try {
+		console.log('Getting batteries of type : [Heavy Engine Batteries]');
 		const categoryPostTypeMatch = await postTypeModel.findOne({postTypeName:"Battery Categories"});
 		const heavyEngineCategoryPost = await postModel.findOne({postType:categoryPostTypeMatch?._id, 'postName':'Heavy Engine Batteries'});
 		const heavyEngineBatteries = await postModel.find({'postData.batterycategory.value':`${heavyEngineCategoryPost.postName}__${heavyEngineCategoryPost?._id}`});
@@ -204,6 +237,7 @@ exports.getHeavyEngineBatteries = async (req, res) => {
 
 exports.getInverterPlusHomeUPSBrands = async (req, res) => {
 	try {
+		console.log("Getting Inverter Plus Home UPS Battery brands...");
 		const categoryPostTypeMatch = await postTypeModel.findOne({postTypeName:"Battery Categories"});
 		const inverterCategoryPost = await postModel.findOne({postType:categoryPostTypeMatch?._id, 'postName':'Inverter & Home UPS Batteries'});
 		console.log(inverterCategoryPost);
@@ -223,6 +257,7 @@ exports.getInverterPlusHomeUPSBrands = async (req, res) => {
 
 exports.getInverterBatteries = async (req, res) => {
 	try {
+		console.log("Getting batteries of type : [Inverter Batteries]");
 		const {brandname} = req.params;
 		const categoryPostTypeMatch = await postTypeModel.findOne({postTypeName:"Battery Categories"});
 		const inverterCategoryPost = await postModel.findOne({postType:categoryPostTypeMatch?._id, 'postName':'Inverter Batteries'});
@@ -236,6 +271,7 @@ exports.getInverterBatteries = async (req, res) => {
 
 exports.getInvertersAndHomeUps = async (req, res) => {
 	try {
+		console.log("Getting batteries of type : [Inverter & Home UPS Batteries]");
 		const {brandname} = req.params;
 		console.log(brandname);
 		const categoryPostTypeMatch = await postTypeModel.findOne({postTypeName:"Battery Categories"});
@@ -252,6 +288,7 @@ exports.getInvertersAndHomeUps = async (req, res) => {
 
 exports.findInverters = async (req, res) => {
 	try {
+		console.log('Finding inverters...');
 		const {category, brand, capacity} = req.body.state;
 		const categoryPostTypeMatch = await postTypeModel.findOne({postTypeName:"Battery Categories"});
 		const inverterCategoryPost = await postModel.findOne({postType:categoryPostTypeMatch?._id, 'postName':'Inverter Batteries'});
@@ -275,6 +312,7 @@ exports.findInverters = async (req, res) => {
 
 exports.getAllBatteryBrands = async (req, res) => {
 	try {
+		console.log("Getting all battery brands...");
 		const allBrands = await postModel.find({postType:"65bb943f3047f00d56d5d638"});
 		if(allBrands){
 			res.status(200).json({success:true, message:"all brands fetched", data: allBrands.map(item => ({postName:item?.postName, brandName:item?.postData?.brandName, brandLogo:item?.postData?.brandImage}))})
@@ -289,6 +327,7 @@ exports.getAllBatteryBrands = async (req, res) => {
 
 exports.getAllBatteryCategories = async (req, res) => {
 	try {
+		console.log('Getting all battery categories...');
 		const categoryPostType = await postTypeModel.findOne({postTypeName:"Battery Categories"});
 		const categories = await postModel.find({postType:categoryPostType._id});
 		res.status(200).json({success:true, categories});
@@ -409,7 +448,7 @@ exports.askBatteryQuotation = async (req, res) => {
 
 exports.addBatteryToCart = async (req, res) => {
 	try {
-		console.log('adding battery to cart', req.body);
+		console.log('adding battery to cart...');
 		const {batteryId, quantity, exchangeOldBattery} = req.body;
 
 		const battery = await postModel.findOne({_id:batteryId});
@@ -468,7 +507,7 @@ exports.addBatteryToCart = async (req, res) => {
 
 exports.deleteCartItem = async (req, res) => {
 	try {
-		console.log('trying to delete cart item...')
+		console.log('trying to delete cart item...');
 		const {cartItem} = req.body;
 		if(!cartItem) return res.status(400).json({success:false, message:"invalid item"})
 		const user = await userModel.findOneAndUpdate({email:req.jwt.decoded?.email, "cart.productId":cartItem?.productId},{
@@ -484,6 +523,7 @@ exports.deleteCartItem = async (req, res) => {
 
 exports.showUserCart = async (req, res) => {
 	try {
+		console.log("displaying user cart contents...");
 		const user = await userModel.findOne({email:req.jwt.decoded?.email});
 		const detailedCart = [];
 		let chosenDeliveryAddress = null;
@@ -522,6 +562,7 @@ exports.showUserCart = async (req, res) => {
 
 exports.applyCoupon = async (req, res) => {
 	try {
+		console.log("Getting coupon...");
 		const {couponCode} = req.body;
 		const coupon = await couponModel.findOne({couponCode:couponCode.toUpperCase()});
 		if(!coupon) throw {status:400, message:"invalid coupon code."};
@@ -537,6 +578,7 @@ exports.applyCoupon = async (req, res) => {
 
 exports.addCartCoupon = async (req, res) => {
 	try {
+		console.log("Adding coupon to cart...");
 		const { couponId,couponCode, couponDiscount, couponDescription} = req.body;
 		const newCoupon = new couponModel({
 			couponId, couponCode, couponDiscount, couponDescription
@@ -551,6 +593,7 @@ exports.addCartCoupon = async (req, res) => {
 
 exports.updateDeliveryInformation = async (req, res) => {
 	try {
+		console.log("updating delivery information...");
 		const {addressName, addressType, addressLineOne, addressLineTwo, state, city, pinCode, country} = req.body;
 		const user = await userModel.findOne({email:req.jwt.decoded?.email});
 		if(!user) throw {status:400, message:"user not found, please login again"}
@@ -586,6 +629,7 @@ exports.updateDeliveryInformation = async (req, res) => {
 
 exports.initiateOrder = async (req, res) => {
 	try {
+		console.log("initiating a new order...");
 		const {chosenAddress, cart, coupon} = req.body;
 		const subtotal = cart?.map(item => (item?.productPrice * item.productQuantity)).reduce((acc, currVal) => acc + currVal, 0);
 		const orderTotal = coupon ? subtotal - subtotal*(parseFloat(coupon?.couponDiscount)/100) : subtotal;
@@ -623,6 +667,7 @@ exports.initiateOrder = async (req, res) => {
 
 exports.updateExpressDeliveryStatus = async (req, res) => {
 	try {
+		console.log(`updating express delivery status. Express Delivery Status : [${req.body.express}]`);
 		const {express} = req.body;
 		await userModel.findOneAndUpdate({email:req.jwt.decoded?.email},{
 			"currentOrder.expressDelivery":express
@@ -636,6 +681,7 @@ exports.updateExpressDeliveryStatus = async (req, res) => {
 
 exports.getCurrentOrder = async (req, res) => {
 	try {
+		console.log("Getting current order details...");
 		const user = await userModel.findOne({email:req.jwt.decoded?.email});
 		if(!user) return res.status(400).json({success:false, message:"user not found, please login again"});
 		return res.status(200).json({success:true, order:user.currentOrder});
@@ -647,7 +693,7 @@ exports.getCurrentOrder = async (req, res) => {
 
 exports.filterInverterBattery = async (req, res) => {
 	try {
-		console.log(req.body);
+		console.log("filtering inverter batteries...");
 		const {category, capacity, brand} = req.body;
 		const categoryPostTypeMatch = await postTypeModel.findOne({postTypeName:"Battery Categories"});
 		const categoryMatch = await postModel.findOne({postName:category, postType:categoryPostTypeMatch?._id});
@@ -667,6 +713,7 @@ exports.filterInverterBattery = async (req, res) => {
 
 exports.placeOrder = async (req, res) => {
 	try {
+		console.log(`placing order : ORDER ID [${req.body?.orderId}]`);
 		const {orderId, confirmationDetails} = req.body;
 		const match = await userModel.findOne({email:req.jwt.decoded?.email});
 		if(!match.currentOrder.orderId === orderId) return res.status(400).json({success:false, message:"cannot find order"});
@@ -724,6 +771,7 @@ exports.placeOrder = async (req, res) => {
 
 exports.getCompletedOrder = async (req, res) => {
 	try {
+		console.log("getting order information...");
 		const {orderId} = req.body;
 		const order = await orderModel.findOne({orderId});
 		if(!order) return res.status(400).json({success: false, message:"cannot find order"});
@@ -761,7 +809,7 @@ exports.makeChatInquiry = async (req, res) => {
 
 exports.requestCallback = async (req, res) => {
 	try {
-		console.log("Asking for callbacks...");
+		console.log("creating a new callback request...");
 		const { name, contactNum,city,enquiry} = req.body;
 
 		const newCallbackRequest = new requestCallBackModel({
@@ -781,6 +829,7 @@ exports.requestCallback = async (req, res) => {
 
 exports.fetchByCarBrand = async (req, res) => {
 	try {
+		console.log(`Fetching car batteries for brand : [${req.body?.brandName}]`)
 		const {brandName} = req.body;
 		console.log(brandName);
 		const postType = await postTypeModel.findOne({postTypeName:"Car models"});
@@ -797,6 +846,7 @@ exports.fetchByCarBrand = async (req, res) => {
 
 exports.fetchTwoWheelerVehicleBrands = async (req, res) => {
 	try {
+		console.log("Fetching vehicle brands for two wheeler vehicles...");
 		const brandsPostType = await postTypeModel.findOne({postTypeName:"Brands"});
 		const categoryPostType = await postTypeModel.findOne({postTypeName:"Battery Categories"});
 		const linkedCategoryMatch = await postModel.findOne({postType:categoryPostType._id, postName:"Two Wheeler Batteries"});
