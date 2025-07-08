@@ -233,6 +233,9 @@ td input:disabled, td textarea:disabled {
 ::-webkit-scrollbar {
 	width: 3px;
 	height: 5px;
+  }.info-table::-webkit-scrollbar {
+	width: 3px;
+	height: 1px;
   }
   
   /* Track */
@@ -1484,3 +1487,106 @@ tbody tr:nth-child(even){
   .form-check-input[type=radio]{
 	border-radius: 50% !important;
   }
+
+
+  /* changes from here */
+
+
+  .about-us-heading{
+	font-size: 54px;
+}
+  .about-us-description{
+	width: 60%;
+  }.about-us-paras{
+	font-size: 18px;
+  }.about-us-flex-container{
+	display: flex;
+    align-items: start;
+    justify-content: start;
+    height: 100%;
+    overflow: hidden;
+  }.about-us-left-container{
+	padding: 46px 36px 132px;
+    width: 90%;
+    margin: 0 auto;
+    text-align: center;
+  }.about-us-logo-collection{
+	 width: 246px;
+	 height:60px;
+  }.collapsible-sidebar {
+	transition: width 0.3s ease;
+	width: 200px;
+	height: 100%;overflow-y: auto;
+}.collapsible-sidebar.collapsed {
+    width: 200px;
+}#main-content{
+	width: calc(100% - 200px);
+}
+
+button.toggle {
+	background:transparent;
+	border:none;
+	width:30px;
+	height:30px;
+	cursor:pointer; 
+	outline:0;
+  }
+  
+  .toggle span {
+	width:100%;
+	height:3px;
+	background:#fff;
+	display:block;
+	position:relative;
+	cursor:pointer;
+  }
+  
+  .toggle span:before,
+  .toggle span:after {
+	content:'';
+	position:absolute;
+	left:0;
+	width:100%;
+	height:100%;
+	background:#fff;
+	transition: all 0.3s ease-out;
+  }
+  
+  .toggle span:before {
+	top:-8px;
+  }
+  
+  .toggle span:after {
+	top:8px;
+  }
+  
+  .toggle span.toggle {
+	background:transparent;
+  }
+  
+  .toggle span.toggle:before {
+	top:0;
+	transform:rotate(-45deg);
+	background:#fff;
+	
+  }
+  
+  .toggle span.toggle:after {
+	top:0;
+	transform:rotate(45deg);
+	background:#fff;
+  }
+.about-us-right-section{
+	color: white; 
+	height: 100%;
+	font-family: 'PT Serif', serif;
+    display: flex;
+	flex-direction: column; 
+	justify-content: space-evenly;
+}.about-us-padding-cont{
+	padding: 30px 70px;
+}#website-name-hldr{
+	width: 165px;
+}#sidebar-toggle-btn{
+	display: none;
+}

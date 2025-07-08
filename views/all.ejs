@@ -6,7 +6,7 @@
 				class="button-secondary-blue" style="background-color: #fff;"
 				id="openModalBtn">Add New Page</button>
 		</div>
-		<div style="display: flex;align-items: center;justify-content: space-between;width: 100%;">
+		<div class="published-info-wr" style="display: flex;align-items: center;justify-content: space-between;width: 100%;">
 				<p style="font-size: 13px;margin: 0;"> <a class="nrm-txt" style="font-weight: 400;text-decoration: none;color: #484848;" href="/api/v1/manage/all-pages/">All <span style="color: #969696;" >(<%= allPages?.length %>)</span> |</a> <a class="nrm-txt" style="font-weight: 400;text-decoration: none;color: #484848;" href="/api/v1/manage/show-published-pages">Published <span style="color: #969696;" >(<%= published?.length %>)</span> |</a> <a class="nrm-txt" style="font-weight: 400;text-decoration: none;color: #484848;" href="/api/v1/manage/show-hidden-pages">Hidden <span style="color: #969696;" >(<%= hidden?.length %>)</span></a></p>
 
 				<div style="display: flex;align-items: center;gap: 5px;">
@@ -16,8 +16,8 @@
 					</form>
 				</div>
 			</div> 
-			<div style="display: flex;align-items: center;justify-content: space-between;width: 100%;padding: 10px 0px;">
-				<div style="display: flex;align-items: center;gap: 5px;">
+			<div class="pages-nav-strip" style="display: flex;align-items: center;justify-content: space-between;width: 100%;padding: 10px 0px;">
+				<div class="pages-inner-nav-strip" style="display: flex;align-items: center;gap: 5px;">
 						<select class="form-select" id="bulkActionSelect" style="font-size: 13px;border: 1px solid #8C8F94;border-radius: 2px;width: 150px;" aria-label="Default select example">
 							<option selected>Bulk Actions</option>
 							<option value="publish all">Publish All</option>
@@ -69,7 +69,9 @@
 			background-color: #fff;
 		}
 	</style>
-	<table cellspacing="0" cellpadding="0" width="100%" style="border: 1px solid rgba(0,0,0,0.25);">
+	<div class="info-table">
+
+	<table  cellspacing="0" cellpadding="0" width="100%" style="border: 1px solid rgba(0,0,0,0.25);">
 		<thead style="border-bottom: 2px solid #d8d8d8;background-color: #fff;">
 			<tr>
 				<th>
@@ -152,6 +154,8 @@
 			<% } %>
 		</tbody>
 	</table>
+</div>
+
 	<!-- modal  start-->
 	<div id="myModal" class="modal">
 		<div class="modal-content">
