@@ -55,6 +55,7 @@ router.post("/update-post-repeater-item", verifyLogin, uploader.any(), pageContr
 router.post("/add-section", verifyLogin, pageController.addSection);
 router.post("/add-element", verifyLogin, pageController.addElement);
 router.get("/all-pages",verifyLogin, pageController.allPages); 
+router.get("/all-users",verifyLogin, pageController.allUsers); 
 router.get("/show-published-pages",verifyLogin, pageController.showPublishedPages); 
 router.get("/show-hidden-pages",verifyLogin, pageController.showHiddenPages); 
 router.get("/add-new-page",verifyLogin, pageController.addNewPage);

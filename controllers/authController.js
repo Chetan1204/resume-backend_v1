@@ -1,5 +1,5 @@
 const adminModel = require("../models/adminModel");
-const {userModel} = require("../models/userModel")
+const {userModel: User} = require("../models/userModel")
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
@@ -387,7 +387,8 @@ exports.updateUserProfile = async (req, res) => {
 	
 exports.handleUserRegister = async (req, res) => {
 	try {
-		const {email, userName, password,confirmPassword,firstName,lastName,phone,addressLineOne,addressLineTwo,state,city,pinCode,country} = req.body;
+		// const {email, userName, password,confirmPassword,firstName,lastName,phone,addressLineOne,addressLineTwo,state,city,pinCode,country} = req.body;
+		const {email, userName, password,confirmPassword,firstName,lastName,phone} = req.body;
 		const hash = await bcrypt.hash(password, 10);
 		
 console.log("Validation passed");
@@ -401,22 +402,22 @@ console.log("Validation passed");
 			firstName,
 			lastName,
 			phone,
-			addressLineOne,
-			addressLineTwo,
-			state,
-			city,
-			pinCode,
-			country,
-			deliveryAddresses:[{
-				addressName:"Default",
-				addressType:"Default",
-				addressLineOne,
-				addressLineTwo,
-				state,
-				city,
-				pinCode,
-				country
-			}]
+			// addressLineOne,
+			// addressLineTwo,
+			// state,
+			// city,
+			// pinCode,
+			// country,
+			// deliveryAddresses:[{
+			// 	addressName:"Default",
+			// 	addressType:"Default",
+			// 	addressLineOne,
+			// 	addressLineTwo,
+			// 	state,
+			// 	city,
+			// 	pinCode,
+			// 	country
+			// }]
 		});
 		await newUser.save();
 		console.log("User saved successfully");
@@ -728,3 +729,73 @@ exports.handleUserLogout = async (req, res) => {
 		res.status(200).success({success:true})
 	}
 }
+
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find().select('-password -access_token -verificationOTP');
+
+    res.status(200).json({
+      success: true,
+      count: users.length,
+      users,
+    });
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server Error',
+    });
+  }
+};
+exports.deleteUser = async (req, res) => { 
+  try {
+    const { id } = req.params;
+
+    const deletedUser = await userModel.findByIdAndDelete(id);
+
+    if (!deletedUser) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'User deleted successfully',
+      deletedUser,
+    });
+  } catch (error) {
+    console.error('Delete user error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error',
+    });
+  }
+};
+
+exports.changePassword = async (req, res) => {
+  try {
+    const { email, oldPassword, newPassword } = req.body;
+
+    if (!email || !oldPassword || !newPassword) {
+      return res.status(400).json({ success: false, message: "All fields are required" });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+    const isMatch = await user.comparePassword(oldPassword);
+    if (!isMatch) {
+      return res.status(400).json({ success: false, message: "Old password is incorrect" });
+    }
+
+    user.password = newPassword; 
+    await user.save();
+
+    res.status(200).json({ success: true, message: "Password changed successfully" });
+  } catch (error) {
+    console.error("Change Password Error:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
